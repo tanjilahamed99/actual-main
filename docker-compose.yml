@@ -5,7 +5,7 @@ services:
     build: ./backend
     container_name: actual-ielts-backend
     ports:
-      - "5060:6000"
+      - "8081:6000"
     restart: always
 
   frontend:
