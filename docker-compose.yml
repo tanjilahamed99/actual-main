@@ -3,16 +3,16 @@ version: "3.9"
 services:
   backend:
     build: ./backend
-    container_name: ieltsmill-backend
+    container_name: actual-ielts-backend
     ports:
-      - "5050:6000"
+      - "5060:6000"
     restart: always
 
   frontend:
     build: ./frontend
-    container_name: ieltsmill-frontend
+    container_name: actual-ielts-frontend
     ports:
-      - "120:3000"
+      - "130:3000"
     depends_on:
       - backend
     restart: always

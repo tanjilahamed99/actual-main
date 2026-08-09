@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 
 // Load environment variables ONCE at the top
 dotenv.config();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 6000;
 
 const app = express();
 
