@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+:root {
+  --color-paper: #f8f6ef;
+  --color-paper-raised: #ffffff;
+  --color-ink: #161d34;
+  --color-ink-soft: #2a3454;
+  --color-indigo: #26365c;
+  --color-indigo-deep: #16213e;
+  --color-muted: #5c6478;
+  --color-line: #e4dfd0;
+  --color-gold: #c99a3b;
+  --color-gold-soft: #e8c778;
+  --color-sage: #4f8b7f;
+  --color-sage-soft: #d9ebe6;
+  --color-clay: #b1492f;
+}
+
+@theme inline {
+  --color-paper: var(--color-paper);
+  --color-paper-raised: var(--color-paper-raised);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-indigo: var(--color-indigo);
+  --color-indigo-deep: var(--color-indigo-deep);
+  --color-muted: var(--color-muted);
+  --color-line: var(--color-line);
+  --color-gold: var(--color-gold);
+  --color-gold-soft: var(--color-gold-soft);
+  --color-sage: var(--color-sage);
+  --color-sage-soft: var(--color-sage-soft);
+  --color-clay: var(--color-clay);
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-plex-mono);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.paper-texture {
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(22, 29, 52, 0.055) 1px, transparent 0);
+  background-size: 18px 18px;
+}
+
+::selection {
+  background: var(--color-gold-soft);
+  color: var(--color-indigo-deep);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+}
