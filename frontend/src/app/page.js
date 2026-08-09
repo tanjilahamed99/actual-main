@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 const skills = [
   {
     letter: "L",
-    name: "Listening koro",
+    name: "Listening",
     count: "2,480",
     desc: "Audio prompts and answer sheets exactly as they appeared in the test, including the accents and pacing students found hardest.",
     tint: "bg-sage-soft text-sage",
