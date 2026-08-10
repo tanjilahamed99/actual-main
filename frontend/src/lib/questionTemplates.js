@@ -24,7 +24,8 @@ export const QUESTION_TEMPLATES = {
   tfng: {
     type: "tfng",
     heading: "Questions 0–0",
-    title: "Do the following statements agree with the information in the text?",
+    title:
+      "Do the following statements agree with the information in the text?",
     sub: "Choose TRUE if the statement agrees, FALSE if it contradicts, or NOT GIVEN if there is no information.",
     options: ["TRUE", "FALSE", "NOT GIVEN"],
     optionLabels: {
@@ -69,7 +70,8 @@ export const QUESTION_TEMPLATES = {
   summary_complete: {
     type: "summary_complete",
     heading: "Questions 0–0",
-    title: "Complete the following summary of the paragraphs of Reading Passage",
+    title:
+      "Complete the following summary of the paragraphs of Reading Passage",
     sub: "Choose no more than THREE WORDS AND/OR A NUMBER from the passage for each answer.",
     items: [{ text: " " }, { n: 0 }, { text: " " }],
   },
@@ -93,7 +95,10 @@ export const QUESTION_TEMPLATES = {
     sub: "Write the correct letter, A-I, in boxes 0-0 on your answer sheet.",
     optionsList: {
       heading: "",
-      options: [{ id: "A", text: "" }, { id: "B", text: "" }],
+      options: [
+        { id: "A", text: "" },
+        { id: "B", text: "" },
+      ],
     },
     items: [{ n: 0, text: "" }],
   },
@@ -103,6 +108,19 @@ export const QUESTION_TEMPLATES = {
     sub: "",
     options: { A: "", B: "", C: "" },
     items: [{ num: 0, q: "" }],
+  },
+  summary_complete_drag: {
+    type: "summary_complete_drag",
+    heading: "Questions 0–0",
+    title: "Complete the summary using the list of words, A-H, below.",
+    wordList: {
+      heading: "Word list",
+      options: [
+        { id: "A", text: "" },
+        { id: "B", text: "" },
+      ],
+    },
+    items: [{ text: " " }, { n: 0 }, { text: " " }],
   },
 };
 

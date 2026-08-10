@@ -88,7 +88,7 @@ const matrixMatchQuestion = z.object({
       z.object({
         id: z.string(),
         text: z.string().optional(), // options like this list of scientists have visible text; plain letter-only lists (e.g. paragraph matching A–H) don't
-      })
+      }),
     ),
   }),
   items: z.array(z.object({ n: z.number(), text: z.string() })),
@@ -114,6 +114,22 @@ const matchAnswerQuestion = z.object({
   items: z.array(z.object({ num: z.number(), q: z.string() })),
 });
 
+const summaryCompleteDragQuestion = z.object({
+  type: z.literal("summary_complete_drag"),
+  heading: z.string().optional(),
+  title: z.string().optional(),
+  sub: z.string().optional(),
+  questionTitle: z.string().optional(),
+  themeTitle: z.string().optional(),
+  wordList: z.object({
+    heading: z.string().optional(),
+    options: z.array(z.object({ id: z.string(), text: z.string() })),
+  }),
+  items: z.array(
+    z.union([z.object({ text: z.string() }), z.object({ n: z.number() })]),
+  ),
+});
+
 const questionBlockSchema = z.discriminatedUnion("type", [
   shortQuestion,
   tfngQuestion,
@@ -124,6 +140,7 @@ const questionBlockSchema = z.discriminatedUnion("type", [
   matrixMatchQuestion,
   paraMatchDragQuestion,
   matchAnswerQuestion,
+  summaryCompleteDragQuestion,
 ]);
 
 const passageSchema = z.object({

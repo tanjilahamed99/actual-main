@@ -474,195 +474,168 @@
   },
   [
     {
-      "type": "short",
-      "heading": "Questions 5–9",
-      "title": "Answer the questions below.",
-      "sub": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER from the passage for each answer.",
-      "bulletPoint": true,
-      "questionTitle": "The events after the river flooded",
-      "themeTitle": "",
+      "type": "tfng",
+      "heading": "Questions 0–0",
+      "title": "Do the following statements agree with the information in the text?",
+      "sub": "Choose TRUE if the statement agrees, FALSE if it contradicts, or NOT GIVEN if there is no information.",
+      "options": ["TRUE", "FALSE", "NOT GIVEN"],
+      "optionLabels": {
+        "TRUE": "if the statement agrees with the information",
+        "FALSE": "if the statement contradicts the information",
+        "NOT GIVEN": "if there is no information on this"
+      },
       "items": [
         {
-          "n": "example",
-          "text": "Tobin found a human skull."
-        },
-        {
-          "n": 5,
-          "text": "The",
-          "afterText": "were initially involved in trying to explain the presence of the skull."
-        },
-        {
-          "n": 6,
-          "text": "Dr Koelmeyer suggested it was a",
-          "afterText": "skull."
-        },
-        {
-          "n": 7,
-          "text": "Dr Watt recommended",
-          "afterText": "to establish the skull's age."
-        },
-        {
-          "n": 8,
-          "text": "A bone",
-          "afterText": "was sent to the GNS."
-        },
-        {
-          "n": 9,
-          "text": "The age of the skull was about",
-          "afterText": "years."
+          "n": 0,
+          "text": ""
         }
       ]
     },
     {
-      "type": "short",
-      "heading": "Questions 10–13",
-      "title": "Answer the questions below.",
-      "sub": "Write ONE WORD ONLY from the passage for each answer.",
-      "bulletPoint": true,
-      "questionTitle": "Problem of the skull's origins",
-      "themeTitle": "",
+      "type": "summary_complete",
+      "heading": "Questions 0–0",
+      "title": "Complete the following summary of the paragraphs of Reading Passage",
+      "sub": "Choose no more than THREE WORDS AND/OR A NUMBER from the passage for each answer.",
       "items": [
         {
-          "n": "example",
-          "text": "Old bones common in NZ - Maori living there for 800 years"
+          "text": " "
         },
         {
-          "n": "example",
-          "text": "Ruamahanga skull surprising because of its:"
+          "n": 0
         },
         {
-          "n": "example",
-          "text": "- age"
-        },
-        {
-          "n": 10,
-          "text": "-"
-        },
-        {
-          "n": "example",
-          "text": "- gender"
+          "text": " "
         }
       ]
     },
-    {
-      "type": "short",
-      "bulletPoint": true,
-      "questionTitle": "New Zealand",
-      "themeTitle": "",
-      "items": [
-        {
-          "n": "example",
-          "text": "- first European explorer arrived in 1642"
-        },
-        {
-          "n": 12,
-          "text": "- Hagerty and Edgar arrived in 1806 from",
-          "afterText": "where they had been imprisoned"
-        }
-      ]
-    },
-    {
-      "type": "short",
-      "bulletPoint": true,
-      "questionTitle": "Possible solution",
-      "themeTitle": "",
-      "items": [
-        {
-          "n": 13,
-          "text": "- Ruamahanga skull may have reached NZ in 17th century after a"
-        }
-      ]
-    },
-
     {
       "type": "matrix_match",
-      "heading": "Questions 18–21",
-      "title": "Look at the following statements and the list of scientists below.",
-      "sub": "Match each statement with the correct scientist, A–D.",
-      "note": "Write the correct letter, A–D, in boxes 6–9 on your answer sheet.",
+      "heading": "Questions 0–0",
+      "title": "Reading Passage has eight paragraphs, A–H.",
+      "sub": "Which paragraph contains the following information?",
+      "note": "NB You may use any letter more than once.",
       "optionsList": {
-        "heading": "List of scientists",
+        "heading": "",
+        "optionHide": true,
         "options": [
           {
-            "id": "A",
-            "text": "Josep Canadell"
+            "id": "A"
           },
           {
-            "id": "B",
-            "text": "Sebastiaan Luyssaert"
+            "id": "B"
           },
           {
-            "id": "C",
-            "text": "Jing Ming Chen"
+            "id": "C"
           },
           {
-            "id": "D",
-            "text": "Nigel Roulet"
+            "id": "D"
           }
         ]
       },
       "items": [
         {
-          "n": 13,
-          "text": "More attention will be paid to the situation in the boreal forests in the future."
-        },
-        {
-          "n": 14,
-          "text": "Boreal forests are able to deal with some of the damage that is done to them."
-        },
-        {
-          "n": 15,
-          "text": "Earlier research may have underestimated the scale of a future problem."
-        },
-        {
-          "n": 16,
-          "text": "The damage done by destroying boreal forests lasts for a very long time."
+          "n": 0,
+          "text": ""
         }
       ]
     },
-
     {
-      "type": "summary_complete",
-      "heading": "Questions 23–26",
-      "title": "Choose NO MORE THAN TWO WORDS from the passage for each answer.",
-      "sub": "Complete the notes below.",
-      "questionTitle": "Wild grasses in Russia and Kazakhstan",
+      "type": "short",
+      "heading": "Questions 0–0",
+      "title": "Answer the questions below.",
+      "sub": "Choose no more than THREE WORDS AND/OR A NUMBER from the passage for each answer.",
+      "bulletPoint": true,
+      "questionTitle": "",
+      "themeTitle": "",
       "items": [
         {
-          "text": "Scientists believe that wild grasses which are currently growing on former "
-        },
+          "n": 0,
+          "text": "",
+          "afterText": ""
+        }
+      ]
+    },
+    {
+      "type": "mcq",
+      "heading": "Questions 0–0",
+      "title": "Choose the correct letter, A, B, C or D.",
+      "items": [
         {
-          "n": 22
-        },
+          "n": 0,
+          "text": "",
+          "options": [
+            {
+              "id": "A",
+              "text": ""
+            },
+            {
+              "id": "B",
+              "text": ""
+            },
+            {
+              "id": "C",
+              "text": ""
+            },
+            {
+              "id": "D",
+              "text": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "para_match_drag",
+      "heading": "Questions 0–0",
+      "title": "Complete the summary using the list of words, A-I, below.",
+      "sub": "Write the correct letter, A-I, in boxes 32-35 on your answer sheet.",
+      "optionsList": {
+        "heading": "The Text of A New Voyage Round the World",
+        "options": [
+          { "id": "A", "text": "" },
+          { "id": "B", "text": "" },
+          { "id": "C", "text": "" },
+          { "id": "D", "text": "" },
+          { "id": "E", "text": "" },
+          { "id": "F", "text": "" },
+          { "id": "G", "text": "" },
+          { "id": "H", "text": "" },
+          { "id": "I", "text": "" }
+        ]
+      },
+
+      "items": [
         {
-          "text": " in Russia and Kazakhstan could be useful in combating environmental problems. There are two different ideas concerning how this could happen. "
-        },
+          "n": 32,
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "para_match_drag",
+      "heading": "Questions 38–40",
+      "title": "Complete the summary using the list of words, A–H, below.",
+      "questionTitle": "The Bilbao Effect",
+      "sub": "",
+      "optionsList": {
+        "heading": "The Text of A New Voyage Round the World",
+        "options": [
+          { "id": "A", "text": "challenge" },
+          { "id": "B", "text": "pipe" },
+          { "id": "C", "text": "visual" },
+          { "id": "D", "text": "contribution" },
+          { "id": "E", "text": "lasting" },
+          { "id": "F", "text": "essential" },
+          { "id": "G", "text": "ambition" },
+          { "id": "H", "text": "attraction" }
+        ]
+      },
+
+      "items": [
         {
-          "text": " With the first idea, approximately ten million tons of carbon would be stored in the ground, and three-quarters of this would create "
-        },
-        {
-          "n": 23
-        },
-        {
-          "text": "  that could be used instead of petroleum-based fuels. "
-        },
-        {
-          "text": "  The second idea is to burn the grasses in "
-        },
-        {
-          "n": 24
-        },
-        {
-          "text": " power plants. Supporters of this idea say that the effect in reducing carbon emissions would be twice as great as if the first idea was carried out. "
-        },
-        {
-          "text": " The grasses would be used to produce "
-        },
-        {
-          "n": 26
-        },
-        {
-          "text": " and production of this could begin in a short period of time. "
+          "n": 32,
+          "text": "MONA has huge appeal for visitors to Hobart, just as Gehry's Guggenheim Museum has for Bilbao. While MONA may lack the",
+          "afterText": ""
         }
       ]
     }

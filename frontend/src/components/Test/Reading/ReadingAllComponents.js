@@ -2762,6 +2762,246 @@ export function MatrixMatchBlock({
   );
 }
 
+export function SummaryCompleteDragBlock({
+  block,
+  vals,
+  onChange,
+  submitted,
+  highlights,
+  onSelect,
+}) {
+  const [draggedId, setDraggedId] = useState(null);
+  const [dragOverSlot, setDragOverSlot] = useState(null);
+  const [touchDrag, setTouchDrag] = useState(null);
+
+  const options = block.wordList?.options ?? [];
+  const blankNs = block.items
+    .filter((seg) => seg.n !== undefined)
+    .map((seg) => seg.n);
+  const placedIds = blankNs
+    .map((n) => vals[n])
+    .filter(Boolean)
+    .map((v) => v.toUpperCase());
+
+  const getOption = (id) => options.find((o) => o.id === id?.toUpperCase());
+
+  const clearFromOtherBlanks = (id) => {
+    blankNs.forEach((otherN) => {
+      if ((vals[otherN] || "").toUpperCase() === id.toUpperCase()) {
+        onChange(otherN, "");
+      }
+    });
+  };
+
+  const onDragStart = (e, id) => {
+    setDraggedId(id);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", id);
+  };
+  const onDragEnd = () => {
+    setDraggedId(null);
+    setDragOverSlot(null);
+  };
+  const onDropSlot = (e, n) => {
+    e.preventDefault();
+    const id = e.dataTransfer.getData("text/plain");
+    if (!id) return;
+    clearFromOtherBlanks(id);
+    onChange(n, id.toUpperCase());
+    setDragOverSlot(null);
+    setDraggedId(null);
+  };
+  const onDragStartFromSlot = (e, n, id) => {
+    onChange(n, "");
+    setDraggedId(id);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", id);
+  };
+  const onTouchStartChip = (e, id) => {
+    const t = e.touches[0];
+    setTouchDrag({ id, x: t.clientX, y: t.clientY });
+  };
+  const onTouchStartSlotChip = (e, n, id) => {
+    onChange(n, "");
+    const t = e.touches[0];
+    setTouchDrag({ id, x: t.clientX, y: t.clientY });
+  };
+
+  useEffect(() => {
+    if (!touchDrag) return;
+    const move = (e) => {
+      const t = e.touches[0];
+      setTouchDrag((p) => (p ? { ...p, x: t.clientX, y: t.clientY } : null));
+      e.preventDefault();
+    };
+    const end = () => {
+      if (!touchDrag) return;
+      const el = document.elementFromPoint(touchDrag.x, touchDrag.y);
+      const slot = el?.closest("[data-scslot]");
+      if (slot) {
+        const n = Number(slot.dataset.scslot);
+        clearFromOtherBlanks(touchDrag.id);
+        onChange(n, touchDrag.id.toUpperCase());
+      }
+      setTouchDrag(null);
+    };
+    window.addEventListener("touchmove", move, { passive: false });
+    window.addEventListener("touchend", end);
+    return () => {
+      window.removeEventListener("touchmove", move);
+      window.removeEventListener("touchend", end);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [touchDrag]);
+
+  return (
+    <div className="mb-5 p-3 sm:p-4">
+      <div className="mb-3">
+        <SectionLabel
+          part={block.part}
+          qRange={block.heading}
+          instruction={block.title}
+          sub={block.sub}
+          highlights={highlights}
+          onSelect={onSelect}
+        />
+      </div>
+
+      {block.questionTitle && (
+        <h2 className="text-base font-bold tracking-[0.08em] text-[#000000] my-3">
+          {block.questionTitle}
+        </h2>
+      )}
+
+      {/* Word bank */}
+      <div
+        className="bg-blue-50 border border-blue-200 rounded p-2.5 sm:p-3 mb-4"
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDraggedId(null);
+        }}>
+        <p className="text-[10px] font-bold uppercase tracking-wide text-[#000000] mb-2">
+          {block.wordList?.heading || "Word list"}
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {options.map((opt) => {
+            const placed = placedIds.includes(opt.id);
+            const dragging = draggedId === opt.id;
+            return (
+              <div
+                key={opt.id}
+                draggable={!placed && !submitted}
+                onDragStart={
+                  !placed && !submitted
+                    ? (e) => onDragStart(e, opt.id)
+                    : undefined
+                }
+                onDragEnd={onDragEnd}
+                onTouchStart={
+                  !placed && !submitted
+                    ? (e) => onTouchStartChip(e, opt.id)
+                    : undefined
+                }
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded border text-sm transition-all select-none border-blue-200 bg-white
+                  ${placed ? "opacity-25 cursor-not-allowed" : dragging ? "opacity-40 cursor-grab" : "cursor-grab hover:bg-blue-100"}`}>
+                <span className="font-bold text-[#000000]">{opt.id} –</span>
+                <span className="text-[#000000]">{opt.text}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Summary paragraph with drop-zone blanks */}
+      <p className="text-base sm:text-lg text-[#000000] leading-[2.1]">
+        {block.items.map((seg, i) => {
+          if (seg.text !== undefined) {
+            return (
+              <span key={i} style={{ whiteSpace: "pre-line" }}>
+                <HighlightableText
+                  id={`summarydrag-seg-${i}`}
+                  text={seg.text}
+                  highlights={highlights}
+                  onSelect={onSelect}
+                />
+              </span>
+            );
+          }
+
+          const n = seg.n;
+          const placedId = vals[n] ? vals[n].toUpperCase() : null;
+          const option = placedId ? getOption(placedId) : null;
+          const over = dragOverSlot === n;
+
+          return (
+            <span
+              key={i}
+              id={`q-${n}`}
+              data-scslot={n}
+              className={`inline-flex items-center gap-1 align-middle mx-1 px-2 py-0.5 border rounded transition-all
+                ${over ? "border-blue-700 bg-blue-50 border-solid" : option ? "border-blue-600 border-solid bg-blue-50" : "border-dashed border-gray-400 bg-gray-50"}`}
+              style={{
+                userSelect: "none",
+                WebkitUserSelect: "none",
+                minWidth: 90,
+              }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onMouseUp={(e) => e.stopPropagation()}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOverSlot(n);
+              }}
+              onDragLeave={() => setDragOverSlot(null)}
+              onDrop={(e) => onDropSlot(e, n)}>
+              {option ? (
+                <span
+                  className="flex items-center gap-1 cursor-grab"
+                  draggable={!submitted}
+                  onDragStart={
+                    !submitted
+                      ? (e) => onDragStartFromSlot(e, n, placedId)
+                      : undefined
+                  }
+                  onDragEnd={onDragEnd}
+                  onTouchStart={
+                    !submitted
+                      ? (e) => onTouchStartSlotChip(e, n, placedId)
+                      : undefined
+                  }>
+                  <span className="font-bold text-[#000000]">{option.id}</span>
+                  <span className="text-[#000000]">{option.text}</span>
+                  {!submitted && (
+                    <button
+                      type="button"
+                      className="text-gray-400 hover:text-red-500 text-xs ml-1"
+                      onClick={() => onChange(n, "")}>
+                      ✕
+                    </button>
+                  )}
+                </span>
+              ) : (
+                <span className="text-gray-400 italic text-sm">
+                  {over ? "Release" : "Drop here"}
+                </span>
+              )}
+            </span>
+          );
+        })}
+      </p>
+
+      {touchDrag && (
+        <div
+          className="fixed z-[9999] pointer-events-none flex items-center gap-1.5 bg-blue-800 rounded px-3 py-1.5 text-white text-xs shadow-xl"
+          style={{ left: touchDrag.x - 60, top: touchDrag.y - 18 }}>
+          <span className="font-bold">{touchDrag.id}</span>
+          <span>{getOption(touchDrag.id)?.text}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function QuestionBlock({
   block,
   passage,
@@ -2771,6 +3011,17 @@ export function QuestionBlock({
   highlights,
   onSelect,
 }) {
+  if (block?.type === "summary_complete_drag")
+    return (
+      <SummaryCompleteDragBlock
+        block={block}
+        vals={vals}
+        onChange={onChange}
+        submitted={submitted}
+        highlights={highlights}
+        onSelect={onSelect}
+      />
+    );
   if (block?.type === "summary_complete")
     return (
       <SummaryCompleteBlock
