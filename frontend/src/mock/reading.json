@@ -572,6 +572,99 @@
           "text": "- Ruamahanga skull may have reached NZ in 17th century after a"
         }
       ]
+    },
+
+    {
+      "type": "matrix_match",
+      "heading": "Questions 18–21",
+      "title": "Look at the following statements and the list of scientists below.",
+      "sub": "Match each statement with the correct scientist, A–D.",
+      "note": "Write the correct letter, A–D, in boxes 6–9 on your answer sheet.",
+      "optionsList": {
+        "heading": "List of scientists",
+        "options": [
+          {
+            "id": "A",
+            "text": "Josep Canadell"
+          },
+          {
+            "id": "B",
+            "text": "Sebastiaan Luyssaert"
+          },
+          {
+            "id": "C",
+            "text": "Jing Ming Chen"
+          },
+          {
+            "id": "D",
+            "text": "Nigel Roulet"
+          }
+        ]
+      },
+      "items": [
+        {
+          "n": 13,
+          "text": "More attention will be paid to the situation in the boreal forests in the future."
+        },
+        {
+          "n": 14,
+          "text": "Boreal forests are able to deal with some of the damage that is done to them."
+        },
+        {
+          "n": 15,
+          "text": "Earlier research may have underestimated the scale of a future problem."
+        },
+        {
+          "n": 16,
+          "text": "The damage done by destroying boreal forests lasts for a very long time."
+        }
+      ]
+    },
+
+    {
+      "type": "summary_complete",
+      "heading": "Questions 23–26",
+      "title": "Choose NO MORE THAN TWO WORDS from the passage for each answer.",
+      "sub": "Complete the notes below.",
+      "questionTitle": "Wild grasses in Russia and Kazakhstan",
+      "items": [
+        {
+          "text": "Scientists believe that wild grasses which are currently growing on former "
+        },
+        {
+          "n": 22
+        },
+        {
+          "text": " in Russia and Kazakhstan could be useful in combating environmental problems. There are two different ideas concerning how this could happen. "
+        },
+        {
+          "text": " With the first idea, approximately ten million tons of carbon would be stored in the ground, and three-quarters of this would create "
+        },
+        {
+          "n": 23
+        },
+        {
+          "text": "  that could be used instead of petroleum-based fuels. "
+        },
+        {
+          "text": "  The second idea is to burn the grasses in "
+        },
+        {
+          "n": 24
+        },
+        {
+          "text": " power plants. Supporters of this idea say that the effect in reducing carbon emissions would be twice as great as if the first idea was carried out. "
+        },
+        {
+          "text": " The grasses would be used to produce "
+        },
+        {
+          "n": 26
+        },
+        {
+          "text": " and production of this could begin in a short period of time. "
+        }
+      ]
     }
   ]
 ]

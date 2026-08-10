@@ -2662,6 +2662,8 @@ export function MatrixMatchBlock({
 }) {
   const letters = block?.optionsList?.options?.map((o) => o.id);
 
+  // console.log(block.optionsList)
+
   return (
     <div className="mb-5 p-3 sm:p-4">
       <div className="mb-3">

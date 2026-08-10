@@ -85,6 +85,7 @@ const matrixMatchQuestion = z.object({
     heading: z.string().optional(),
     optionHide: z.boolean().optional(),
     options: z.array(z.object({ id: z.string() })),
+    text: z.string().optional(),
   }),
   items: z.array(z.object({ n: z.number(), text: z.string() })),
 });
