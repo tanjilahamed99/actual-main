@@ -84,8 +84,12 @@ const matrixMatchQuestion = z.object({
   optionsList: z.object({
     heading: z.string().optional(),
     optionHide: z.boolean().optional(),
-    options: z.array(z.object({ id: z.string() })),
-    text: z.string().optional(),
+    options: z.array(
+      z.object({
+        id: z.string(),
+        text: z.string().optional(), // options like this list of scientists have visible text; plain letter-only lists (e.g. paragraph matching A–H) don't
+      })
+    ),
   }),
   items: z.array(z.object({ n: z.number(), text: z.string() })),
 });
