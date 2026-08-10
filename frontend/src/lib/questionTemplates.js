@@ -8,6 +8,10 @@ export const QUESTION_TYPES = [
   { value: "matrix_match", label: "Matching information" },
   { value: "para_match_drag", label: "Matching from word list (drag)" },
   { value: "matchAnswer", label: "Match answer" },
+  {
+    value: "summary_complete_drag",
+    label: "Summary completion (drag word list)",
+  },
 ];
 
 export const QUESTION_TEMPLATES = {
