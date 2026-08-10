@@ -10,7 +10,7 @@ const shortQuestion = z.object({
   themeTitle: z.string().optional(),
   items: z.array(
     z.object({
-      n: z.number(),
+      n: z.union([z.number(), z.literal("example")]),
       text: z.string(),
       afterText: z.string().optional(),
     }),

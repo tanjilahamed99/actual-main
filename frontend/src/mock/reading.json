@@ -5,46 +5,46 @@
     "priority": "main",
     "title": "Reading Test-2",
     "answers": {
-      "1": "FALSE",
-      "2": "NOT GIVEN",
-      "3": "FALSE",
-      "4": "TRUE",
-      "5": "FALSE",
-      "6": "FALSE",
-      "7": "irrigation",
-      "8": "cyclones",
-      "9": "farming",
-      "10": "logging",
-      "11": "animals",
-      "12": "maps",
-      "13": "book",
-      "14": "vii",
-      "15": "xi",
-      "16": "v",
-      "17": "iv",
-      "18": "ii",
-      "19": "ix",
-      "20": "vi",
-      "21": ["A", "C"],
-      "22": ["A", "C"],
-      "23": "civilisation",
-      "24": "barter",
-      "25": "silver",
-      "26": "inflation",
-      "27": "B",
-      "28": "H",
-      "29": "E",
-      "30": "F",
-      "31": "C",
-      "32": "H",
-      "33": "D",
-      "34": "naringin",
-      "35": "poisonous",
-      "36": "genetic",
-      "37": "supertasters",
-      "38": "taste buds",
-      "39": "A",
-      "40": "C"
+      "1": "",
+      "2": "",
+      "3": "",
+      "4": "",
+      "5": "",
+      "6": "",
+      "7": "",
+      "8": "",
+      "9": "",
+      "10": "",
+      "11": "",
+      "12": "",
+      "13": "",
+      "14": "",
+      "15": "",
+      "16": "",
+      "17": "",
+      "18": "",
+      "19": "",
+      "20": "",
+      "21": ["", ""],
+      "22": ["", ""],
+      "23": "",
+      "24": "",
+      "25": "",
+      "26": "",
+      "27": "",
+      "28": "",
+      "29": "",
+      "30": "",
+      "31": "",
+      "32": "",
+      "33": "",
+      "34": "",
+      "35": "",
+      "36": "",
+      "37": "",
+      "38": "",
+      "39": "",
+      "40": ""
     },
     "questions": [
       {
@@ -471,5 +471,107 @@
         ]
       }
     ]
-  }
+  },
+  [
+    {
+      "type": "short",
+      "heading": "Questions 5–9",
+      "title": "Answer the questions below.",
+      "sub": "Write NO MORE THAN TWO WORDS AND/OR A NUMBER from the passage for each answer.",
+      "bulletPoint": true,
+      "questionTitle": "The events after the river flooded",
+      "themeTitle": "",
+      "items": [
+        {
+          "n": "example",
+          "text": "Tobin found a human skull."
+        },
+        {
+          "n": 5,
+          "text": "The",
+          "afterText": "were initially involved in trying to explain the presence of the skull."
+        },
+        {
+          "n": 6,
+          "text": "Dr Koelmeyer suggested it was a",
+          "afterText": "skull."
+        },
+        {
+          "n": 7,
+          "text": "Dr Watt recommended",
+          "afterText": "to establish the skull's age."
+        },
+        {
+          "n": 8,
+          "text": "A bone",
+          "afterText": "was sent to the GNS."
+        },
+        {
+          "n": 9,
+          "text": "The age of the skull was about",
+          "afterText": "years."
+        }
+      ]
+    },
+    {
+      "type": "short",
+      "heading": "Questions 10–13",
+      "title": "Answer the questions below.",
+      "sub": "Write ONE WORD ONLY from the passage for each answer.",
+      "bulletPoint": true,
+      "questionTitle": "Problem of the skull's origins",
+      "themeTitle": "",
+      "items": [
+        {
+          "n": "example",
+          "text": "Old bones common in NZ - Maori living there for 800 years"
+        },
+        {
+          "n": "example",
+          "text": "Ruamahanga skull surprising because of its:"
+        },
+        {
+          "n": "example",
+          "text": "- age"
+        },
+        {
+          "n": 10,
+          "text": "-"
+        },
+        {
+          "n": "example",
+          "text": "- gender"
+        }
+      ]
+    },
+    {
+      "type": "short",
+      "bulletPoint": true,
+      "questionTitle": "New Zealand",
+      "themeTitle": "",
+      "items": [
+        {
+          "n": "example",
+          "text": "- first European explorer arrived in 1642"
+        },
+        {
+          "n": 12,
+          "text": "- Hagerty and Edgar arrived in 1806 from",
+          "afterText": "where they had been imprisoned"
+        }
+      ]
+    },
+    {
+      "type": "short",
+      "bulletPoint": true,
+      "questionTitle": "Possible solution",
+      "themeTitle": "",
+      "items": [
+        {
+          "n": 13,
+          "text": "- Ruamahanga skull may have reached NZ in 17th century after a"
+        }
+      ]
+    }
+  ]
 ]
