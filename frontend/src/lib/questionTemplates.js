@@ -12,6 +12,7 @@ export const QUESTION_TYPES = [
     value: "summary_complete_drag",
     label: "Summary completion (drag word list)",
   },
+  { value: "sentence_ending", label: "Sentence ending (select)" },
 ];
 
 export const QUESTION_TEMPLATES = {
@@ -125,6 +126,20 @@ export const QUESTION_TEMPLATES = {
       ],
     },
     items: [{ text: " " }, { n: 0 }, { text: " " }],
+  },
+  sentence_ending: {
+    type: "sentence_ending",
+    heading: "Questions 0–0",
+    title: "Complete each sentence with the correct ending, A-G, below.",
+    sub: "Write the correct letter, A-G, in boxes 0-0 on your answer sheet.",
+    endingsList: {
+      heading: "List of endings",
+      options: [
+        { id: "A", text: "" },
+        { id: "B", text: "" },
+      ],
+    },
+    items: [{ n: 0, text: "" }],
   },
 };
 

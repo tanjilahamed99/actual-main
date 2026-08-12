@@ -249,61 +249,6 @@
                 "label": "Paragraph G"
               }
             ]
-          },
-          {
-            "type": "multiChoiceMCQ",
-            "heading": "Questions 21–22",
-            "title": "Choose TWO correct answers. Select no more than TWO options.",
-            "sub": "Choose Two letters A-E.",
-            "items": [
-              {
-                "n": [21, 22],
-                "q": "Which TWO of these comments about ancient coins are made by the writer of the text?",
-                "opts": [
-                  "There is no record of the names of the coin makers.",
-                  "Coins were not popular as payment for traded objects.",
-                  "Coins with the same design often looked quite different.",
-                  "Greek coins were more beautiful in design than Roman coins.",
-                  "At times, too many coins were produced in Greece."
-                ]
-              }
-            ]
-          },
-          {
-            "type": "summary_complete",
-            "heading": "Questions 23–26",
-            "title": "Complete the summary below. Write ONE WORD ONLY from the passage for each answer.",
-            "sub": "Complete the notes below.",
-            "questionTitle": "Greek traders and coins",
-            "items": [
-              {
-                "text": "The ancient Greek "
-              },
-              {
-                "n": 23
-              },
-              {
-                "text": " was made up of many city-states which were spread over a large area. Many Greeks were seafarers who travelled the seas trading. Before coins, they had to do this through "
-              },
-              {
-                "n": 24
-              },
-              {
-                "text": " . This meant that, whenever they set out, they had to carry a lot of goods, which could get damaged on the voyages. The Greeks liked coins; they were made of metal, and the weather and sea had little effect on them. The Greeks had a plentiful supply of "
-              },
-              {
-                "n": 25
-              },
-              {
-                "text": " which they mined themselves, but were able to avoid the problem of "
-              },
-              {
-                "n": 26
-              },
-              {
-                "text": " which the Spanish encountered much later, after they allowed too much gold from the New World to enter their economy."
-              }
-            ]
           }
         ]
       },
@@ -637,6 +582,82 @@
           "text": "MONA has huge appeal for visitors to Hobart, just as Gehry's Guggenheim Museum has for Bilbao. While MONA may lack the",
           "afterText": ""
         }
+      ]
+    },
+    {
+      "type": "summary_complete_drag",
+      "heading": "Questions 38–40",
+      "title": "Complete the summary using the list of words, A-H, below.",
+      "wordList": {
+        "heading": "Word list",
+        "options": [
+          { "id": "A", "text": "challenge" },
+          { "id": "B", "text": "pipe" },
+          { "id": "C", "text": "visual" },
+          { "id": "D", "text": "contribution" },
+          { "id": "E", "text": "lasting" },
+          { "id": "F", "text": "essential" },
+          { "id": "G", "text": "ambition" },
+          { "id": "H", "text": "attraction" }
+        ]
+      },
+      "items": [
+        {
+          "text": "The Bilbao Effect\nMONA has huge appeal for visitors to Hobart, just as Gehry's Guggenheim Museum has for Bilbao. While MONA may lack the "
+        },
+        { "n": 38 },
+        {
+          "text": " effect of the Guggenheim, David Walsh explains that MONA's architect had a different objective when designing MONA: unlike the architectural showcasing of the Guggenheim, with MONA there was a major "
+        },
+        { "n": 39 },
+        {
+          "text": " that needed to be dealt with; the gallery was set beneath the ground. In any case, both galleries have transformed their cities, just as successful public buildings have for thousands of years. It remains to be seen how the "
+        },
+        { "n": 40 },
+        { "text": " of David Walsh will be expanded upon in Tasmania." }
+      ]
+    },
+    {
+      "type": "sentence_ending",
+      "heading": "Questions 36–40",
+      "title": "Complete each sentence with the correct ending, A-G, below.",
+      "sub": "Write the correct letter, A-G, in boxes 36-40 on your answer sheet.",
+      "endingsList": {
+        "heading": "List of endings",
+        "options": [
+          {
+            "id": "A",
+            "text": "the museum programme will lose its individuality."
+          },
+          { "id": "B", "text": "the museum will lose credibility." },
+          { "id": "C", "text": "the art loses its importance." },
+          { "id": "D", "text": "it will have to balance opposing demands." },
+          {
+            "id": "E",
+            "text": "this will encourage museum visitors in the future."
+          },
+          {
+            "id": "F",
+            "text": "it will have the capability of increasing revenue."
+          },
+          { "id": "G", "text": "the architect's reputation might suffer." }
+        ]
+      },
+      "items": [
+        { "n": 36, "text": "If a large space is available in the museum," },
+        {
+          "n": 37,
+          "text": "If children are allowed to move freely in parts of the gallery,"
+        },
+        {
+          "n": 38,
+          "text": "If too much emphasis is placed on the museum building itself,"
+        },
+        {
+          "n": 39,
+          "text": "If there is an over-reliance on 'blockbuster' exhibitions,"
+        },
+        { "n": 40, "text": "If the NGV wants to continue to be successful," }
       ]
     }
   ]

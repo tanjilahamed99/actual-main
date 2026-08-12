@@ -130,6 +130,18 @@ const summaryCompleteDragQuestion = z.object({
   ),
 });
 
+const sentenceEndingQuestion = z.object({
+  type: z.literal("sentence_ending"),
+  heading: z.string().optional(),
+  title: z.string().optional(),
+  sub: z.string().optional(),
+  endingsList: z.object({
+    heading: z.string().optional(),
+    options: z.array(z.object({ id: z.string(), text: z.string() })),
+  }),
+  items: z.array(z.object({ n: z.number(), text: z.string() })),
+});
+
 const questionBlockSchema = z.discriminatedUnion("type", [
   shortQuestion,
   tfngQuestion,
@@ -141,6 +153,7 @@ const questionBlockSchema = z.discriminatedUnion("type", [
   paraMatchDragQuestion,
   matchAnswerQuestion,
   summaryCompleteDragQuestion,
+  sentenceEndingQuestion,
 ]);
 
 const passageSchema = z.object({

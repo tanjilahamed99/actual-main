@@ -3002,6 +3002,196 @@ export function SummaryCompleteDragBlock({
   );
 }
 
+// ── Custom select — smoother/more polished than a native <select>,
+// used by SentenceEndingBlock. Click outside or Escape closes it.
+function LetterDropdown({ value, options, onChange, disabled }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const selected = options.find((o) => o.id === value);
+
+  return (
+    <div ref={ref} className="relative inline-block" style={{ minWidth: 64 }}>
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setOpen((v) => !v)}
+        className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-sm font-semibold
+          transition-all duration-150 ease-out select-none
+          ${
+            disabled
+              ? "cursor-not-allowed opacity-50 border-gray-300 bg-gray-50 text-gray-400"
+              : open
+                ? "border-blue-600 ring-2 ring-blue-100 text-[#000000] bg-white"
+                : selected
+                  ? "border-blue-500 bg-blue-50 text-[#000000] hover:border-blue-600"
+                  : "border-gray-400 bg-white text-[#000000] hover:border-gray-600"
+          }`}
+        style={{ minWidth: 64 }}>
+        <span>{selected ? selected.id : "–"}</span>
+        <svg
+          viewBox="0 0 24 24"
+          width="14"
+          height="14"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          className={`shrink-0 transition-transform duration-150 ${open ? "rotate-180" : ""}`}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+
+      <div
+        className={`absolute z-30 mt-1.5 w-56 origin-top rounded-xl border border-gray-200 bg-white shadow-lg
+          transition-all duration-150 ease-out
+          ${open ? "opacity-100 scale-100 pointer-events-auto" : "opacity-0 scale-95 pointer-events-none"}`}>
+        <div className="max-h-64 overflow-y-auto py-1.5">
+          <button
+            type="button"
+            onClick={() => {
+              onChange("");
+              setOpen(false);
+            }}
+            className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm text-gray-400 hover:bg-gray-50">
+            <span className="w-5 shrink-0 font-bold">–</span>
+            <span className="italic">Clear</span>
+          </button>
+          {options.map((opt) => {
+            const isSelected = opt.id === value;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => {
+                  onChange(opt.id);
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center gap-2.5 px-3 py-2 text-left text-sm transition-colors
+                  ${isSelected ? "bg-blue-50 text-[#000000]" : "text-[#000000] hover:bg-gray-50"}`}>
+                <span
+                  className={`w-5 shrink-0 font-bold ${isSelected ? "text-blue-700" : "text-gray-500"}`}>
+                  {opt.id}
+                </span>
+                <span className="flex-1 leading-snug">{opt.text}</span>
+                {isSelected && (
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="14"
+                    height="14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    className="text-blue-700 shrink-0">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m5 13 4 4L19 7"
+                    />
+                  </svg>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function SentenceEndingBlock({
+  block,
+  vals,
+  onChange,
+  submitted,
+  highlights,
+  onSelect,
+}) {
+  const options = block.endingsList?.options ?? [];
+
+  return (
+    <div className="mb-5 p-3 sm:p-4">
+      <div className="mb-3">
+        <SectionLabel
+          part={block.part}
+          qRange={block.heading}
+          instruction={block.title}
+          sub={block.sub}
+          highlights={highlights}
+          onSelect={onSelect}
+        />
+      </div>
+
+      {options.length > 0 && (
+        <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50/60 p-3">
+          <h2 className="mb-2 text-sm font-bold text-[#000000]">
+            {block.endingsList?.heading || "List of endings"}
+          </h2>
+          <div className="flex flex-col gap-1">
+            {options.map((opt) => (
+              <div
+                key={opt.id}
+                className="text-[13px] sm:text-base text-[#000000]">
+                <strong>{opt.id}.</strong>{" "}
+                <HighlightableText
+                  id={`sentence-ending-opt-${block.heading}-${opt.id}`}
+                  text={opt.text}
+                  highlights={highlights}
+                  onSelect={onSelect}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-4">
+        {block.items.map(({ n, text }) => (
+          <div
+            key={n}
+            id={`q-${n}`}
+            className="flex flex-col gap-2 border-b border-gray-100 pb-4 last:border-b-0 last:pb-0">
+            <div className="flex items-start gap-3">
+              <div className="w-7 h-7 border border-gray-800 flex items-center justify-center text-[13px] sm:text-base font-medium text-[#000000] shrink-0 rounded-xs">
+                {n}
+              </div>
+              <p className="flex-1 pt-0.5 text-[13px] sm:text-lg leading-relaxed text-[#000000]">
+                <HighlightableText
+                  id={`sentence-ending-${n}`}
+                  text={text}
+                  highlights={highlights}
+                  onSelect={onSelect}
+                />
+              </p>
+            </div>
+            <div className="pl-10">
+              <LetterDropdown
+                value={vals[n] ?? ""}
+                options={options}
+                disabled={submitted}
+                onChange={(id) => onChange(n, id)}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function QuestionBlock({
   block,
   passage,
@@ -3011,6 +3201,18 @@ export function QuestionBlock({
   highlights,
   onSelect,
 }) {
+  if (block?.type === "sentence_ending")
+    return (
+      <SentenceEndingBlock
+        block={block}
+        vals={vals}
+        onChange={onChange}
+        submitted={submitted}
+        highlights={highlights}
+        onSelect={onSelect}
+      />
+    );
+
   if (block?.type === "summary_complete_drag")
     return (
       <SummaryCompleteDragBlock
