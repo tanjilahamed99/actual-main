@@ -37,19 +37,15 @@ export function scoreReadingAnswers(vals, answerKey) {
 }
 
 // ── OFFSET HELPERS ────────────────────────────
-export function getTextOffset(container, targetNode, targetOffset) {
-  let total = 0;
-  const walker = document.createTreeWalker(
-    container,
-    NodeFilter.SHOW_TEXT,
-    null,
-  );
-  while (walker.nextNode()) {
-    const node = walker.currentNode;
-    if (node === targetNode) return total + targetOffset;
-    total += node.textContent.length;
+export function getTextOffset(container, node, offset) {
+  const range = document.createRange();
+  range.selectNodeContents(container);
+  try {
+    range.setEnd(node, offset);
+  } catch {
+    return container.textContent.length;
   }
-  return total;
+  return range.toString().length;
 }
 
 export function getNodeAtCharOffset(container, targetOffset) {
@@ -641,34 +637,53 @@ export function useHighlightsAndNotes() {
 
   const handleHighlight = useCallback(() => {
     if (!selection) return;
-    const n = {
-      id: Date.now().toString(),
-      zoneId: selection.zoneId,
-      start: selection.start,
-      end: selection.end,
-    };
-    setHighlights((p) => [
-      ...p.filter(
-        (h) => !(h.zoneId === n.zoneId && h.end > n.start && h.start < n.end),
-      ),
-      n,
-    ]);
+    const { zoneId, start, end } = selection;
+
+    setHighlights((prev) => {
+      const overlapping = prev.filter(
+        (h) => h.zoneId === zoneId && h.end >= start && h.start <= end,
+      );
+      const others = prev.filter((h) => !overlapping.includes(h));
+
+      const mergedStart = Math.min(start, ...overlapping.map((h) => h.start));
+      const mergedEnd = Math.max(end, ...overlapping.map((h) => h.end));
+
+      return [
+        ...others,
+        {
+          id: Date.now().toString() + Math.random().toString(36).slice(2),
+          zoneId,
+          start: mergedStart,
+          end: mergedEnd,
+        },
+      ];
+    });
+
     window.getSelection()?.removeAllRanges();
     setSelection(null);
   }, [selection]);
 
   const handleClear = useCallback(() => {
     if (!selection) return;
-    setHighlights((p) =>
-      p.filter(
-        (h) =>
-          !(
-            h.zoneId === selection.zoneId &&
-            h.start < selection.end &&
-            h.end > selection.start
-          ),
-      ),
-    );
+    const { zoneId, start, end } = selection;
+
+    setHighlights((prev) => {
+      const result = [];
+      prev.forEach((h) => {
+        if (h.zoneId !== zoneId || h.end <= start || h.start >= end) {
+          result.push(h);
+          return;
+        }
+        if (h.start < start) {
+          result.push({ id: h.id + "-a", zoneId, start: h.start, end: start });
+        }
+        if (h.end > end) {
+          result.push({ id: h.id + "-b", zoneId, start: end, end: h.end });
+        }
+      });
+      return result;
+    });
+
     window.getSelection()?.removeAllRanges();
     setSelection(null);
   }, [selection]);
@@ -1076,41 +1091,57 @@ export function useHighlights() {
       )
     : false;
   const handleSelect = useCallback((sel) => setSelection(sel), []);
+
   const addHighlight = useCallback(() => {
     if (!selection) return;
+    const { zoneId, start, end } = selection;
     setHighlights((prev) => {
-      const rest = prev.filter(
-        (h) =>
-          !(
-            h.zoneId === selection.zoneId &&
-            h.end > selection.start &&
-            h.start < selection.end
-          ),
+      const overlapping = prev.filter(
+        (h) => h.zoneId === zoneId && h.end >= start && h.start <= end,
       );
-      return [...rest, { id: Date.now(), ...selection }];
+      const others = prev.filter((h) => !overlapping.includes(h));
+      const mergedStart = Math.min(start, ...overlapping.map((h) => h.start));
+      const mergedEnd = Math.max(end, ...overlapping.map((h) => h.end));
+      return [
+        ...others,
+        {
+          id: Date.now().toString() + Math.random().toString(36).slice(2),
+          zoneId,
+          start: mergedStart,
+          end: mergedEnd,
+        },
+      ];
     });
     window.getSelection()?.removeAllRanges();
     setSelection(null);
   }, [selection]);
+
   const clearHighlight = useCallback(() => {
     if (!selection) return;
-    setHighlights((prev) =>
-      prev.filter(
-        (h) =>
-          !(
-            h.zoneId === selection.zoneId &&
-            h.start < selection.end &&
-            h.end > selection.start
-          ),
-      ),
-    );
+    const { zoneId, start, end } = selection;
+    setHighlights((prev) => {
+      const result = [];
+      prev.forEach((h) => {
+        if (h.zoneId !== zoneId || h.end <= start || h.start >= end) {
+          result.push(h);
+          return;
+        }
+        if (h.start < start)
+          result.push({ id: h.id + "-a", zoneId, start: h.start, end: start });
+        if (h.end > end)
+          result.push({ id: h.id + "-b", zoneId, start: end, end: h.end });
+      });
+      return result;
+    });
     window.getSelection()?.removeAllRanges();
     setSelection(null);
   }, [selection]);
+
   const dismiss = useCallback(() => {
     setSelection(null);
     window.getSelection()?.removeAllRanges();
   }, []);
+
   return {
     highlights,
     selection,

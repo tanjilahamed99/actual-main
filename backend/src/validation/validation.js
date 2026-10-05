@@ -11,7 +11,7 @@ const shortQuestion = z.object({
   items: z.array(
     z.object({
       n: z.union([z.number(), z.literal("example")]),
-      text: z.string(),
+      text: z.string().optional(),
       afterText: z.string().optional(),
     }),
   ),
