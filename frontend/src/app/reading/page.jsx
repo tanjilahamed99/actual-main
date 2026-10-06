@@ -11,7 +11,7 @@ import { UserRoute } from "@/pages/PrivateRoutes";
 
 const PAGE_SIZE = 9;
 
-function DemoPageInner() {
+function MainReadingPage() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -206,8 +206,8 @@ function DemoPageInner() {
                 updateParams({ type: e.target.value, page: null })
               }
               className={selectClass}>
-              {typeOptions.map((t) => (
-                <option key={t} value={t}>
+              {typeOptions.map((t, idx) => (
+                <option key={idx} value={t}>
                   {t === "all" ? "All types" : t}
                 </option>
               ))}
@@ -276,7 +276,7 @@ function DemoPageInner() {
                 return (
                   <Link
                     key={test._id}
-                    href={`/reading/${test.testNumber}`}
+                    href={`/reading/${test._id}`}
                     style={{ animationDelay: `${i * 40}ms` }}
                     className="animate-fade-up group relative rounded-2xl border border-line bg-paper-raised p-6 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-indigo-deep/30 hover:shadow-[0_20px_40px_-30px_rgba(22,29,52,0.4)]">
                     {isCompleted && (
@@ -448,7 +448,7 @@ function DemoPageInner() {
 export default function DemoPage() {
   return (
     <Suspense fallback={null}>
-      <DemoPageInner />
+      <MainReadingPage />
     </Suspense>
   );
 }

@@ -9,7 +9,7 @@ const readingTestSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["draft", "published"],
-      default: "published",
+      default: "draft",
     },
     answers: { type: mongoose.Schema.Types.Mixed, required: true },
     questions: { type: [mongoose.Schema.Types.Mixed], required: true }, // array of passages

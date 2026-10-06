@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { readingData } from "@/mock/reading";
 import ReadingMainPage from "@/components/Test/Reading/ReadingMainPage";
 import { getSingleReadingTest } from "@/actions/test";
 

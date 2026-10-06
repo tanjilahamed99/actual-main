@@ -85,7 +85,7 @@ export default function ReadingMainPage({
     submitModule("reading", testId);
     setPhase("done");
 
-    if (type === "demo") {
+    if (testType === "demo") {
       return router.push(`/demo`);
     } else {
       router.push(`/reading`);

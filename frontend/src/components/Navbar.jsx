@@ -3,77 +3,31 @@
 import { useAuthStore } from "@/features/Useauthstore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
-import { Lock, X, Menu } from "lucide-react";
-
-const LOCK_MESSAGES = {
-  pending:
-    "Your account is pending approval. You'll get access to Reading once an admin approves it.",
-  rejected:
-    "Your account request was rejected. Contact support if you think this is a mistake.",
-  suspended: "Your account has been suspended. Contact support for details.",
-};
+import { X, Menu } from "lucide-react";
+import { ROUTES } from "@/lib/access";
+import NavLink from "@/components/nav/NavLink";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const user = useAuthStore((state) => state.user);
+  const user = useAuthStore((s) => s.user);
   const clearAuth = useAuthStore((s) => s.clearAuth);
   const router = useRouter();
-
-  // Only gate access once we actually know a status; guests (no user) see a normal link.
-  const isLocked = user && user.status && user.status !== "approved";
-
-  const handleLockedClick = (e) => {
-    e.preventDefault();
-    toast.error(
-      LOCK_MESSAGES[user.status] ??
-        "You don't have access to Reading tests yet.",
-    );
-  };
-
-  const ReadingLink = ({ onClick } = {}) =>
-    isLocked ? (
-      <button
-        type="button"
-        onClick={handleLockedClick}
-        aria-label="Reading (locked)"
-        className="inline-flex items-center gap-1.5 text-ink-soft/50 cursor-not-allowed"
-        title={LOCK_MESSAGES[user.status] ?? "Locked"}>
-        Reading
-        <Lock className="h-3.5 w-3.5" strokeWidth={2} />
-      </button>
-    ) : (
-      <Link href="/reading" onClick={onClick}>
-        Reading
-      </Link>
-    );
-
-  const ulLinks = ({ onLinkClick } = {}) => (
-    <>
-      <Link href="/demo" onClick={onLinkClick}>
-        Demo Test
-      </Link>
-      <ReadingLink onClick={onLinkClick} />
-
-      {user?.role === "user" && (
-        <Link href="/dashboard" onClick={onLinkClick}>
-          Dashboard
-        </Link>
-      )}
-      {user?.role === "admin" && (
-        <Link href="/admin" onClick={onLinkClick}>
-          Admin Panel
-        </Link>
-      )}
-    </>
-  );
 
   const handleLogout = () => {
     clearAuth();
     toast.success("Logged out successfully.");
     router.push("/login");
   };
+
+  // Filter routes the current user is *allowed* to see at all (admins never see
+  // "Dashboard" unless we want them to; users never see "Admin Panel").
+  const visibleRoutes = ROUTES.filter((r) => {
+    if (r.access === "admin") return user?.role === "admin";
+    if (r.href === "/dashboard") return user?.role === "user";
+    return true;
+  });
 
   return (
     <div>
@@ -88,8 +42,11 @@ const Navbar = () => {
             </span>
           </a>
 
+          {/* Desktop nav */}
           <nav className="hidden items-center gap-8 font-sans text-[15px] text-ink-soft md:flex">
-            {ulLinks()}
+            {visibleRoutes.map((route) => (
+              <NavLink key={route.href} route={route} user={user} />
+            ))}
           </nav>
 
           <div className="flex shrink-0 items-center gap-2">
@@ -107,7 +64,6 @@ const Navbar = () => {
               </Link>
             )}
 
-            {/* Mobile menu toggle */}
             <button
               type="button"
               onClick={() => setMenuOpen((v) => !v)}
@@ -124,10 +80,18 @@ const Navbar = () => {
           </div>
         </div>
 
+        {/* Mobile menu */}
         {menuOpen && (
           <div className="border-t border-line bg-paper px-4 py-4 sm:px-6 md:hidden">
             <nav className="flex flex-col gap-4 font-sans text-[15px] text-ink-soft">
-              {ulLinks({ onLinkClick: () => setMenuOpen(false) })}
+              {visibleRoutes.map((route) => (
+                <NavLink
+                  key={route.href}
+                  route={route}
+                  user={user}
+                  onClick={() => setMenuOpen(false)}
+                />
+              ))}
 
               {user ? (
                 <button

@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 
-// Load environment variables ONCE at the top
 dotenv.config();
 const port = process.env.PORT || 6000;
 
@@ -15,23 +14,29 @@ app.use(
   }),
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ extended: true, limit: "5mb" }));
 
-// Database connection
+// Database
 const connectDB = require("./src/db/db");
 connectDB();
 
-const authRoutes = require("./src/routes/authRoutes");
-// const adminRoutes = require("./src/routes/adminRoutes");
-const readingRoutes = require("./src/routes/readingRoutes");
+// All routes come from one place
+const routes = require("./src/routes");
+app.use("/api", routes);
 
-app.use("/api/auth", authRoutes);
-app.use("/api/admin", readingRoutes);
-
-// Health check endpoint
+// Health check
 app.get("/", (req, res) => {
   res.json({ message: "welcome to the API" });
+});
+
+// Central error handler (last middleware)
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Server error",
+  });
 });
 
 app.listen(port, () => {

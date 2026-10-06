@@ -1,14 +1,9 @@
 const { authenticate } = require("./authHelpers");
 
-exports.adminProtect = async (req, res, next) => {
+exports.authProtect = async (req, res, next) => {
   try {
     const { user } = await authenticate(req, { requireSession: true });
-
-    if (user.role !== "admin") {
-      return res.status(403).json({ message: "Forbidden — admin only" });
-    }
-
-    req.user = user; // already has password stripped
+    req.user = user;
     next();
   } catch (err) {
     res.status(err.status || 500).json({ message: err.message });

@@ -1,177 +1,177 @@
-{
-  "type": "tfng",
-  "heading": "Questions 4–8",
-  "title": "Do the following statements agree with the information in the text?",
-  "sub": "Choose TRUE if the statement agrees, FALSE if it contradicts, or NOT GIVEN if there is no information.",
-  "options": ["TRUE", "FALSE", "NOT GIVEN"],
-  "optionLabels": {
-    "TRUE": "if the statement agrees with the information",
-    "FALSE": "if the statement contradicts the information",
-    "NOT GIVEN": "if there is no information on this"
-  },
-  "items": [
-    {
-      "n": 4,
-      "text": "Borrowdale graphite was superior to all other forms of graphite."
-    },
-    {
-      "n": 5,
-      "text": "Pencil production in the Borrowdale area only lasted until the 1860s"
-    },
-    {
-      "n": 6,
-      "text": "The Cumberland pencil museum contains examples of pencils from different European countries."
-    },
-    {
-      "n": 7,
-      "text": "A technique which improved on the Bernacottis’ method of making pencils is still used now."
-    },
-    {
-      "n": 8,
-      "text": "In 1662, manufacturers in Nuremberg made pencils with graphite imported from England"
-    }
-  ]
-}
+// {
+//   "type": "tfng",
+//   "heading": "Questions 4–8",
+//   "title": "Do the following statements agree with the information in the text?",
+//   "sub": "Choose TRUE if the statement agrees, FALSE if it contradicts, or NOT GIVEN if there is no information.",
+//   "options": ["TRUE", "FALSE", "NOT GIVEN"],
+//   "optionLabels": {
+//     "TRUE": "if the statement agrees with the information",
+//     "FALSE": "if the statement contradicts the information",
+//     "NOT GIVEN": "if there is no information on this"
+//   },
+//   "items": [
+//     {
+//       "n": 4,
+//       "text": "Borrowdale graphite was superior to all other forms of graphite."
+//     },
+//     {
+//       "n": 5,
+//       "text": "Pencil production in the Borrowdale area only lasted until the 1860s"
+//     },
+//     {
+//       "n": 6,
+//       "text": "The Cumberland pencil museum contains examples of pencils from different European countries."
+//     },
+//     {
+//       "n": 7,
+//       "text": "A technique which improved on the Bernacottis’ method of making pencils is still used now."
+//     },
+//     {
+//       "n": 8,
+//       "text": "In 1662, manufacturers in Nuremberg made pencils with graphite imported from England"
+//     }
+//   ]
+// }
 
 
-{
-  "1": "",
-  "2": "",
-  "3": "",
-  "4": "",
-  "5": "",
-  "6": "",
-  "7": "",
-  "8": "",
-  "9": "",
-  "10": "",
-  "11": "",
-  "12": "",
-  "13": "",
-  "14": "",
-  "15": "",
-  "16": "",
-  "17": "",
-  "18": "",
-  "19": "",
-  "20": "",
-  "21": "",
-  "22": "",
-  "23": "",
-  "24": "",
-  "25": "",
-  "26": "",
-  "27": "",
-  "28": "",
-  "29": "",
-  "30": "",
-  "31": "",
-  "32": "",
-  "33": "",
-  "34": "",
-  "35": "",
-  "36": "",
-  "37": "",
-  "38": "",
-  "39": "",
-  "40": ""
-}
+// {
+//   "1": "",
+//   "2": "",
+//   "3": "",
+//   "4": "",
+//   "5": "",
+//   "6": "",
+//   "7": "",
+//   "8": "",
+//   "9": "",
+//   "10": "",
+//   "11": "",
+//   "12": "",
+//   "13": "",
+//   "14": "",
+//   "15": "",
+//   "16": "",
+//   "17": "",
+//   "18": "",
+//   "19": "",
+//   "20": "",
+//   "21": "",
+//   "22": "",
+//   "23": "",
+//   "24": "",
+//   "25": "",
+//   "26": "",
+//   "27": "",
+//   "28": "",
+//   "29": "",
+//   "30": "",
+//   "31": "",
+//   "32": "",
+//   "33": "",
+//   "34": "",
+//   "35": "",
+//   "36": "",
+//   "37": "",
+//   "38": "",
+//   "39": "",
+//   "40": ""
+// }
 
-{
-  "type": "short",
-  "heading": "Questions 9–13",
-  "title": "Answer the questions below.",
-  "sub": "Choose ONE WORD ONLY from the passage for each answer.",
-  "bulletPoint": true,
-  "questionTitle": "Marc Brunel's tunnel",
-  "themeTitle": "Preparing to build the tunnel",
-  "items": [
-    {
-      "n": 9,
-      "text": "Brunel noticed how a kind of",
-      "afterText":"made its tunnels in wood."
-    },
-    {
-      "n": "example",
-      "text": "Brunel created a device called a tunnelling shield, to protect people working under the river.",
-    },
-    {
-      "n": 10,
-      "text": "Brunel planned to build a shallow tunnel so the earth would have a higher content of"
-    }
-  ]
-}
-{
-  "type": "short",
-  "bulletPoint": true,
-  "themeTitle": "Problems faced by miners",
-  "items": [
-    {
-      "n": "example",
-      "text": "There were frequent floods caused by mechanical breakdowns",
-    },
-    {
-      "n": 11,
-      "text": "The miners suffered from",
-      "afterText":" because of pollution in the tunnels."
-    },
-    {
-      "n": 12,
-      "text": "Lighting problems led to several",
-    }
-    {
-      "n": "example",
-      "text": "Some workers quit because of the high temperatures in the tunnel.",
-    }
-  ]
-}
-{
-  "type": "short",
-  "bulletPoint": true,
-  "themeTitle": "After the tunnel was finished",
-  "items": [
-    {
-      "n": "example",
-      "text": " The tunnel was finally completed in 1841.",
-    },
-    {
-      "n": 13,
-      "afterText": "Brunel did not have enough money to repay his debt to the",
-    },
-    {
-      "n": "example",
-      "text": "The tunnel was abandoned until the 1880s.",
-    },
-  ]
-}
+// {
+//   "type": "short",
+//   "heading": "Questions 9–13",
+//   "title": "Answer the questions below.",
+//   "sub": "Choose ONE WORD ONLY from the passage for each answer.",
+//   "bulletPoint": true,
+//   "questionTitle": "Marc Brunel's tunnel",
+//   "themeTitle": "Preparing to build the tunnel",
+//   "items": [
+//     {
+//       "n": 9,
+//       "text": "Brunel noticed how a kind of",
+//       "afterText":"made its tunnels in wood."
+//     },
+//     {
+//       "n": "example",
+//       "text": "Brunel created a device called a tunnelling shield, to protect people working under the river.",
+//     },
+//     {
+//       "n": 10,
+//       "text": "Brunel planned to build a shallow tunnel so the earth would have a higher content of"
+//     }
+//   ]
+// }
+// {
+//   "type": "short",
+//   "bulletPoint": true,
+//   "themeTitle": "Problems faced by miners",
+//   "items": [
+//     {
+//       "n": "example",
+//       "text": "There were frequent floods caused by mechanical breakdowns",
+//     },
+//     {
+//       "n": 11,
+//       "text": "The miners suffered from",
+//       "afterText":" because of pollution in the tunnels."
+//     },
+//     {
+//       "n": 12,
+//       "text": "Lighting problems led to several",
+//     }
+//     {
+//       "n": "example",
+//       "text": "Some workers quit because of the high temperatures in the tunnel.",
+//     }
+//   ]
+// }
+// {
+//   "type": "short",
+//   "bulletPoint": true,
+//   "themeTitle": "After the tunnel was finished",
+//   "items": [
+//     {
+//       "n": "example",
+//       "text": " The tunnel was finally completed in 1841.",
+//     },
+//     {
+//       "n": 13,
+//       "afterText": "Brunel did not have enough money to repay his debt to the",
+//     },
+//     {
+//       "n": "example",
+//       "text": "The tunnel was abandoned until the 1880s.",
+//     },
+//   ]
+// }
 
 
-{
-  "type": "short",
-  "bulletPoint": true,
-  "themeTitle": "Outside : ",
-  "items": [ 
+// {
+//   "type": "short",
+//   "bulletPoint": true,
+//   "themeTitle": "Outside : ",
+//   "items": [ 
    
-    {
-      "n": 12,
-      "text":"A large",
-      "afterText": "at the foot of a wide staircase",
-    }
-  ]
-}
-{
-  "type": "short",
-  "bulletPoint": true,
-  "themeTitle": "Alterations : ",
-  "items": [ 
-   {
-           "n": "example",
-          "text":"A colonnade was added in 2006"
-   }
-    {
-      "n": 13,
-      "text":"Openings made the",
-      "afterText": "visible from foyers",
-    }
-  ]
-}
+//     {
+//       "n": 12,
+//       "text":"A large",
+//       "afterText": "at the foot of a wide staircase",
+//     }
+//   ]
+// }
+// {
+//   "type": "short",
+//   "bulletPoint": true,
+//   "themeTitle": "Alterations : ",
+//   "items": [ 
+//    {
+//            "n": "example",
+//           "text":"A colonnade was added in 2006"
+//    }
+//     {
+//       "n": 13,
+//       "text":"Openings made the",
+//       "afterText": "visible from foyers",
+//     }
+//   ]
+// }
