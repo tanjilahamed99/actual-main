@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { X, Menu } from "lucide-react";
 import { ROUTES } from "@/lib/access";
 import NavLink from "@/components/nav/NavLink";
+import Logo from "./Logo";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -34,9 +35,7 @@ const Navbar = () => {
       <header className="sticky top-0 z-40 border-b border-line/80 bg-paper/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-4 sm:px-6 md:px-8">
           <a href="#top" className="flex min-w-0 items-center gap-2 sm:gap-2.5">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-indigo-deep font-display text-sm text-paper">
-              A
-            </span>
+            <Logo />
             <span className="truncate font-display text-[15px] leading-none text-ink sm:text-[17px]">
               Actual IELTS Questions
             </span>
