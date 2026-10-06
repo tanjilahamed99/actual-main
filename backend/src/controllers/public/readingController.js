@@ -18,7 +18,7 @@ exports.getAllPublishedReadingTest = async (req, res) => {
 exports.getPublishedReadingTest = async (req, res) => {
   try {
     const test = await ReadingTest.findOne({
-      _id: req.params.id,
+      testNumber: req.params.id,
       status: "published",
     }).lean();
     if (!test) return res.status(404).json({ message: "Not found" });

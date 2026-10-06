@@ -275,8 +275,8 @@ function MainReadingPage() {
 
                 return (
                   <Link
-                    key={test._id}
-                    href={`/reading/${test._id}`}
+                    key={test.testNumber}
+                    href={`/reading/${test.testNumber}`}
                     style={{ animationDelay: `${i * 40}ms` }}
                     className="animate-fade-up group relative rounded-2xl border border-line bg-paper-raised p-6 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-indigo-deep/30 hover:shadow-[0_20px_40px_-30px_rgba(22,29,52,0.4)]">
                     {isCompleted && (
