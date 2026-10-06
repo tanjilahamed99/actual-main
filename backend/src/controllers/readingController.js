@@ -46,12 +46,6 @@ exports.updateReadingTest = async (req, res) => {
   res.json(test);
 };
 
-
-
-
-
-
-
 exports.getAllReadingTests = async (req, res) => {
   const filter = {};
   if (req.query.status) filter.status = req.query.status;
@@ -79,9 +73,74 @@ exports.getPublishedReadingTest = async (req, res) => {
 };
 
 exports.getAllPublishedReadingTest = async (req, res) => {
-  const test = await ReadingTest.find(); // don't ship answer key to the client during the test
-  if (!test) return res.status(404).json({ message: "Not found" });
-  res.json({ test, success: true });
+  try {
+    const {
+      q = "", // search term
+      status, // "draft" | "published"
+      priority, // "main" | "extra"
+      page = 1,
+      limit = 10,
+      sort = "testNumber", // testNumber | updatedAt | title
+      order = "asc",
+    } = req.query;
+
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const pageSize = Math.min(50, Math.max(1, parseInt(limit, 10) || 10));
+    const skip = (pageNum - 1) * pageSize;
+
+    // ---- build filter ----
+    const filter = {};
+    if (status) filter.status = status;
+    if (priority) filter.priority = priority;
+
+    if (q.trim()) {
+      const safe = q.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const rx = new RegExp(safe, "i");
+
+      // testNumber is a Number → only match if q is numeric
+      const numeric = Number(q);
+      const orClauses = [
+        { title: rx },
+        { "questions.title": rx }, // passage titles
+        { "questions.label": rx }, // "Passage 1"
+      ];
+      if (!Number.isNaN(numeric)) orClauses.push({ testNumber: numeric });
+
+      filter.$or = orClauses;
+    }
+
+    const sortObj = { [sort]: order === "desc" ? -1 : 1 };
+
+    // ---- execute both queries in parallel ----
+    const [tests, total] = await Promise.all([
+      ReadingTest.find(filter)
+        // ⬇️ THE KEY FIX — only return what the table needs
+        .select(
+          "testNumber title priority status updatedAt createdAt " +
+            "questions.label questions.title questions._id",
+        )
+        .sort(sortObj)
+        .skip(skip)
+        .limit(pageSize)
+        .lean(), // ⬅️ plain JS objects, much faster
+      ReadingTest.countDocuments(filter),
+    ]);
+
+    res.json({
+      success: true,
+      test: tests,
+      pagination: {
+        page: pageNum,
+        limit: pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+        hasNext: pageNum * pageSize < total,
+        hasPrev: pageNum > 1,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };
 
 exports.deleteReadingTest = async (req, res) => {

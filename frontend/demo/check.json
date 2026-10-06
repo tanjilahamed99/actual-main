@@ -34,128 +34,144 @@
 }
 
 
-// {
-//   "1": "",
-//   "2": "",
-//   "3": "",
-//   "4": "",
-//   "5": "",
-//   "6": "",
-//   "7": "",
-//   "8": "",
-//   "9": "",
-//   "10": "",
-//   "11": "",
-//   "12": "",
-//   "13": "",
-//   "14": "",
-//   "15": "",
-//   "16": "",
-//   "17": "",
-//   "18": "",
-//   "19": "",
-//   "20": "",
-//   "21": "",
-//   "22": "",
-//   "23": "",
-//   "24": "",
-//   "25": "",
-//   "26": "",
-//   "27": "",
-//   "28": "",
-//   "29": "",
-//   "30": "",
-//   "31": "",
-//   "32": "",
-//   "33": "",
-//   "34": "",
-//   "35": "",
-//   "36": "",
-//   "37": "",
-//   "38": "",
-//   "39": "",
-//   "40": ""
-// }
+{
+  "1": "",
+  "2": "",
+  "3": "",
+  "4": "",
+  "5": "",
+  "6": "",
+  "7": "",
+  "8": "",
+  "9": "",
+  "10": "",
+  "11": "",
+  "12": "",
+  "13": "",
+  "14": "",
+  "15": "",
+  "16": "",
+  "17": "",
+  "18": "",
+  "19": "",
+  "20": "",
+  "21": "",
+  "22": "",
+  "23": "",
+  "24": "",
+  "25": "",
+  "26": "",
+  "27": "",
+  "28": "",
+  "29": "",
+  "30": "",
+  "31": "",
+  "32": "",
+  "33": "",
+  "34": "",
+  "35": "",
+  "36": "",
+  "37": "",
+  "38": "",
+  "39": "",
+  "40": ""
+}
 
-// {
-//   "type": "short",
-//   "heading": "Questions 8–13",
-//   "title": "Answer the questions below.",
-//   "sub": "Choose ONE WORD AND/OR A NUMBER from the passage for each answer.",
-//   "bulletPoint": true,
-//   "questionTitle": "Sydney Opera House",
-//   "themeTitle": "",
-//   "items": [
-//     {
-//       "n": 8,
-//       "text": "Final cost: 8",
-//     }
-//   ]
-// }
-// {
-//   "type": "short",
-//   "bulletPoint": true,
-//   "themeTitle": "Construction",
-//   "items": [
-//     {
-//       "n": "example",
-//       "text": "A large platform acting as a base for the building",
-//     },{
-//       "n": "example",
-//       "text": "Concrete panels used to make 'shells', which are covered in tiles",
-//     },
-//     {
-//       "n": 9,
-//       "text": "Over a million tiles from",
-//     }
-//     ,
-//     {
-//       "n": 10,
-//       "afterText": "from Australia covering the outside walls",
-//     }
-//   ]
-// }
-// {
-//   "type": "short",
-//   "bulletPoint": true,
-//   "themeTitle": "Use:",
-//   "items": [
-//     {
-//       "n": "example",
-//       "text": "More than 1,500 performances annually",
-//     },
-//     {
-//       "n": 11,
-//       "afterText": "performing arts companies have their home base at the Opera House",
-//     }
-//   ]
-// }
-// {
-//   "type": "short",
-//   "bulletPoint": true,
-//   "themeTitle": "Outside : ",
-//   "items": [ 
+{
+  "type": "short",
+  "heading": "Questions 9–13",
+  "title": "Answer the questions below.",
+  "sub": "Choose ONE WORD ONLY from the passage for each answer.",
+  "bulletPoint": true,
+  "questionTitle": "Marc Brunel's tunnel",
+  "themeTitle": "Preparing to build the tunnel",
+  "items": [
+    {
+      "n": 9,
+      "text": "Brunel noticed how a kind of",
+      "afterText":"made its tunnels in wood."
+    },
+    {
+      "n": "example",
+      "text": "Brunel created a device called a tunnelling shield, to protect people working under the river.",
+    },
+    {
+      "n": 10,
+      "text": "Brunel planned to build a shallow tunnel so the earth would have a higher content of"
+    }
+  ]
+}
+{
+  "type": "short",
+  "bulletPoint": true,
+  "themeTitle": "Problems faced by miners",
+  "items": [
+    {
+      "n": "example",
+      "text": "There were frequent floods caused by mechanical breakdowns",
+    },
+    {
+      "n": 11,
+      "text": "The miners suffered from",
+      "afterText":" because of pollution in the tunnels."
+    },
+    {
+      "n": 12,
+      "text": "Lighting problems led to several",
+    }
+    {
+      "n": "example",
+      "text": "Some workers quit because of the high temperatures in the tunnel.",
+    }
+  ]
+}
+{
+  "type": "short",
+  "bulletPoint": true,
+  "themeTitle": "After the tunnel was finished",
+  "items": [
+    {
+      "n": "example",
+      "text": " The tunnel was finally completed in 1841.",
+    },
+    {
+      "n": 13,
+      "afterText": "Brunel did not have enough money to repay his debt to the",
+    },
+    {
+      "n": "example",
+      "text": "The tunnel was abandoned until the 1880s.",
+    },
+  ]
+}
+
+
+{
+  "type": "short",
+  "bulletPoint": true,
+  "themeTitle": "Outside : ",
+  "items": [ 
    
-//     {
-//       "n": 12,
-//       "text":"A large",
-//       "afterText": "at the foot of a wide staircase",
-//     }
-//   ]
-// }
-// {
-//   "type": "short",
-//   "bulletPoint": true,
-//   "themeTitle": "Alterations : ",
-//   "items": [ 
-//    {
-//            "n": "example",
-//           "text":"A colonnade was added in 2006"
-//    }
-//     {
-//       "n": 13,
-//       "text":"Openings made the",
-//       "afterText": "visible from foyers",
-//     }
-//   ]
-// }
+    {
+      "n": 12,
+      "text":"A large",
+      "afterText": "at the foot of a wide staircase",
+    }
+  ]
+}
+{
+  "type": "short",
+  "bulletPoint": true,
+  "themeTitle": "Alterations : ",
+  "items": [ 
+   {
+           "n": "example",
+          "text":"A colonnade was added in 2006"
+   }
+    {
+      "n": 13,
+      "text":"Openings made the",
+      "afterText": "visible from foyers",
+    }
+  ]
+}

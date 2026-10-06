@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import axios from "axios";
-import QuestionsTable from "../_components/QuestionsTable";
 import { getAllReadingTest } from "@/actions/test";
+import QuestionsTable from "../_components/QuestionsTable";
+import SearchBar from "../_components/SearchBar";
+import Pagination from "../_components/Pagination";
+
+const PAGE_SIZE = 10;
 
 function toRow(test) {
   return {
@@ -22,31 +25,51 @@ function toRow(test) {
 export default function ReadingAdmin() {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchTests = async () => {
-      try {
-        const { data } = await getAllReadingTest();
-        setTests(data.test);
-      } catch (err) {
-        console.error("Failed to load reading tests:", err);
-        setTests([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchTests();
-  }, []);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("");        // "" | "draft" | "published"
+  const [priority, setPriority] = useState("");    // "" | "main" | "extra"
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState({ totalPages: 1, total: 0 });
 
-  const rows = tests.map(toRow);
+  // reset to page 1 whenever filters change
+  useEffect(() => { setPage(1); }, [search, status, priority]);
+
+  const fetchTests = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await getAllReadingTest({
+        q: search || undefined,
+        status: status || undefined,
+        priority: priority || undefined,
+        page,
+        limit: PAGE_SIZE,
+      });
+      setTests(data.test ?? []);
+      setMeta(data.pagination ?? { totalPages: 1, total: 0 });
+    } catch (err) {
+      console.error("Failed to load reading tests:", err);
+      setTests([]);
+      setError("Could not load reading tests. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [search, status, priority, page]);
+
+  useEffect(() => { fetchTests(); }, [fetchTests]);
+
+  const rows = useMemo(() => tests.map(toRow), [tests]);
 
   return (
     <div className="space-y-6">
+      {/* ---- header ---- */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-xl font-sans text-sm text-muted">
           {loading
             ? "Loading reading tests…"
-            : `${tests.length} reading tests in the archive, spanning matching headings, True/False/Not Given, and sentence completion across all three passage types.`}
+            : `${meta.total} reading test${meta.total === 1 ? "" : "s"} in the archive.`}
         </p>
         <Link
           href="/admin/reading/new"
@@ -55,13 +78,72 @@ export default function ReadingAdmin() {
         </Link>
       </div>
 
+      {/* ---- filters ---- */}
+      <div className="flex flex-col gap-3 rounded-2xl border border-line bg-paper-raised p-4 sm:flex-row sm:items-center">
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder="Search title, passage, or test number…"
+        />
+
+        <div className="flex flex-wrap gap-2 sm:ml-auto">
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="rounded-full border border-line bg-paper-raised px-4 py-2.5 font-sans text-sm
+                       text-ink outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20">
+            <option value="">All statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+
+          <select
+            value={priority}
+            onChange={(e) => setPriority(e.target.value)}
+            className="rounded-full border border-line bg-paper-raised px-4 py-2.5 font-sans text-sm
+                       text-ink outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20">
+            <option value="">All priorities</option>
+            <option value="main">Main test</option>
+            <option value="extra">Extra practice</option>
+          </select>
+        </div>
+      </div>
+
+      {/* ---- table ---- */}
       {loading ? (
-        <div className="rounded-2xl border border-line bg-paper-raised p-10 text-center text-sm text-muted">
-          Loading…
+        <TableSkeleton rows={PAGE_SIZE} />
+      ) : error ? (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-10 text-center font-sans text-sm text-red-700">
+          {error}{" "}
+          <button onClick={fetchTests} className="underline">Retry</button>
+        </div>
+      ) : rows.length === 0 ? (
+        <div className="rounded-2xl border border-line bg-paper-raised p-10 text-center font-sans text-sm text-muted">
+          No tests match your filters.
         </div>
       ) : (
-        <QuestionsTable rows={rows} typeLabel="Priority" />
+        <>
+          <QuestionsTable rows={rows} typeLabel="Priority" />
+          <Pagination
+            page={page}
+            totalPages={meta.totalPages}
+            onChange={setPage}
+          />
+        </>
       )}
+    </div>
+  );
+}
+
+function TableSkeleton({ rows = 5 }) {
+  return (
+    <div className="space-y-2 rounded-2xl border border-line bg-paper-raised p-4">
+      {Array.from({ length: rows }).map((_, i) => (
+        <div
+          key={i}
+          className="h-12 animate-pulse rounded-lg bg-line/40"
+        />
+      ))}
     </div>
   );
 }
