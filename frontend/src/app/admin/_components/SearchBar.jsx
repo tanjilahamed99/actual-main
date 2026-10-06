@@ -1,23 +1,39 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
 
 export default function SearchBar({ value, onChange, placeholder = "Search…" }) {
-  const [local, setLocal] = useState(value);
+  const [local, setLocal] = useState(value ?? "");
+  const lastEmitted = useRef(value ?? "");
 
-  // debounce 350ms
+  // keep external value in sync only when it changed outside of us
   useEffect(() => {
-    const t = setTimeout(() => onChange(local), 350);
+    if (value !== lastEmitted.current) {
+      setLocal(value ?? "");
+      lastEmitted.current = value ?? "";
+    }
+  }, [value]);
+
+  // debounce local → parent
+  useEffect(() => {
+    const t = setTimeout(() => {
+      if (local !== lastEmitted.current) {
+        lastEmitted.current = local;
+        onChange(local);
+      }
+    }, 350);
     return () => clearTimeout(t);
   }, [local, onChange]);
-
-  // keep in sync if parent resets
-  useEffect(() => setLocal(value), [value]);
 
   return (
     <div className="relative w-full sm:max-w-xs">
       <svg
         className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
-        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <circle cx="11" cy="11" r="8" />
         <path d="m21 21-4.3-4.3" />
       </svg>
@@ -33,7 +49,8 @@ export default function SearchBar({ value, onChange, placeholder = "Search…" }
         <button
           onClick={() => setLocal("")}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink"
-          aria-label="Clear search">
+          aria-label="Clear search"
+        >
           ✕
         </button>
       )}

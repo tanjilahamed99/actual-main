@@ -6,11 +6,18 @@ const readingTestSchema = new mongoose.Schema(
     type: { type: String, default: "reading" },
     priority: { type: String, enum: ["main", "extra"], default: "main" },
     title: { type: String, required: true },
-    status: { type: String, enum: ["draft", "published"], default: "published" },
+    status: {
+      type: String,
+      enum: ["draft", "published"],
+      default: "published",
+    },
     answers: { type: mongoose.Schema.Types.Mixed, required: true },
     questions: { type: [mongoose.Schema.Types.Mixed], required: true }, // array of passages
   },
-  { timestamps: true }
+  { timestamps: true },
 );
+
+ReadingTestSchema.index({ testNumber: 1 });
+ReadingTestSchema.index({ status: 1, priority: 1, testNumber: 1 });
 
 module.exports = mongoose.model("ReadingTest", readingTestSchema);

@@ -75,12 +75,12 @@ exports.getPublishedReadingTest = async (req, res) => {
 exports.getAllPublishedReadingTest = async (req, res) => {
   try {
     const {
-      q = "", // search term
-      status, // "draft" | "published"
-      priority, // "main" | "extra"
+      q = "",
+      status,
+      priority,
       page = 1,
       limit = 10,
-      sort = "testNumber", // testNumber | updatedAt | title
+      sort = "testNumber",
       order = "asc",
     } = req.query;
 
@@ -88,7 +88,6 @@ exports.getAllPublishedReadingTest = async (req, res) => {
     const pageSize = Math.min(50, Math.max(1, parseInt(limit, 10) || 10));
     const skip = (pageNum - 1) * pageSize;
 
-    // ---- build filter ----
     const filter = {};
     if (status) filter.status = status;
     if (priority) filter.priority = priority;
@@ -96,33 +95,28 @@ exports.getAllPublishedReadingTest = async (req, res) => {
     if (q.trim()) {
       const safe = q.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const rx = new RegExp(safe, "i");
-
-      // testNumber is a Number → only match if q is numeric
       const numeric = Number(q);
       const orClauses = [
         { title: rx },
-        { "questions.title": rx }, // passage titles
-        { "questions.label": rx }, // "Passage 1"
+        { "questions.title": rx },
+        { "questions.label": rx },
       ];
       if (!Number.isNaN(numeric)) orClauses.push({ testNumber: numeric });
-
       filter.$or = orClauses;
     }
 
     const sortObj = { [sort]: order === "desc" ? -1 : 1 };
 
-    // ---- execute both queries in parallel ----
     const [tests, total] = await Promise.all([
       ReadingTest.find(filter)
-        // ⬇️ THE KEY FIX — only return what the table needs
         .select(
           "testNumber title priority status updatedAt createdAt " +
-            "questions.label questions.title questions._id",
+            "questions.label questions.title questions._id"
         )
         .sort(sortObj)
         .skip(skip)
         .limit(pageSize)
-        .lean(), // ⬅️ plain JS objects, much faster
+        .lean(),
       ReadingTest.countDocuments(filter),
     ]);
 

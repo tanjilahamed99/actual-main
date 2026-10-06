@@ -6,6 +6,7 @@ import { getAllReadingTest } from "@/actions/test";
 import QuestionsTable from "../_components/QuestionsTable";
 import SearchBar from "../_components/SearchBar";
 import Pagination from "../_components/Pagination";
+import { useUrlState, useUrlBatch } from "@/hooks/useUrlState";
 
 const PAGE_SIZE = 10;
 
@@ -23,18 +24,29 @@ function toRow(test) {
 }
 
 export default function ReadingAdmin() {
+  // ---- URL is the source of truth ----
+  const [search] = useUrlState("q", "");
+  const [status] = useUrlState("status", "");
+  const [priority] = useUrlState("priority", "");
+  const [pageStr] = useUrlState("page", "1");
+  const page = Math.max(1, parseInt(pageStr, 10) || 1);
+  const patchUrl = useUrlBatch();
+
+  const setPage = useCallback(
+    (p) => patchUrl({ page: p === 1 ? null : p }),
+    [patchUrl],
+  );
+
+  const applyFilter = useCallback(
+    (patch) => patchUrl({ ...patch, page: null }),
+    [patchUrl],
+  );
+
+  // ---- data ----
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("");        // "" | "draft" | "published"
-  const [priority, setPriority] = useState("");    // "" | "main" | "extra"
-  const [page, setPage] = useState(1);
   const [meta, setMeta] = useState({ totalPages: 1, total: 0 });
-
-  // reset to page 1 whenever filters change
-  useEffect(() => { setPage(1); }, [search, status, priority]);
 
   const fetchTests = useCallback(async () => {
     setLoading(true);
@@ -58,13 +70,14 @@ export default function ReadingAdmin() {
     }
   }, [search, status, priority, page]);
 
-  useEffect(() => { fetchTests(); }, [fetchTests]);
+  useEffect(() => {
+    fetchTests();
+  }, [fetchTests]);
 
   const rows = useMemo(() => tests.map(toRow), [tests]);
 
   return (
     <div className="space-y-6">
-      {/* ---- header ---- */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="max-w-xl font-sans text-sm text-muted">
           {loading
@@ -73,25 +86,27 @@ export default function ReadingAdmin() {
         </p>
         <Link
           href="/admin/reading/new"
-          className="shrink-0 rounded-full bg-gold px-5 py-2.5 font-sans text-sm font-semibold text-indigo-deep transition-all duration-200 hover:bg-gold-soft hover:shadow-md active:scale-[0.98]">
+          className="shrink-0 rounded-full bg-gold px-5 py-2.5 font-sans text-sm font-semibold text-indigo-deep transition-all duration-200 hover:bg-gold-soft hover:shadow-md active:scale-[0.98]"
+        >
           + Add test
         </Link>
       </div>
 
-      {/* ---- filters ---- */}
+      {/* filters */}
       <div className="flex flex-col gap-3 rounded-2xl border border-line bg-paper-raised p-4 sm:flex-row sm:items-center">
         <SearchBar
           value={search}
-          onChange={setSearch}
+          onChange={(v) => applyFilter({ q: v || null })}
           placeholder="Search title, passage, or test number…"
         />
 
         <div className="flex flex-wrap gap-2 sm:ml-auto">
           <select
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            onChange={(e) => applyFilter({ status: e.target.value || null })}
             className="rounded-full border border-line bg-paper-raised px-4 py-2.5 font-sans text-sm
-                       text-ink outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20">
+                       text-ink outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20"
+          >
             <option value="">All statuses</option>
             <option value="published">Published</option>
             <option value="draft">Draft</option>
@@ -99,9 +114,10 @@ export default function ReadingAdmin() {
 
           <select
             value={priority}
-            onChange={(e) => setPriority(e.target.value)}
+            onChange={(e) => applyFilter({ priority: e.target.value || null })}
             className="rounded-full border border-line bg-paper-raised px-4 py-2.5 font-sans text-sm
-                       text-ink outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20">
+                       text-ink outline-none transition focus:border-gold focus:ring-2 focus:ring-gold/20"
+          >
             <option value="">All priorities</option>
             <option value="main">Main test</option>
             <option value="extra">Extra practice</option>
@@ -109,13 +125,14 @@ export default function ReadingAdmin() {
         </div>
       </div>
 
-      {/* ---- table ---- */}
       {loading ? (
         <TableSkeleton rows={PAGE_SIZE} />
       ) : error ? (
         <div className="rounded-2xl border border-red-200 bg-red-50 p-10 text-center font-sans text-sm text-red-700">
           {error}{" "}
-          <button onClick={fetchTests} className="underline">Retry</button>
+          <button onClick={fetchTests} className="underline">
+            Retry
+          </button>
         </div>
       ) : rows.length === 0 ? (
         <div className="rounded-2xl border border-line bg-paper-raised p-10 text-center font-sans text-sm text-muted">
@@ -123,7 +140,9 @@ export default function ReadingAdmin() {
         </div>
       ) : (
         <>
-          <QuestionsTable rows={rows} typeLabel="Priority" />
+          <div data-table-anchor>
+            <QuestionsTable rows={rows} typeLabel="Priority" />
+          </div>
           <Pagination
             page={page}
             totalPages={meta.totalPages}
@@ -139,10 +158,7 @@ function TableSkeleton({ rows = 5 }) {
   return (
     <div className="space-y-2 rounded-2xl border border-line bg-paper-raised p-4">
       {Array.from({ length: rows }).map((_, i) => (
-        <div
-          key={i}
-          className="h-12 animate-pulse rounded-lg bg-line/40"
-        />
+        <div key={i} className="h-12 animate-pulse rounded-lg bg-line/40" />
       ))}
     </div>
   );
