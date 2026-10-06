@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+    http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- Home -->
+  <url>
+    <loc>https://actualieltsquestions.com/</loc>
+    <lastmod>2026-10-06</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Demo (public teaser) -->
+  <url>
+    <loc>https://actualieltsquestions.com/demo</loc>
+    <lastmod>2026-10-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Auth pages -->
+  <url>
+    <loc>https://actualieltsquestions.com/login</loc>
+    <lastmod>2026-10-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://actualieltsquestions.com/register</loc>
+    <lastmod>2026-10-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!--
+    NOT INCLUDED (intentionally):
+    /dashboard      → auth-gated, per-user, not crawlable
+    /admin/*        → admin-only, must not be indexed
+    /reading/*      → auth-gated test player
+    /listening      → "coming soon" placeholder
+    /reading        → auth-gated list page
+    /demo/reading/* → demo flow, not built yet
+  -->
+
+</urlset>
