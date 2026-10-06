@@ -17,7 +17,7 @@ const readingTestSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-ReadingTestSchema.index({ testNumber: 1 });
-ReadingTestSchema.index({ status: 1, priority: 1, testNumber: 1 });
+readingTestSchema.index({ testNumber: 1 });
+readingTestSchema.index({ status: 1, priority: 1, testNumber: 1 });
 
 module.exports = mongoose.model("ReadingTest", readingTestSchema);
