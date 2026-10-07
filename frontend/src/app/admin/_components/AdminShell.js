@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
+import Logo from "@/components/Logo";
 
 const nav = [
   { href: "/admin", label: "Dashboard", icon: "grid", exact: true },
@@ -61,9 +61,7 @@ function SidebarContent({ pathname, onNavigate }) {
   return (
     <div className="flex h-full flex-col">
       <Link href={"/"} className="flex items-center gap-2.5 px-5 pb-6 pt-5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-paper/15 bg-gold font-display text-sm text-indigo-deep">
-          A
-        </span>
+        <Logo />
         <div className="leading-tight">
           <p className="font-display text-[15px] text-paper">Actual IELTS</p>
           <p className="font-mono text-[10px] uppercase tracking-wider text-paper/50">

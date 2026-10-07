@@ -1,4 +1,5 @@
 import React from "react";
+import Logo from "./Logo";
 
 const Footer = () => {
   return (
@@ -6,9 +7,7 @@ const Footer = () => {
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:px-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full border border-ink/15 bg-indigo-deep font-display text-xs text-paper">
-              A
-            </span>
+            <Logo />
             <span className="font-display text-[15px] text-ink">
               Actual IELTS Questions
             </span>

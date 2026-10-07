@@ -4,6 +4,16 @@ import API from "../lib/axios";
 // ADMIN — READING
 // ─────────────────────────────────────────────────────────────
 
+
+export const adminGetStats = () => API.get("/admin/stats");
+
+export const adminGetReadingTests = (params = {}) =>
+  API.get("/admin/reading", { params });
+
+export const adminGetUsers = (params = {}) =>
+  API.get("/admin/users", { params });
+
+
 /**
  * List reading tests (admin).
  * Accepts: { q, status, priority, page, limit, sort, order }
