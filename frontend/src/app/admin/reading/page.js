@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { getAllReadingTest } from "@/actions/test";
+import { getAllReadingTest } from "@/actions/admin";
 import QuestionsTable from "../_components/QuestionsTable";
 import SearchBar from "../_components/SearchBar";
 import Pagination from "../_components/Pagination";

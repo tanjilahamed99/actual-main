@@ -6,8 +6,7 @@ import axios from "axios";
 import ReadingTestForm, {
   testToFormState,
 } from "@/app/admin/_components/ReadingTestForm";
-import { getSingleReadingTest } from "@/actions/test";
-import { updateReadingTest } from "@/actions/admin";
+import { updateReadingTest, getSingleReadingTest } from "@/actions/admin";
 
 export default function EditReadingTestPage() {
   const router = useRouter();

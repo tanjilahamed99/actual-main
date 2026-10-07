@@ -86,7 +86,7 @@ exports.getAllPublishedReadingTest = async (req, res) => {
       ReadingTest.find(filter)
         .select(
           "testNumber title priority status updatedAt createdAt " +
-            "questions.label questions.title questions._id"
+            "questions.label questions.title questions._id",
         )
         .sort(sortObj)
         .skip(skip)
@@ -114,10 +114,10 @@ exports.getAllPublishedReadingTest = async (req, res) => {
 
 // ---------- GET ONE (admin, full doc) ----------
 exports.getReadingTestById = async (req, res) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+  if (!req.params.id) {
     return res.status(400).json({ message: "Invalid id" });
   }
-  const test = await ReadingTest.findById(req.params.id);
+  const test = await ReadingTest.findOne({ testNumber: req.params.id });
   if (!test) return res.status(404).json({ message: "Not found" });
   res.json({ success: true, test });
 };

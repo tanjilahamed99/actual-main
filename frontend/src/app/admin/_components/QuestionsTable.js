@@ -108,7 +108,7 @@ export default function QuestionsTable({ rows, typeLabel = "Type" }) {
           <tbody>
             {filtered.map((r, i) => (
               <tr
-                key={r.id}
+                key={i}
                 className="animate-fade-in-up border-b border-line/70 text-sm transition-colors duration-150 last:border-0 hover:bg-paper"
                 style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}>
                 <td className="max-w-70 px-5 py-4">
