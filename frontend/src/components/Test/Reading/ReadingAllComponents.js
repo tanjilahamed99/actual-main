@@ -3223,6 +3223,108 @@ export function SentenceEndingBlock({
   );
 }
 
+export function DiagramBlock({
+  block,
+  vals,
+  onChange,
+  submitted,
+  highlights,
+  onSelect,
+}) {
+  const H = (id, text) => (
+    <HighlightableText
+      id={id}
+      text={text}
+      highlights={highlights}
+      onSelect={onSelect}
+    />
+  );
+
+  return (
+    <div className="mb-5 p-3 sm:p-4">
+      <SectionLabel
+        part={block.part}
+        qRange={block.heading}
+        instruction={block.sub}
+        sub={block.title}
+        highlights={highlights}
+        onSelect={onSelect}
+      />
+
+      {/* Diagram image */}
+      <div className="my-4 flex justify-center">
+        <img
+          src={block.imageUrl}
+          alt={block.imageAlt || "diagram"}
+          className="max-w-full h-auto border border-gray-200 rounded"
+          draggable={false}
+        />
+      </div>
+
+      {/* Numbered blanks below the image */}
+      <ul className="flex flex-col gap-2.5 mt-4">
+        {block.items.map(({ n, text, afterText }) => (
+          <li
+            key={n}
+            id={`q-${n}`}
+            className="flex items-center gap-2 flex-wrap text-base sm:text-lg text-[#000000] leading-relaxed">
+            {/* number badge */}
+            <span
+              className="inline-flex items-center justify-center border border-gray-400 bg-white
+                text-[#000000] font-bold shrink-0"
+              style={{
+                width: 26,
+                height: 30,
+                fontSize: 13,
+                borderRadius: "2px 0 0 2px",
+              }}>
+              {n}
+            </span>
+
+            {/* input */}
+            <input
+              type="text"
+              value={vals[n] ?? ""}
+              onChange={(e) => !submitted && onChange(n, e.target.value)}
+              readOnly={submitted}
+              className="border border-gray-400 bg-white outline-none
+                text-base text-[#000000] px-2 focus:border-gray-700"
+              style={{
+                width: 160,
+                height: 30,
+                borderRadius: "0 2px 2px 0",
+                borderLeft: "none",
+              }}
+            />
+
+            {/* label text */}
+            {text && (
+              <span>
+                <HighlightableText
+                  id={`diagram-${n}`}
+                  text={text}
+                  highlights={highlights}
+                  onSelect={onSelect}
+                />
+              </span>
+            )}
+            {afterText && (
+              <span>
+                <HighlightableText
+                  id={`diagram-${n}-after`}
+                  text={afterText}
+                  highlights={highlights}
+                  onSelect={onSelect}
+                />
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export function QuestionBlock({
   block,
   passage,
@@ -3232,6 +3334,17 @@ export function QuestionBlock({
   highlights,
   onSelect,
 }) {
+if (block?.type === "diagram")
+  return (
+    <DiagramBlock
+      block={block}
+      vals={vals}
+      onChange={onChange}
+      submitted={submitted}
+      highlights={highlights}
+      onSelect={onSelect}
+    />
+  );
   if (block?.type === "sentence_ending")
     return (
       <SentenceEndingBlock

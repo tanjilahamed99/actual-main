@@ -36,12 +36,16 @@ exports.updateReadingTest = async (req, res) => {
       .status(400)
       .json({ message: "Invalid payload", errors: parsed.error.flatten() });
   }
-  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+  if (!req.params.id) {
     return res.status(400).json({ message: "Invalid id" });
   }
-  const test = await ReadingTest.findByIdAndUpdate(req.params.id, parsed.data, {
-    new: true,
-  });
+  const test = await ReadingTest.findOneAndUpdate(
+    { testNumber: req.params.id },
+    parsed.data,
+    {
+      new: true,
+    },
+  );
   if (!test) return res.status(404).json({ message: "Not found" });
   res.json({ success: true, test });
 };

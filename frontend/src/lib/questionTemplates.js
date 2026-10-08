@@ -13,6 +13,7 @@ export const QUESTION_TYPES = [
     label: "Summary completion (drag word list)",
   },
   { value: "sentence_ending", label: "Sentence ending (select)" },
+  { value: "diagram", label: "Diagram labelling" },
 ];
 
 export const QUESTION_TEMPLATES = {
@@ -140,6 +141,22 @@ export const QUESTION_TEMPLATES = {
       ],
     },
     items: [{ n: 0, text: "" }],
+  },
+  diagram: {
+    type: "diagram",
+    heading: "Questions 14–16",
+    title: "Label the diagram below.",
+    sub: "Choose ONE WORD ONLY from the passage for each answer. Write your answers in boxes 14–16 on your answer sheet.",
+    imageUrl: "https://i.ibb.co/xxxxxxx/roller-coaster.png",
+    imageAlt: "Roller coaster lifting mechanism",
+    items: [
+      {
+        n: 14,
+        text: "The chain that pulls the cars up the lift hill runs along the",
+      },
+      { n: 15, text: "The chain is driven by a" },
+      { n: 16, text: "The machine that powers the lift is called the" },
+    ],
   },
 };
 
