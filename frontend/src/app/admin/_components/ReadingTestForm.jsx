@@ -68,6 +68,11 @@ export default function ReadingTestForm({
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
 
+  // ── Accordion state ──
+  // Single-open mode: only one passage expanded at a time.
+  // `null` = all collapsed. 0 = first passage open.
+  const [openPassage, setOpenPassage] = useState(0);
+
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
 
   const updatePassage = (idx, patch) =>
@@ -76,11 +81,32 @@ export default function ReadingTestForm({
       passages: f.passages.map((pg, i) => (i === idx ? { ...pg, ...patch } : pg)),
     }));
 
-  const addPassage = () =>
-    setForm((f) => ({ ...f, passages: [...f.passages, blankPassage(f.passages.length + 1)] }));
+  const addPassage = () => {
+    setForm((f) => {
+      const nextIdx = f.passages.length;
+      setOpenPassage(nextIdx); // auto-open the newly added passage
+      return {
+        ...f,
+        passages: [...f.passages, blankPassage(nextIdx + 1)],
+      };
+    });
+  };
 
-  const removePassage = (idx) =>
-    setForm((f) => ({ ...f, passages: f.passages.filter((_, i) => i !== idx) }));
+  const removePassage = (idx) => {
+    setForm((f) => ({
+      ...f,
+      passages: f.passages.filter((_, i) => i !== idx),
+    }));
+    setOpenPassage((prev) => {
+      if (prev === null) return null;
+      if (prev === idx) return null;
+      if (prev > idx) return prev - 1;
+      return prev;
+    });
+  };
+
+  const togglePassage = (idx) =>
+    setOpenPassage((prev) => (prev === idx ? null : idx));
 
   const addBlock = (passageIdx, type) => {
     if (!type) return;
@@ -269,138 +295,216 @@ export default function ReadingTestForm({
       </section>
 
       {/* Passages */}
-      {form.passages.map((pg, pIdx) => (
-        <section key={pIdx} className="space-y-4 rounded-2xl border border-gray-500 p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-cream">Passage {pIdx + 1}</h2>
-            {form.passages.length > 1 && (
-              <button
-                type="button"
-                onClick={() => removePassage(pIdx)}
-                className="text-xs text-red-400 hover:underline"
-              >
-                Remove passage
-              </button>
-            )}
-          </div>
+      {form.passages.map((pg, pIdx) => {
+        const isOpen = openPassage === pIdx;
+        return (
+          <section
+            key={pIdx}
+            className="space-y-4 rounded-2xl border border-gray-500 p-5"
+          >
+            {/* ── Header (clickable toggle) ── */}
+            <div
+              className="flex items-center justify-between cursor-pointer select-none"
+              onClick={() => togglePassage(pIdx)}
+            >
+              <div className="flex items-center gap-2">
+                {/* Chevron */}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  className={`transition-transform duration-200 ${
+                    isOpen ? "rotate-90" : ""
+                  }`}
+                >
+                  <polyline points="9 6 15 12 9 18" />
+                </svg>
+                <h2 className="font-semibold text-cream">
+                  Passage {pIdx + 1}
+                  {pg.label && (
+                    <span className="ml-2 text-xs font-normal text-gray-400">
+                      — {pg.label}
+                    </span>
+                  )}
+                </h2>
+              </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <input
-              value={pg.label}
-              onChange={(e) => updatePassage(pIdx, { label: e.target.value })}
-              placeholder="Label, e.g. Passage 1"
-              className="rounded-lg border border-gray-500 bg-transparent px-3 py-2"
-            />
-            <input
-              value={pg.title}
-              onChange={(e) => updatePassage(pIdx, { title: e.target.value })}
-              placeholder="Passage title"
-              className="rounded-lg border border-gray-500 bg-transparent px-3 py-2"
-            />
-          </div>
-
-          <input
-            value={pg.subtitle}
-            onChange={(e) => updatePassage(pIdx, { subtitle: e.target.value })}
-            placeholder="Subtitle (optional)"
-            className="w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 mt-2"
-          />
-
-          <textarea
-            value={pg.text}
-            onChange={(e) => updatePassage(pIdx, { text: e.target.value })}
-            placeholder="Passage text"
-            rows={8}
-            className="w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 mt-2 font-mono text-xs leading-relaxed"
-          />
-
-          {/* Heading matching */}
-          <div className="space-y-3 border-t border-gray-500 pt-4">
-            <h3 className="text-muted">
-              Heading matching{" "}
-              <span className="text-[11px] text-gray-500">
-                (leave blank if this passage isn't a heading-matching question)
-              </span>
-            </h3>
-
-            <div>
-              <label className="text-xs text-muted">Headings list</label>
-              <textarea
-                value={pg.headingsListText ?? ""}
-                onChange={(e) => updatePassage(pIdx, { headingsListText: e.target.value })}
-                placeholder={HEADINGS_LIST_PLACEHOLDER}
-                rows={5}
-                className="mt-1 w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 font-mono text-xs leading-relaxed"
-              />
-              {errors[`headingsList-${pIdx}`] && (
-                <p className="text-red-400 text-xs">{errors[`headingsList-${pIdx}`]}</p>
+              {form.passages.length > 1 && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removePassage(pIdx);
+                  }}
+                  className="text-xs text-red-400 hover:underline"
+                >
+                  Remove passage
+                </button>
               )}
             </div>
 
-            <div>
-              <label className="text-xs text-muted">Paragraph → question number mapping</label>
-              <textarea
-                value={pg.paragraphQuestionsText ?? ""}
-                onChange={(e) => updatePassage(pIdx, { paragraphQuestionsText: e.target.value })}
-                placeholder={PARAGRAPH_QUESTIONS_PLACEHOLDER}
-                rows={5}
-                className="mt-1 w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 font-mono text-xs leading-relaxed"
-              />
-              {errors[`paragraphQuestions-${pIdx}`] && (
-                <p className="text-red-400 text-xs">{errors[`paragraphQuestions-${pIdx}`]}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Question blocks */}
-          <div className="space-y-3 border-t border-gray-500 pt-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-muted">Question blocks</h3>
-              <select
-                defaultValue=""
-                onChange={(e) => {
-                  addBlock(pIdx, e.target.value);
-                  e.target.value = "";
-                }}
-                className="rounded-lg border border-gray-500 bg-transparent px-3 py-1.5 text-xs"
-              >
-                <option value="" disabled>+ Add block…</option>
-                {QUESTION_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
-                ))}
-              </select>
-            </div>
-
-            {errors[`passage-${pIdx}`] && (
-              <p className="text-red-400 text-xs">{errors[`passage-${pIdx}`]}</p>
+            {/* Collapsed summary strip */}
+            {!isOpen && (
+              <div className="text-xs text-gray-400 -mt-2 pl-6">
+                {pg.questions.length} question block
+                {pg.questions.length !== 1 ? "s" : ""}
+                {pg.text ? ` · ${pg.text.slice(0, 60)}${pg.text.length > 60 ? "…" : ""}` : ""}
+              </div>
             )}
 
-            {pg.questions.map((block, bIdx) => (
-              <div key={bIdx} className="space-y-2 rounded-lg border border-gray-500 p-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-gold">{block.type}</span>
-                  <button
-                    type="button"
-                    onClick={() => removeBlock(pIdx, bIdx)}
-                    className="text-xs text-red-400 hover:underline"
-                  >
-                    Remove
-                  </button>
+            {/* ── Body (only when open) ── */}
+            {isOpen && (
+              <>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <input
+                    value={pg.label}
+                    onChange={(e) => updatePassage(pIdx, { label: e.target.value })}
+                    placeholder="Label, e.g. Passage 1"
+                    className="rounded-lg border border-gray-500 bg-transparent px-3 py-2"
+                  />
+                  <input
+                    value={pg.title}
+                    onChange={(e) => updatePassage(pIdx, { title: e.target.value })}
+                    placeholder="Passage title"
+                    className="rounded-lg border border-gray-500 bg-transparent px-3 py-2"
+                  />
                 </div>
+
+                <input
+                  value={pg.subtitle}
+                  onChange={(e) => updatePassage(pIdx, { subtitle: e.target.value })}
+                  placeholder="Subtitle (optional)"
+                  className="w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 mt-2"
+                />
+
                 <textarea
-                  value={block.json}
-                  onChange={(e) => updateBlockJson(pIdx, bIdx, e.target.value)}
-                  rows={10}
+                  value={pg.text}
+                  onChange={(e) => updatePassage(pIdx, { text: e.target.value })}
+                  placeholder="Passage text"
+                  rows={8}
                   className="w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 mt-2 font-mono text-xs leading-relaxed"
                 />
-                {errors[`block-${pIdx}-${bIdx}`] && (
-                  <p className="text-red-400 text-xs">{errors[`block-${pIdx}-${bIdx}`]}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
+
+                {/* Heading matching */}
+                <div className="space-y-3 border-t border-gray-500 pt-4">
+                  <h3 className="text-muted">
+                    Heading matching{" "}
+                    <span className="text-[11px] text-gray-500">
+                      (leave blank if this passage isn't a heading-matching question)
+                    </span>
+                  </h3>
+
+                  <div>
+                    <label className="text-xs text-muted">Headings list</label>
+                    <textarea
+                      value={pg.headingsListText ?? ""}
+                      onChange={(e) =>
+                        updatePassage(pIdx, { headingsListText: e.target.value })
+                      }
+                      placeholder={HEADINGS_LIST_PLACEHOLDER}
+                      rows={5}
+                      className="mt-1 w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 font-mono text-xs leading-relaxed"
+                    />
+                    {errors[`headingsList-${pIdx}`] && (
+                      <p className="text-red-400 text-xs">
+                        {errors[`headingsList-${pIdx}`]}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-xs text-muted">
+                      Paragraph → question number mapping
+                    </label>
+                    <textarea
+                      value={pg.paragraphQuestionsText ?? ""}
+                      onChange={(e) =>
+                        updatePassage(pIdx, {
+                          paragraphQuestionsText: e.target.value,
+                        })
+                      }
+                      placeholder={PARAGRAPH_QUESTIONS_PLACEHOLDER}
+                      rows={5}
+                      className="mt-1 w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 font-mono text-xs leading-relaxed"
+                    />
+                    {errors[`paragraphQuestions-${pIdx}`] && (
+                      <p className="text-red-400 text-xs">
+                        {errors[`paragraphQuestions-${pIdx}`]}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Question blocks */}
+                <div className="space-y-3 border-t border-gray-500 pt-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-muted">Question blocks</h3>
+                    <select
+                      defaultValue=""
+                      onChange={(e) => {
+                        addBlock(pIdx, e.target.value);
+                        e.target.value = "";
+                      }}
+                      className="rounded-lg border border-gray-500 bg-transparent px-3 py-1.5 text-xs"
+                    >
+                      <option value="" disabled>
+                        + Add block…
+                      </option>
+                      {QUESTION_TYPES.map((t) => (
+                        <option key={t.value} value={t.value}>
+                          {t.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {errors[`passage-${pIdx}`] && (
+                    <p className="text-red-400 text-xs">
+                      {errors[`passage-${pIdx}`]}
+                    </p>
+                  )}
+
+                  {pg.questions.map((block, bIdx) => (
+                    <div
+                      key={bIdx}
+                      className="space-y-2 rounded-lg border border-gray-500 p-3"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-gold">
+                          {block.type}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeBlock(pIdx, bIdx)}
+                          className="text-xs text-red-400 hover:underline"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <textarea
+                        value={block.json}
+                        onChange={(e) =>
+                          updateBlockJson(pIdx, bIdx, e.target.value)
+                        }
+                        rows={10}
+                        className="w-full rounded-lg border border-gray-400 bg-transparent px-3 py-2 mt-2 font-mono text-xs leading-relaxed"
+                      />
+                      {errors[`block-${pIdx}-${bIdx}`] && (
+                        <p className="text-red-400 text-xs">
+                          {errors[`block-${pIdx}-${bIdx}`]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </section>
+        );
+      })}
 
       <button
         type="button"
@@ -414,7 +518,8 @@ export default function ReadingTestForm({
       <section className="space-y-2 rounded-2xl border border-gray-500 p-5">
         <h2 className="font-semibold text-cream">Answer key</h2>
         <p className="text-xs text-muted">
-          Flat map of question number → answer, e.g. {`{ "1": "TRUE", "24": ["C","D","E"] }`}
+          Flat map of question number → answer, e.g.{" "}
+          {`{ "1": "TRUE", "24": ["C","D","E"] }`}
         </p>
         <textarea
           value={form.answersJson}
