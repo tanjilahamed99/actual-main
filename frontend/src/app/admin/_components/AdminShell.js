@@ -8,6 +8,7 @@ import Logo from "@/components/Logo";
 const nav = [
   { href: "/admin", label: "Dashboard", icon: "grid", exact: true },
   { href: "/admin/reading", label: "Reading", icon: "book" },
+  { href: "/admin/passages", label: "Passages", icon: "layers" },
   { href: "/admin/listening", label: "Listening", icon: "headphones" },
   { href: "/admin/writing", label: "Writing", icon: "pen" },
   { href: "/admin/users", label: "Users", icon: "user" },
@@ -29,6 +30,13 @@ const icons = {
       d="M4 5.5C4 4.7 4.7 4 5.5 4H12v16H5.5A1.5 1.5 0 0 1 4 18.5v-13ZM20 5.5c0-.8-.7-1.5-1.5-1.5H12v16h6.5a1.5 1.5 0 0 0 1.5-1.5v-13Z"
     />
   ),
+  layers: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="m12 3-9 5 9 5 9-5-9-5Zm0 10L4 9v6l8 5 8-5V9l-8 4Zm0 4-8-5v3l8 5 8-5v-3l-8 5Z"
+    />
+  ),
   headphones: (
     <path
       strokeLinecap="round"
@@ -48,6 +56,13 @@ const icons = {
       strokeLinecap="round"
       strokeLinejoin="round"
       d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm-7-3a7 7 0 0 0 14 0M12 19v3"
+    />
+  ),
+  user: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M16 14a4 4 0 0 0-8 0m8 0v2a4 4 0 0 0 4 4H4a4 4 0 0 0 4-4v-2m8 0a3 3 0 1 0-6 0m6 0a3 3 0 1 1-6 0M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
     />
   ),
 };
@@ -148,6 +163,10 @@ const titles = {
     "Reading questions",
     "Review and manage reported Reading passages.",
   ],
+  "/admin/passages": [
+    "Passages",
+    "Browse every passage across all reading tests — search by title, label, or test.",
+  ],
   "/admin/listening": [
     "Listening questions",
     "Review and manage reported Listening sets.",
@@ -156,14 +175,22 @@ const titles = {
     "Writing questions",
     "Review and manage reported Writing tasks.",
   ],
-  "/admin/user": ["All User", "Review and Update user details."],
+  "/admin/users": ["All users", "Review and update user details."],
 };
 
 export default function AdminShell({ children }) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [prevPathname, setPrevPathname] = useState(pathname);
-  const [title, subtitle] = titles[pathname] || titles["/admin"];
+
+  // Pick the header title by longest matching prefix, so nested
+  // routes like /admin/reading/abc123 still get the Reading header.
+  const title =
+    Object.entries(titles)
+      .filter(([path]) => pathname === path || pathname.startsWith(path + "/"))
+      .sort((a, b) => b[0].length - a[0].length)[0]?.[1] ?? titles["/admin"];
+
+  const [heading, subtitle] = title;
 
   if (pathname !== prevPathname) {
     setPrevPathname(pathname);
@@ -186,7 +213,9 @@ export default function AdminShell({ children }) {
 
       {/* Mobile drawer */}
       <div
-        className={`fixed inset-0 z-50 md:hidden ${drawerOpen ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-50 md:hidden ${
+          drawerOpen ? "pointer-events-auto" : "pointer-events-none"
+        }`}
         aria-hidden={!drawerOpen}>
         <div
           onClick={() => setDrawerOpen(false)}
@@ -226,7 +255,7 @@ export default function AdminShell({ children }) {
 
             <div className="min-w-0 flex-1">
               <h1 className="truncate font-display text-lg text-ink sm:text-xl">
-                {title}
+                {heading}
               </h1>
               <p className="hidden truncate font-sans text-sm text-muted sm:block">
                 {subtitle}

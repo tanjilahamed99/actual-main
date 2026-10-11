@@ -67,3 +67,7 @@ export const adminUpdateUserStatus = (id, status) =>
 /** Delete a user by _id (admin). */
 export const adminDeleteUser = (id) =>
   API.delete(`/admin/users/${id}`);
+
+
+export const getAllPassages = (params = {}) =>
+  API.get("/admin/passages", { params });
