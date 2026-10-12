@@ -7,10 +7,11 @@ const ReadingTest = require("../../models/ReadingTest");
  *   ?priority=main        main | extra
  *   ?testNumber=12        exact test number
  *   ?page=1&limit=20
- *   ?sort=testNumber      testNumber | passageId | updatedAt
+ *   ?sort=testNumber      testNumber | passageId | updatedAt | testTitle
  *   ?order=asc            asc | desc
  *
- * Returns flat rows: one per passage.
+ * Returns flat rows: one per passage, grouped by test in `testNumber` order,
+ * with passages within a test sorted by their `id` (1, 2, 3).
  */
 exports.getAllPassages = async (req, res) => {
   try {
@@ -40,7 +41,7 @@ exports.getAllPassages = async (req, res) => {
 
     const pipeline = [
       { $match: match },
-      // sort passages inside each doc before unwinding, so $unwind keeps order
+      // ensure passages inside each doc are sorted before unwinding
       {
         $addFields: {
           questions: {
@@ -51,7 +52,7 @@ exports.getAllPassages = async (req, res) => {
       { $unwind: "$questions" },
     ];
 
-    // ---- optional text search on passage OR test fields ----
+    // ---- optional text search ----
     if (q.trim()) {
       const safe = q.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const rx = new RegExp(safe, "i");
@@ -61,13 +62,13 @@ exports.getAllPassages = async (req, res) => {
             { "questions.title": rx },
             { "questions.label": rx },
             { "questions.subtitle": rx },
-            { title: rx }, // test title
+            { title: rx },
           ],
         },
       });
     }
 
-    // ---- final shape of each row ----
+    // ---- flatten to row shape ----
     pipeline.push({
       $project: {
         _id: 0,
@@ -81,12 +82,18 @@ exports.getAllPassages = async (req, res) => {
         passageLabel: "$questions.label",
         passageTitle: "$questions.title",
         passageSubtitle: "$questions.subtitle",
-        questionBlockCount: { $size: { $ifNull: ["$questions.questions", []] } },
+        passageText: "$questions.text",
+        questionBlockCount: {
+          $size: { $ifNull: ["$questions.questions", []] },
+        },
       },
     });
 
-    // ---- sorting on the flattened rows ----
-    const sortField =
+    // ---- sort ----
+    // ALWAYS sort by testNumber first, then passageId — this is what groups
+    // passages by their parent test. If the client asks for a different
+    // primary field, we still keep passageId as a secondary tiebreak.
+    const primaryField =
       sort === "passageId"
         ? "passageId"
         : sort === "updatedAt"
@@ -94,7 +101,13 @@ exports.getAllPassages = async (req, res) => {
           : sort === "testTitle"
             ? "testTitle"
             : "testNumber";
-    pipeline.push({ $sort: { [sortField]: dir, passageId: 1 } });
+
+    const sortObj =
+      primaryField === "passageId"
+        ? { passageId: dir, testNumber: 1 }            // rare: passages across tests
+        : { [primaryField]: dir, passageId: 1 };       // default: test first, then passage
+
+    pipeline.push({ $sort: sortObj });
 
     // ---- run data + count in parallel ----
     const [rows, countResult] = await Promise.all([
