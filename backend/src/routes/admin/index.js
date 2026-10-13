@@ -6,7 +6,7 @@ const { adminProtect } = require("../../middleware/adminValidate");
 const statsRoutes = require("./statsRoutes");
 const readingRoutes = require("./readingRoutes");
 // const listeningRoutes = require("./listeningRoutes");
-// const writingRoutes = require("./writingRoutes");
+const writingRoutes = require("./writingRoutes");
 const userRoutes = require("./userRoutes");
 const passagesRoutes = require("./passagesRoutes");
 
@@ -15,7 +15,7 @@ router.use(adminProtect);
 router.use("/stats", statsRoutes);
 router.use("/reading", readingRoutes);
 // router.use("/listening", listeningRoutes);
-// router.use("/writing", writingRoutes);
+router.use("/writing", writingRoutes);
 router.use("/users", userRoutes);
 // ...
 router.use("/passages", passagesRoutes);

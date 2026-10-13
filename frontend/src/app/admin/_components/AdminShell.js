@@ -11,11 +11,19 @@ const nav = [
   { href: "/admin/passages", label: "Passages", icon: "layers" },
   { href: "/admin/listening", label: "Listening", icon: "headphones" },
   { href: "/admin/writing", label: "Writing", icon: "pen" },
+  { href: "/admin/writing/attempts", label: "Submissions", icon: "inbox" },
   { href: "/admin/users", label: "Users", icon: "user" },
   { href: "#", label: "Speaking", icon: "mic", soon: true },
 ];
 
 const icons = {
+  inbox: (
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M3 12h4l2 3h6l2-3h4M5 5h14l2 7v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5l2-7Z"
+    />
+  ),
   grid: (
     <path
       strokeLinecap="round"

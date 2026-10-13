@@ -1,26 +1,34 @@
 "use client";
+
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useTestStore } from "@/features/Useteststore";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+
+import { useModuleTestStore } from "@/features/Useteststore";
 import { useExitGuard } from "@/hooks/Useexitguard";
 
-import { WritingHighlightRoot,WritingNoteModal,WritingNotesPanel,WritingSelectionPopup,useWritingHighlightsAndNotes } from "@/components/Test/Writing/Writinghighlightnotes";
+import {
+  WritingHighlightRoot,
+  WritingNoteModal,
+  WritingNotesPanel,
+  WritingSelectionPopup,
+  useWritingHighlightsAndNotes,
+} from "@/components/Test/Writing/Writinghighlightnotes";
 
 import {
   BottomNav,
   CompletionModal,
   ConfirmModal,
   ResultModal,
+  AnswersReviewModal,
   useDivider,
-  LineChart,
-  ProcessDiagram,
-  BarChart,
-  ChangeTable,
-  MapPair,
-  PieChart,
-  TableChart,
 } from "@/components/Test/Writing/WritingAllComponents";
+
+import ChartRenderer from "./ChartRenderer";
+import WritingFeedbackPanel from "./WritingFeedbackPanel";
 import IntroModal from "@/components/Test/IntroModal";
+import { submitWritingAttempt } from "@/actions/writing";
 
 const TOTAL_SEC = 60 * 60;
 
@@ -31,35 +39,30 @@ function countWords(text) {
   return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
 }
 
-const MainWritingPage = ({
-  testId,
-  WRITING_PART,
-  WRITING_PROCESS,
-  WRITING_CHANGE,
-  WRITING_BAR,
-  WRITING_MAP,
-  WRITING_TABLE_COFFEE,
-  WRITING_TABLE_TEA,
-  WRITING_PIE_EMISSIONS,
-  WRITING_PIE_ENERGY,
-  WRITING_LINE,
-}) => {
+const MainWritingPage = ({ testId, test }) => {
   const router = useRouter();
+  const PARTS = test?.parts ?? [];
+
   const [phase, setPhase] = useState("intro");
   const [activePart, setActivePart] = useState(0);
-  const [answers, setAnswers] = useState(["", ""]);
+  const [answers, setAnswers] = useState(() => PARTS.map(() => ""));
   const [timeLeft, setTimeLeft] = useState(TOTAL_SEC);
   const [showResult, setShowResult] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showCompletion, setShowCompletion] = useState(false);
+  const [showAnswersReview, setShowAnswersReview] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const [promptOpen, setPromptOpen] = useState(false);
+
+  // Submission
+  const [submitting, setSubmitting] = useState(false);
+
   const submitted = phase === "done";
   const { split, containerRef, onMouseDown } = useDivider(48);
 
-  const { saveAllAnswers, submitSection } = useTestStore();
+  const { initModule, startModule, saveAllAnswers, submitModule } =
+    useModuleTestStore();
 
-  // ── HIGHLIGHTS & NOTES ──
   const {
     highlights,
     notes,
@@ -81,33 +84,14 @@ const MainWritingPage = ({
 
   const guardActive = phase === "test";
 
-  const handleForcedExit = useCallback(async () => {
-    saveAllAnswers("writing", { part_1: answers[0], part_2: answers[1] });
-    submitSection("writing");
-    setPhase("done");
-    setTimeout(() => {
-      router.push(`/full-test/${testId}`);
-    }, 2000);
-  }, [answers, saveAllAnswers, submitSection, testId, router]);
+  const answerPayload = Object.fromEntries(
+    answers.map((a, i) => [`part_${i + 1}`, a]),
+  );
 
-  const { guardedPush } = useExitGuard({
-    active: guardActive,
-    onConfirmExit: handleForcedExit,
-    message:
-      "Your test is in progress. Leaving now will auto-submit your current answers.",
-  });
-
-  const handleConfirm = () => {
-    setShowConfirm(false);
-    setPhase("done");
-    setShowResult(true);
-    saveAllAnswers("writing", { part_1: answers[0], part_2: answers[1] });
-    submitSection("writing");
-    setTimeout(() => {
-      setShowResult(false);
-      setShowCompletion(true);
-    }, 2000);
-  };
+  useEffect(() => {
+    if (!test?.testNumber) return;
+    initModule("writing", testId, test?.title ?? `Writing Test ${testId}`);
+  }, [testId, test?.testNumber, test?.title, initModule]);
 
   useEffect(() => {
     if (phase !== "test") return;
@@ -117,12 +101,87 @@ const MainWritingPage = ({
     }
     const id = setInterval(() => setTimeLeft((t) => t - 1), 1000);
     return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, timeLeft]);
 
-  // Reset prompt panel when switching parts on mobile
-  useEffect(() => {
-    setPromptOpen(false);
-  }, [activePart]);
+  useEffect(() => setPromptOpen(false), [activePart]);
+
+  const handleForcedExit = useCallback(async () => {
+    saveAllAnswers("writing", testId, answerPayload);
+    submitModule("writing", testId);
+    setPhase("done");
+    setTimeout(() => router.push("/writing"), 2000);
+  }, [answerPayload, saveAllAnswers, submitModule, testId, router]);
+
+  const { guardedPush } = useExitGuard({
+    active: guardActive,
+    onConfirmExit: handleForcedExit,
+    message:
+      "Your test is in progress. Leaving now will auto-submit your current answers.",
+  });
+
+  // ── Submit: save the attempt to the backend ──
+  const handleConfirm = async () => {
+    setShowConfirm(false);
+    setSubmitting(true);
+
+    try {
+      const payload = {
+        testId: test?._id,
+        testNumber: Number(testId),
+        testTitle: test?.title ?? "",
+        answers: PARTS.map((p, i) => ({
+          partIndex: i,
+          label: p.label,
+          prompt: p.prompt,
+          minWords: p.minWords,
+          answer: answers[i] ?? "",
+          wordCount: countWords(answers[i] ?? ""),
+        })),
+      };
+
+      await submitWritingAttempt(testId, payload);
+      toast.success("Your answers have been submitted for marking.");
+    } catch (err) {
+      const status = err?.response?.status;
+      const msg =
+        err?.response?.data?.message ??
+        "Failed to submit. Please check your connection and try again.";
+      if (status === 403) {
+        toast.error("Your account isn't approved yet.");
+      } else {
+        toast.error(msg);
+      }
+      setSubmitting(false);
+      return;
+    }
+
+    setPhase("done");
+    saveAllAnswers("writing", testId, answerPayload);
+    submitModule("writing", testId);
+    setShowResult(true);
+    setSubmitting(false);
+  };
+
+  const handleResultDone = () => {
+    setShowResult(false);
+    setShowCompletion(true);
+  };
+
+  const handleViewAnswers = () => {
+    setShowCompletion(false);
+    setShowAnswersReview(true);
+  };
+
+  const handleBackToTests = () => {
+    setShowCompletion(false);
+    router.push("/writing");
+  };
+
+  const handleStart = () => {
+    startModule("writing", testId);
+    setPhase("test");
+  };
 
   const setAnswer = (i, v) =>
     setAnswers((prev) => {
@@ -133,212 +192,210 @@ const MainWritingPage = ({
 
   const handleSubmitClick = () => setShowConfirm(true);
 
-  const handleViewResults = () => {
-    setShowCompletion(false);
-    router.push(`/full-test/${testId}`);
-  };
+  const part = PARTS[activePart];
 
-  const part = WRITING_PART[activePart];
+  if (!part) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-white text-sm text-gray-500">
+        This writing test has no parts yet.
+      </div>
+    );
+  }
 
-  // Unique zone IDs per part so highlights don't bleed across parts
   const promptZoneId = `prompt-part-${activePart}`;
   const promptZoneIdMobile = `prompt-part-${activePart}-mobile`;
 
-  const chartsBlock = (
-    <div className="mt-5">
-      {WRITING_PROCESS && <ProcessDiagram {...WRITING_PROCESS} />}
-      {WRITING_BAR && <BarChart {...WRITING_BAR} />}
-      {WRITING_CHANGE && <ChangeTable {...WRITING_CHANGE} />}
-      {WRITING_MAP && <MapPair {...WRITING_MAP} />}
-      {WRITING_PIE_ENERGY && (
-        <PieChart
-          title={WRITING_PIE_ENERGY.title}
-          segments={WRITING_PIE_ENERGY.segments}
-        />
-      )}
-      {WRITING_PIE_EMISSIONS && (
-        <PieChart
-          title={WRITING_PIE_EMISSIONS.title}
-          segments={WRITING_PIE_EMISSIONS.segments}
-        />
-      )}
-      {WRITING_TABLE_COFFEE && (
-        <TableChart
-          title={WRITING_TABLE_COFFEE.title}
-          columns={WRITING_TABLE_COFFEE.columns}
-          rows={WRITING_TABLE_COFFEE.rows}
-        />
-      )}
-      {WRITING_TABLE_TEA && (
-        <TableChart
-          title={WRITING_TABLE_TEA.title}
-          columns={WRITING_TABLE_TEA.columns}
-          rows={WRITING_TABLE_TEA.rows}
-        />
-      )}
-      {WRITING_LINE && <LineChart {...WRITING_LINE} />}
-    </div>
-  );
+  const chartsBlock =
+    part.hasCharts && part.charts?.length > 0 ? (
+      <div className="mt-5 space-y-6">
+        {part.charts.map((chart, i) => (
+          <ChartRenderer key={i} chart={chart} />
+        ))}
+      </div>
+    ) : null;
 
   return (
-    <div className=" bg-white h-screen flex flex-col overflow-hidden text-[#1a1a1a]">
-      {/* MODALS */}
+    <div className="flex h-screen flex-col overflow-hidden bg-white text-[#1a1a1a]">
+      {/* ── MODALS ── */}
       {phase === "intro" && (
-        <IntroModal
-          onStart={() => setPhase("test")}
-          num={testId}
-          type={"writing"}
+        <IntroModal onStart={handleStart} num={testId} type={"writing"} />
+      )}
+
+      {showResult && (
+        <ResultModal
+          answers={answers}
+          PARTS={PARTS}
+          onDone={handleResultDone}
         />
       )}
-      {showResult && <ResultModal answers={answers} PARTS={WRITING_PART} />}
-      {showCompletion && <CompletionModal onViewResults={handleViewResults} />}
+
+      {showCompletion && (
+        <CompletionModal
+          onViewAnswers={handleViewAnswers}
+          onBackToTests={handleBackToTests}
+        />
+      )}
+
       {showConfirm && !showResult && !showCompletion && (
         <ConfirmModal
           answers={answers}
           onConfirm={handleConfirm}
-          onCancel={() => setShowConfirm(false)}
-          PARTS={WRITING_PART}
+          onCancel={() => !submitting && setShowConfirm(false)}
+          PARTS={PARTS}
         />
+      )}
+
+      {showAnswersReview && (
+        <AnswersReviewModal
+          answers={answers}
+          PARTS={PARTS}
+          onClose={() => setShowAnswersReview(false)}
+        />
+      )}
+
+      {/* ── Submitting overlay ── */}
+      {submitting && (
+        <div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/40">
+          <div className="flex items-center gap-3 rounded-lg bg-white px-5 py-4 shadow-xl">
+            <Loader2 className="h-5 w-5 animate-spin text-indigo-deep" />
+            <span className="font-sans text-sm text-ink">
+              Submitting your answers…
+            </span>
+          </div>
+        </div>
       )}
 
       {phase !== "intro" && !showCompletion && (
         <>
           {/* ── TOP BAR ── */}
           {!focusMode && (
-            <div className="flex items-center bg-[#f8d7da] border-b border-[#f0b8be] px-3 h-9 flex-shrink-0">
-              <div className="w-6 h-6 bg-[#c0392b] text-white text-[13px] font-bold flex items-center justify-center rounded-[3px] flex-shrink-0">
+            <div className="flex h-9 flex-shrink-0 items-center border-b border-[#f0b8be] bg-[#f8d7da] px-3">
+              <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-[3px] bg-[#c0392b] text-[13px] font-bold text-white">
                 M
               </div>
-              <div className="flex-1 text-center text-[12px] sm:text-[13px] text-gray-600 truncate px-2">
-                Full-Test Writing Test {testId} (Online Test)
+              <div className="flex-1 truncate px-2 text-center text-[12px] text-gray-600 sm:text-[13px]">
+                {test?.title ?? `Writing Test ${testId}`} (Online Test)
               </div>
             </div>
           )}
 
           {/* ── SUB BAR ── */}
-          <div className="flex items-center gap-2 bg-white border-b border-gray-200 px-3 h-[34px] flex-shrink-0">
-            {/* Focus toggle */}
+          <div className="flex h-[34px] flex-shrink-0 items-center gap-2 border-b border-gray-200 bg-white px-3">
             <button
               onClick={() => setFocusMode((f) => !f)}
-              className="flex items-center gap-1.5 border border-gray-300 rounded bg-white text-gray-700 text-[12px] px-2 sm:px-2.5 py-[3px] cursor-pointer hover:bg-gray-50 transition-colors flex-shrink-0">
+              className="flex flex-shrink-0 cursor-pointer items-center gap-1.5 rounded border border-gray-300 bg-white px-2 py-[3px] text-[12px] text-gray-700 transition-colors hover:bg-gray-50 sm:px-2.5"
+            >
               <svg
                 width="13"
                 height="13"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2.5">
+                strokeWidth="2.5"
+              >
                 <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
               </svg>
               <span className="hidden sm:inline">Focus</span>
             </button>
 
-            {/* Timer */}
-            <div className="flex items-center gap-1.5 mx-auto text-[13px] font-semibold text-gray-800">
+            <div className="mx-auto flex items-center gap-1.5 text-[13px] font-semibold text-gray-800">
               <svg
                 width="13"
                 height="13"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2">
+                strokeWidth="2"
+              >
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12,6 12,12 16,14" />
               </svg>
               <span
-                className={`font-mono text-[13px] font-bold${timeLeft < 300 ? " text-red-600 animate-pulse" : ""}`}>
+                className={`font-mono text-[13px] font-bold${
+                  timeLeft < 300 ? " animate-pulse text-red-600" : ""
+                }`}
+              >
                 {fmt(timeLeft)}
               </span>
             </div>
 
-            {/* Notes button */}
             <button
               onClick={() => setShowNotesPanel(true)}
-              className="flex items-center gap-1.5 border border-gray-300 rounded bg-white text-gray-700 text-[12px] px-2 sm:px-2.5 py-[3px] cursor-pointer hover:bg-gray-50 transition-colors relative flex-shrink-0">
+              className="relative flex flex-shrink-0 cursor-pointer items-center gap-1.5 rounded border border-gray-300 bg-white px-2 py-[3px] text-[12px] text-gray-700 transition-colors hover:bg-gray-50 sm:px-2.5"
+            >
               <svg
                 width="13"
                 height="13"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2.5">
+                strokeWidth="2.5"
+              >
                 <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
                 <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
               </svg>
               <span className="hidden sm:inline">Notes</span>
               {notes.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white rounded-full text-[9px] font-bold flex items-center justify-center">
+                <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-blue-600 text-[9px] font-bold text-white">
                   {notes.length}
                 </span>
               )}
-            </button>
-
-            {/* Menu stub */}
-            <button className="border-none bg-transparent cursor-pointer text-gray-500 p-1 flex items-center hover:text-gray-900 flex-shrink-0">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2">
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-              </svg>
             </button>
           </div>
 
           {/* ── PART HEADER ── */}
           {!focusMode && (
-            <div className="flex flex-col sm:flex-row sm:items-baseline gap-0.5 sm:gap-2.5 bg-white border-b border-gray-200 px-3.5 py-1.5 flex-shrink-0">
+            <div className="flex flex-shrink-0 flex-col gap-0.5 border-b border-gray-200 bg-white px-3.5 py-1.5 sm:flex-row sm:items-baseline sm:gap-2.5">
               <span className="text-[13px] font-bold text-gray-900">
                 {part.label}
               </span>
-              <span className="text-[11px] sm:text-[12px] text-gray-500 leading-tight">
+              <span className="text-[11px] leading-tight text-gray-500 sm:text-[12px]">
                 <span className="sm:hidden">{part.subtitle}</span>
                 <span className="hidden sm:inline">{part.subtitleFull}</span>
               </span>
             </div>
           )}
 
-          {/* ── MAIN BODY ── */}
-
-          {/* DESKTOP: side-by-side split layout */}
+          {/* ── DESKTOP split ── */}
           <div
-            className="hidden md:flex flex-1 overflow-hidden min-h-0"
-            ref={containerRef}>
+            className="hidden min-h-0 flex-1 overflow-hidden md:flex"
+            ref={containerRef}
+          >
             <div
-              className="overflow-y-auto shrink-0 border-r border-gray-200 bg-white"
-              style={{ width: `${split}%` }}>
+              className="shrink-0 overflow-y-auto border-r border-gray-200 bg-white"
+              style={{ width: `${split}%` }}
+            >
               <WritingHighlightRoot
                 zoneId={promptZoneId}
                 highlightKey={`app-highlight-writing-${activePart}`}
                 highlights={highlights}
-                onSelect={handleSelect}>
-                <div className="px-5 pt-4 pb-14 text-lg text-[#1a1a1a]">
+                onSelect={handleSelect}
+              >
+                <div className="px-5 pb-14 pt-4 text-lg text-[#1a1a1a]">
                   <p style={{ whiteSpace: "pre-line" }}>{part.prompt}</p>
-                  {part.hasCharts && chartsBlock}
+                  {chartsBlock}
                 </div>
               </WritingHighlightRoot>
             </div>
 
-            {/* DIVIDER */}
             <div
-              className="w-2 shrink-0 bg-gray-200 cursor-col-resize flex items-center justify-center relative border-l border-r border-gray-300 hover:bg-gray-300 transition-colors"
+              className="relative flex w-2 shrink-0 cursor-col-resize items-center justify-center border-l border-r border-gray-300 bg-gray-200 transition-colors hover:bg-gray-300"
               onMouseDown={onMouseDown}
-              onTouchStart={onMouseDown}>
+              onTouchStart={onMouseDown}
+            >
               <button
-                className="absolute flex flex-row items-center justify-center w-5 h-7 border border-gray-300 rounded-[3px] bg-white cursor-col-resize shadow-sm text-black hover:bg-gray-50 hover:text-black-900"
+                className="absolute flex h-7 w-5 cursor-col-resize flex-row items-center justify-center rounded-[3px] border border-gray-300 bg-white text-black shadow-sm hover:bg-gray-50"
                 onMouseDown={onMouseDown}
-                onTouchStart={onMouseDown}>
+                onTouchStart={onMouseDown}
+              >
                 <svg
                   width="12"
                   height="12"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2.5">
+                  strokeWidth="2.5"
+                >
                   <polyline points="15,18 9,12 15,6" />
                 </svg>
                 <svg
@@ -347,23 +404,24 @@ const MainWritingPage = ({
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2.5">
+                  strokeWidth="2.5"
+                >
                   <polyline points="9,18 15,12 9,6" />
                 </svg>
               </button>
             </div>
 
-            {/* RIGHT: Answer */}
             <div
-              className="overflow-y-auto shrink-0 bg-white flex flex-col"
-              style={{ width: `${100 - split}%` }}>
-              <div className="flex-1 flex flex-col px-4 py-3.5">
-                <fieldset className="flex-1 flex flex-col border border-gray-300 rounded-[3px] px-2.5 pt-1.5 pb-2 min-h-0">
-                  <legend className="text-[11px] text-gray-500 px-1">
+              className="flex shrink-0 flex-col overflow-y-auto bg-white"
+              style={{ width: `${100 - split}%` }}
+            >
+              <div className="flex flex-1 flex-col px-4 py-3.5">
+                <fieldset className="flex min-h-0 flex-1 flex-col rounded-[3px] border border-gray-300 px-2.5 pb-2 pt-1.5">
+                  <legend className="px-1 text-[11px] text-gray-500">
                     {part.label} Answer
                   </legend>
                   <textarea
-                    className="flex-1 w-full min-h-80 border-none outline-none resize-none text-[14px] leading-[1.75] text-[#1a1a1a] bg-transparent py-1 placeholder:text-gray-300 placeholder:italic placeholder:text-[13px]"
+                    className="min-h-80 w-full flex-1 resize-none border-none bg-transparent py-1 text-[14px] leading-[1.75] text-[#1a1a1a] outline-none placeholder:text-[13px] placeholder:italic placeholder:text-gray-300"
                     style={{ fontFamily: "Arial, sans-serif" }}
                     value={answers[activePart]}
                     onChange={(e) =>
@@ -373,7 +431,7 @@ const MainWritingPage = ({
                     readOnly={submitted}
                     spellCheck
                   />
-                  <div className="flex items-center justify-between pt-1.5 border-t border-gray-100 mt-1">
+                  <div className="mt-1 flex items-center justify-between border-t border-gray-100 pt-1.5">
                     <span className="text-[11px] text-gray-400">
                       Word Count:{" "}
                       <span
@@ -381,50 +439,60 @@ const MainWritingPage = ({
                           countWords(answers[activePart]) >= part.minWords
                             ? "text-green-600"
                             : "text-gray-600"
-                        }`}>
+                        }`}
+                      >
                         {countWords(answers[activePart])}
                       </span>
                       <span className="text-gray-300"> / {part.minWords}</span>
                     </span>
                     {countWords(answers[activePart]) >= part.minWords && (
-                      <span className="text-[11px] text-green-600 font-semibold">
+                      <span className="text-[11px] font-semibold text-green-600">
                         ✓ Minimum met
                       </span>
                     )}
                   </div>
                 </fieldset>
+
+                <WritingFeedbackPanel
+                  answer={answers[activePart]}
+                  minWords={part.minWords}
+                />
               </div>
             </div>
           </div>
 
-          {/* MOBILE: stacked layout */}
-          <div className="flex md:hidden flex-col flex-1 overflow-hidden min-h-0">
-            {/* Collapsible prompt panel */}
+          {/* ── MOBILE ── */}
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:hidden">
             <div
-              className={`shrink-0 border-b border-gray-200 bg-white overflow-hidden transition-all duration-300 ${promptOpen ? "max-h-[45vh]" : "max-h-0"}`}>
+              className={`shrink-0 overflow-hidden border-b border-gray-200 bg-white transition-all duration-300 ${
+                promptOpen ? "max-h-[45vh]" : "max-h-0"
+              }`}
+            >
               <WritingHighlightRoot
                 zoneId={promptZoneIdMobile}
                 highlightKey={`app-highlight-writing-mobile-${activePart}`}
                 highlights={highlights}
-                onSelect={handleSelect}>
+                onSelect={handleSelect}
+              >
                 <div
-                  className="overflow-y-auto max-h-[45vh] px-4 pt-3 pb-5"
+                  className="max-h-[45vh] overflow-y-auto px-4 pb-5 pt-3"
                   style={{
                     fontFamily: "'Times New Roman', Times, serif",
                     fontSize: 14,
                     lineHeight: 1.75,
                     color: "#1a1a1a",
-                  }}>
+                  }}
+                >
                   <p style={{ whiteSpace: "pre-line" }}>{part.prompt}</p>
-                  {part.hasCharts && chartsBlock}
+                  {chartsBlock}
                 </div>
               </WritingHighlightRoot>
             </div>
 
-            {/* Prompt toggle pill */}
             <button
               onClick={() => setPromptOpen((o) => !o)}
-              className="shrink-0 flex items-center justify-center gap-1.5 w-full py-1.5 bg-gray-50 border-b border-gray-200 text-[11.5px] font-medium text-gray-600 hover:bg-gray-100 transition-colors">
+              className="flex w-full shrink-0 items-center justify-center gap-1.5 border-b border-gray-200 bg-gray-50 py-1.5 text-[11.5px] font-medium text-gray-600 transition-colors hover:bg-gray-100"
+            >
               <svg
                 width="12"
                 height="12"
@@ -432,21 +500,23 @@ const MainWritingPage = ({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2.5"
-                className={`transition-transform duration-200 ${promptOpen ? "rotate-180" : ""}`}>
+                className={`transition-transform duration-200 ${
+                  promptOpen ? "rotate-180" : ""
+                }`}
+              >
                 <polyline points="6,9 12,15 18,9" />
               </svg>
               {promptOpen ? "Hide prompt" : "View prompt & charts"}
             </button>
 
-            {/* Answer area */}
             <div className="flex-1 overflow-y-auto bg-white">
-              <div className="flex flex-col h-full px-3 py-3">
-                <fieldset className="flex flex-col flex-1 border border-gray-300 rounded-[3px] px-2.5 pt-1.5 pb-2 min-h-0">
-                  <legend className="text-[11px] text-gray-500 px-1">
+              <div className="flex h-full flex-col px-3 py-3">
+                <fieldset className="flex min-h-0 flex-1 flex-col rounded-[3px] border border-gray-300 px-2.5 pb-2 pt-1.5">
+                  <legend className="px-1 text-[11px] text-gray-500">
                     {part.label} Answer
                   </legend>
                   <textarea
-                    className="flex-1 w-full min-h-60 border-none outline-none resize-none text-[14px] leading-[1.75] text-[#1a1a1a] bg-transparent py-1 placeholder:text-gray-300 placeholder:italic placeholder:text-[13px]"
+                    className="min-h-60 w-full flex-1 resize-none border-none bg-transparent py-1 text-[14px] leading-[1.75] text-[#1a1a1a] outline-none placeholder:text-[13px] placeholder:italic placeholder:text-gray-300"
                     style={{ fontFamily: "Arial, sans-serif" }}
                     value={answers[activePart]}
                     onChange={(e) =>
@@ -456,12 +526,17 @@ const MainWritingPage = ({
                     readOnly={submitted}
                     spellCheck
                   />
-                  <div className="flex items-center justify-between pt-1.5 border-t border-gray-100 mt-1">
+                  <div className="mt-1 flex items-center justify-between border-t border-gray-100 pt-1.5">
                     <span className="text-[11px] text-gray-400">
                       {countWords(answers[activePart])} / {part.minWords} words
                     </span>
                   </div>
                 </fieldset>
+
+                <WritingFeedbackPanel
+                  answer={answers[activePart]}
+                  minWords={part.minWords}
+                />
               </div>
             </div>
           </div>
@@ -473,14 +548,14 @@ const MainWritingPage = ({
             answers={answers}
             onSubmit={handleSubmitClick}
             submitted={submitted}
-            PARTS={WRITING_PART}
+            PARTS={PARTS}
           />
         </>
       )}
 
       {/* ── HIGHLIGHT / NOTE OVERLAYS ── */}
       {selection && !showNoteModal && (
-        <WritingSelectionPopup 
+        <WritingSelectionPopup
           selection={selection}
           isHighlighted={isHighlighted}
           onHighlight={handleHighlight}
@@ -506,6 +581,7 @@ const MainWritingPage = ({
           onClose={() => setShowNotesPanel(false)}
         />
       )}
+
       <style>{`
         * { box-sizing: border-box; }
         ::-webkit-scrollbar { width: 4px; }

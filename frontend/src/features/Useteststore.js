@@ -8,7 +8,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export const MODULE_REGISTRY = {
   reading: { durationMin: 60, label: "Reading" },
   // listening: { durationMin: 40, label: "Listening" },
-  // writing:   { durationMin: 60, label: "Writing" },
+  writing:   { durationMin: 60, label: "Writing" },
 };
 
 function makeModuleSession(moduleType, testId, testTitle) {

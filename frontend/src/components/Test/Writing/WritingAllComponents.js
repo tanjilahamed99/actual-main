@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const PART1_MIN = 150;
 const PART2_MIN = 250;
@@ -7,6 +7,9 @@ function countWords(text) {
   return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
 }
 
+// ─────────────────────────────────────────────────────────────
+// PIE CHART
+// ─────────────────────────────────────────────────────────────
 export function PieChart({ title, segments }) {
   const cx = 90,
     cy = 90,
@@ -32,20 +35,23 @@ export function PieChart({ title, segments }) {
   return (
     <div className="mb-6">
       <p
-        className="font-bold text-[13px] text-center text-gray-900 mb-2.5"
-        style={{ fontFamily: "Arial, sans-serif" }}>
+        className="mb-2.5 text-center text-[13px] font-bold text-gray-900"
+        style={{ fontFamily: "Arial, sans-serif" }}
+      >
         {title}
       </p>
-      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4">
+      <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start sm:gap-4">
         <svg
           viewBox="0 0 180 180"
-          className="w-32 h-32 sm:w-40 sm:h-40 flex-shrink-0">
+          className="h-32 w-32 flex-shrink-0 sm:h-40 sm:w-40"
+        >
           <defs>
             <pattern
               id={patternId("hatch", title.slice(0, 3))}
               patternUnits="userSpaceOnUse"
               width="5"
-              height="5">
+              height="5"
+            >
               <path
                 d="M-1,1 l2,-2 M0,5 l5,-5 M4,6 l2,-2"
                 stroke="#666"
@@ -56,14 +62,16 @@ export function PieChart({ title, segments }) {
               id={patternId("dots", title.slice(0, 3))}
               patternUnits="userSpaceOnUse"
               width="4"
-              height="4">
+              height="4"
+            >
               <circle cx="2" cy="2" r="0.9" fill="#777" />
             </pattern>
             <pattern
               id={patternId("cross", title.slice(0, 3))}
               patternUnits="userSpaceOnUse"
               width="6"
-              height="6">
+              height="6"
+            >
               <path d="M0,3 h6 M3,0 v6" stroke="#888" strokeWidth="0.7" />
             </pattern>
           </defs>
@@ -99,20 +107,22 @@ export function PieChart({ title, segments }) {
                   fontSize={s.value >= 15 ? 9 : 8}
                   fontWeight="700"
                   fill="#000"
-                  fontFamily="Arial,sans-serif">
+                  fontFamily="Arial,sans-serif"
+                >
                   {s.value}%
                 </text>
               ),
           )}
         </svg>
-        <div className="grid grid-cols-2 sm:flex sm:flex-col gap-x-3 gap-y-1.5 pt-0 sm:pt-1">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 pt-0 sm:flex sm:flex-col sm:pt-1">
           {segments?.map((s, i) => (
             <div
               key={i}
-              className="flex items-center gap-1.5 text-[11px] sm:text-[11.5px] text-gray-800"
-              style={{ fontFamily: "Arial, sans-serif" }}>
+              className="flex items-center gap-1.5 text-[11px] text-gray-800 sm:text-[11.5px]"
+              style={{ fontFamily: "Arial, sans-serif" }}
+            >
               <span
-                className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 border border-gray-400 rounded-[1px]"
+                className="h-3 w-3 flex-shrink-0 rounded-[1px] border border-gray-400 sm:h-3.5 sm:w-3.5"
                 style={{
                   background:
                     s.pattern === "hatched"
@@ -135,7 +145,9 @@ export function PieChart({ title, segments }) {
   );
 }
 
-// ── DIVIDER HOOK (desktop only) ───────────────
+// ─────────────────────────────────────────────────────────────
+// DIVIDER HOOK (desktop only)
+// ─────────────────────────────────────────────────────────────
 export function useDivider(initial = 48) {
   const [split, setSplit] = useState(initial);
   const dragging = useRef(false);
@@ -164,7 +176,9 @@ export function useDivider(initial = 48) {
   return { split, containerRef, onMouseDown };
 }
 
-// ── BOTTOM NAV ────────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// BOTTOM NAV
+// ─────────────────────────────────────────────────────────────
 export function BottomNav({
   active,
   setActive,
@@ -173,45 +187,44 @@ export function BottomNav({
   submitted,
   PARTS,
 }) {
-  const MINS = [PART1_MIN, PART2_MIN];
   return (
-    <div className="shrink-0 bg-white border-t border-gray-200 w-full">
-      <div className="flex items-center w-full h-12 px-1.5 sm:px-3 gap-1 sm:gap-2">
-        {/* ← Prev */}
+    <div className="w-full shrink-0 border-t border-gray-200 bg-white">
+      <div className="flex h-12 w-full items-center gap-1 px-1.5 sm:gap-2 sm:px-3">
         <button
           onClick={() => setActive((a) => Math.max(0, a - 1))}
           disabled={active === 0}
-          className="w-6 sm:w-7 h-8 shrink-0 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+          className="flex h-8 w-6 shrink-0 items-center justify-center rounded border border-gray-300 text-gray-600 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30 sm:w-7"
+        >
           <svg
             width="13"
             height="13"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2.5">
+            strokeWidth="2.5"
+          >
             <polyline points="15,18 9,12 15,6" />
           </svg>
         </button>
 
-        {/* Part tabs */}
-        <div className="flex flex-1 gap-1 sm:gap-1.5 min-w-0">
+        <div className="flex min-w-0 flex-1 gap-1 sm:gap-1.5">
           {PARTS.map((p, i) => {
-            const wc = countWords(answers[i]);
-            const min = MINS[i];
             const isActive = active === i;
-            const isMet = wc >= min;
             return (
               <button
                 key={i}
                 onClick={() => setActive(i)}
-                className={`flex-1 min-w-0 flex items-center justify-center border rounded h-9 transition-all
-                  ${
-                    isActive
-                      ? "bg-gray-900 border-gray-900 text-white px-1.5 sm:px-2 gap-1 sm:gap-1.5"
-                      : "bg-white border-gray-300 text-gray-700 hover:border-gray-500 hover:bg-gray-50 px-1 sm:px-2 gap-1"
-                  }`}>
+                className={`flex h-9 min-w-0 flex-1 items-center justify-center rounded border transition-all ${
+                  isActive
+                    ? "gap-1 border-gray-900 bg-gray-900 px-1.5 text-white sm:gap-1.5 sm:px-2"
+                    : "gap-1 border-gray-300 bg-white px-1 text-gray-700 hover:border-gray-500 hover:bg-gray-50 sm:px-2"
+                }`}
+              >
                 <span
-                  className={`font-bold whitespace-nowrap flex-shrink-0 text-[11px] sm:text-[12px] ${isActive ? "text-white" : "text-gray-800"}`}>
+                  className={`flex-shrink-0 whitespace-nowrap text-[11px] font-bold sm:text-[12px] ${
+                    isActive ? "text-white" : "text-gray-800"
+                  }`}
+                >
                   <span className="sm:hidden">P{i + 1}:</span>
                   <span className="hidden sm:inline">{p.label}</span>
                 </span>
@@ -220,37 +233,39 @@ export function BottomNav({
           })}
         </div>
 
-        {/* → Next */}
         <button
           onClick={() => setActive((a) => Math.min(PARTS.length - 1, a + 1))}
           disabled={active === PARTS.length - 1}
-          className="w-6 sm:w-7 h-8 flex-shrink-0 flex items-center justify-center border border-gray-300 rounded hover:bg-gray-100 text-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+          className="flex h-8 w-6 shrink-0 items-center justify-center rounded border border-gray-300 text-gray-600 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-30 sm:w-7"
+        >
           <svg
             width="13"
             height="13"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2.5">
+            strokeWidth="2.5"
+          >
             <polyline points="9,18 15,12 9,6" />
           </svg>
         </button>
 
-        <div className="w-px h-7 bg-gray-200 flex-shrink-0" />
+        <div className="h-7 w-px flex-shrink-0 bg-gray-200" />
 
-        {/* Submit */}
         <button
           onClick={onSubmit}
           disabled={submitted}
-          className="flex items-center justify-center gap-1.5 h-8 flex-shrink-0 bg-[#1a3b6e] hover:bg-[#0f2a52] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded transition-colors w-8 sm:w-auto sm:px-3">
-          <span className="hidden sm:inline text-[12.5px]">Submit</span>
+          className="flex h-8 w-8 flex-shrink-0 items-center justify-center gap-1.5 rounded bg-[#1a3b6e] font-bold text-white transition-colors hover:bg-[#0f2a52] disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto sm:px-3"
+        >
+          <span className="hidden text-[12.5px] sm:inline">Submit</span>
           <svg
             width="13"
             height="13"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2.5">
+            strokeWidth="2.5"
+          >
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
         </button>
@@ -259,98 +274,132 @@ export function BottomNav({
   );
 }
 
-// ── RESULT MODAL ──────────────────────────────
-export function ResultModal({ answers, PARTS }) {
+// ─────────────────────────────────────────────────────────────
+// RESULT MODAL (auto-dismisses)
+// ─────────────────────────────────────────────────────────────
+export function ResultModal({ answers, PARTS, onDone }) {
   const counts = answers.map(countWords);
-  const mins = [PART1_MIN, PART2_MIN];
+
+  useEffect(() => {
+    const id = setTimeout(() => onDone?.(), 2000);
+    return () => clearTimeout(id);
+  }, [onDone]);
+
   return (
-    <div className="fixed inset-0 z-[300] bg-black/45 flex items-center justify-center p-4">
-      <div className="bg-white rounded-[5px] p-5 sm:p-7 max-w-[500px] w-full shadow-[0_18px_56px_rgba(0,0,0,.22)] max-h-[90vh] overflow-y-auto">
-        <p className="text-[10px] font-bold tracking-[.1em] uppercase text-gray-400 mb-1">
-          Results
+    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/45 p-4">
+      <div className="max-h-[90vh] w-full max-w-[520px] overflow-y-auto rounded-lg bg-white p-5 shadow-[0_18px_56px_rgba(0,0,0,.22)] sm:p-7">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+          Submitted
         </p>
-        <h2 className="text-[18px] sm:text-[21px] font-bold text-gray-900 mb-1">
-          Test Submitted
+        <h2 className="mb-1 text-[18px] font-bold text-gray-900 sm:text-[21px]">
+          Your answers have been saved
         </h2>
-        <p className="text-[12px] sm:text-[12.5px] text-gray-500 mb-4">
-          Cambridge IELTS 10 · Academic Writing Test 1
+        <p className="mb-4 text-[12px] text-gray-500 sm:text-[12.5px]">
+          Here&apos;s a quick summary of what you submitted.
         </p>
-        <div className="flex gap-3 mb-4">
+
+        <div className="flex gap-3">
           {PARTS.map((p, i) => {
-            const ok = counts[i] >= mins[i];
+            const wc = counts[i];
+            const min = p.minWords ?? 150;
+            const ok = wc >= min;
+
             return (
               <div
                 key={i}
-                className={`flex-1 text-center py-3 px-2 rounded border-[1.5px] ${ok ? "border-green-700/40 bg-green-50" : "border-red-800/30 bg-red-50"}`}>
-                <div className="text-[10px] font-bold uppercase tracking-[.06em] text-gray-400 mb-1">
+                className={`flex-1 rounded border-[1.5px] px-2 py-3 text-center ${
+                  ok
+                    ? "border-green-700/40 bg-green-50"
+                    : "border-red-800/30 bg-red-50"
+                }`}
+              >
+                <div className="mb-1 text-[10px] font-bold uppercase tracking-wide text-gray-400">
                   {p.label}
                 </div>
-                <div className="text-[28px] sm:text-[34px] font-bold text-[#1a3b6e] leading-none">
-                  {counts[i]}
+                <div className="text-[26px] font-bold leading-none text-[#1a3b6e] sm:text-[32px]">
+                  {wc}
                 </div>
-                <div className="text-[11px] sm:text-[12px] text-gray-500 mt-1">
-                  words {ok ? "✓" : `(need ${mins[i]})`}
+                <div className="mt-1 text-[11px] text-gray-500 sm:text-[12px]">
+                  words {ok ? "✓" : `(need ${min})`}
                 </div>
               </div>
             );
           })}
         </div>
-        {counts.some((c, i) => c < mins[i]) && (
-          <div className="bg-amber-50 border border-amber-200 rounded p-2.5 text-[12px] sm:text-[13px] text-amber-900 leading-relaxed">
-            ⚠ One or more parts did not meet the minimum word count.
+
+        {counts.some((c, i) => c < (PARTS[i]?.minWords ?? 150)) && (
+          <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-2.5 text-[12px] leading-relaxed text-amber-900 sm:text-[13px]">
+            ⚠ One or more parts did not meet the minimum word count. This may
+            affect your band score.
           </div>
         )}
+
+        <p className="mt-4 text-center text-[11px] text-gray-400">
+          Closing in a moment…
+        </p>
       </div>
     </div>
   );
 }
 
-// ── SUBMIT CONFIRM ────────────────────────────
+// ─────────────────────────────────────────────────────────────
+// SUBMIT CONFIRM
+// ─────────────────────────────────────────────────────────────
 export function ConfirmModal({ answers, onConfirm, onCancel, PARTS }) {
   const counts = answers.map(countWords);
-  const mins = [PART1_MIN, PART2_MIN];
-  const allOk = counts.every((c, i) => c >= mins[i]);
+  const allOk = counts.every((c, i) => c >= (PARTS[i]?.minWords ?? 150));
+
   return (
-    <div className="fixed inset-0 z-[300] bg-black/45 flex items-center justify-center p-4">
-      <div className="bg-white rounded-[5px] p-5 sm:p-7 max-w-[420px] w-full shadow-[0_18px_56px_rgba(0,0,0,.22)]">
-        <p className="text-[10px] font-bold tracking-[.1em] uppercase text-gray-400 mb-1">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/45 p-4">
+      <div className="w-full max-w-[440px] rounded-lg bg-white p-5 shadow-[0_18px_56px_rgba(0,0,0,.22)] sm:p-7">
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">
           Confirm Submission
         </p>
-        <h2 className="text-[18px] sm:text-[20px] font-bold text-gray-900 mb-3">
+        <h2 className="mb-3 text-[18px] font-bold text-gray-900 sm:text-[20px]">
           Submit your test?
         </h2>
+
         <div className="mb-3">
           {PARTS.map((p, i) => {
-            const ok = counts[i] >= mins[i];
+            const wc = counts[i];
+            const min = p.minWords ?? 150;
+            const ok = wc >= min;
             return (
               <div
                 key={i}
-                className={`flex items-start gap-2 px-3 py-2 rounded text-[12.5px] mb-1.5 ${ok ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-900"}`}>
-                <span className="flex-shrink-0 mt-px">{ok ? "✓" : "⚠"}</span>
+                className={`mb-1.5 flex items-start gap-2 rounded px-3 py-2 text-[12.5px] ${
+                  ok
+                    ? "bg-green-50 text-green-800"
+                    : "bg-amber-50 text-amber-900"
+                }`}
+              >
+                <span className="mt-px flex-shrink-0">{ok ? "✓" : "⚠"}</span>
                 <span>
-                  {p.label}: <strong>{counts[i]}</strong> words{" "}
-                  {ok
-                    ? `(min. ${mins[i]} ✓)`
-                    : `— need ${mins[i] - counts[i]} more`}
+                  <strong>{p.label}:</strong> {wc} words{" "}
+                  {ok ? `(min. ${min} ✓)` : `— need ${min - wc} more`}
                 </span>
               </div>
             );
           })}
         </div>
+
         {!allOk && (
-          <p className="text-[12px] text-amber-900 bg-amber-50 border border-amber-200 rounded px-3 py-2 mb-3 leading-relaxed">
+          <p className="mb-3 rounded border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] leading-relaxed text-amber-900">
             Submitting below the minimum word count may affect your band score.
           </p>
         )}
-        <div className="flex flex-col sm:flex-row gap-2">
+
+        <div className="flex flex-col gap-2 sm:flex-row">
           <button
             onClick={onCancel}
-            className="flex-1 py-2.5 px-3 rounded border border-gray-200 bg-gray-100 hover:bg-gray-200 text-gray-900 text-[13px] font-bold cursor-pointer transition-colors">
+            className="flex-1 cursor-pointer rounded border border-gray-200 bg-gray-100 px-3 py-2.5 text-[13px] font-bold text-gray-900 transition-colors hover:bg-gray-200"
+          >
             Continue writing
           </button>
           <button
             onClick={onConfirm}
-            className="flex-1 py-2.5 px-3 rounded border-none bg-[#1a3b6e] hover:bg-[#0f2a52] text-white text-[13px] font-bold cursor-pointer transition-colors">
+            className="flex-1 cursor-pointer rounded border-none bg-[#1a3b6e] px-3 py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#0f2a52]"
+          >
             Submit now
           </button>
         </div>
@@ -359,53 +408,165 @@ export function ConfirmModal({ answers, onConfirm, onCancel, PARTS }) {
   );
 }
 
-// ── COMPLETION MODAL ──────────────────────────
-export function CompletionModal({ onViewResults }) {
+// ─────────────────────────────────────────────────────────────
+// COMPLETION MODAL
+// ─────────────────────────────────────────────────────────────
+export function CompletionModal({ onViewAnswers, onBackToTests }) {
   return (
-    <div className="fixed inset-0 z-[300] bg-black/45 flex items-center justify-center p-4">
-      <div className="bg-white rounded-[5px] p-5 sm:p-7 max-w-[420px] w-full shadow-[0_18px_56px_rgba(0,0,0,.22)] text-center">
-        <div className="w-14 h-14 sm:w-[60px] sm:h-[60px] bg-[#2e7d52] rounded-full flex items-center justify-center mx-auto mb-4">
+    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/45 p-4">
+      <div className="w-full max-w-[460px] rounded-lg bg-white p-6 text-center shadow-[0_18px_56px_rgba(0,0,0,.22)] sm:p-8">
+        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#2e7d52] sm:h-[60px] sm:w-[60px]">
           <svg
             width="28"
             height="28"
             viewBox="0 0 24 24"
             fill="none"
             stroke="white"
-            strokeWidth="3">
+            strokeWidth="3"
+          >
             <polyline points="20 6 9 17 4 12" />
           </svg>
         </div>
-        <p className="text-[10px] font-bold tracking-[.1em] uppercase text-gray-400 mb-1">
-          Test Complete!
+
+        <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+          Test Complete
         </p>
-        <h2 className="text-[20px] sm:text-[24px] font-bold text-gray-900 mb-1">
+        <h2 className="mb-2 text-[20px] font-bold text-gray-900 sm:text-[24px]">
           Congratulations!
         </h2>
-        <p className="text-[12px] sm:text-[12.5px] text-gray-500 mb-6">
-          You have successfully completed the full mock test.
+        <p className="mb-6 text-[13px] leading-relaxed text-gray-500">
+          Your answers have been submitted. A teacher will mark them and you
+          will see your band score on the writing tests page.
         </p>
-        <button
-          onClick={onViewResults}
-          className="w-full py-3 rounded border-none bg-[#1a3b6e] hover:bg-[#0f2a52] text-white text-[14px] font-bold cursor-pointer transition-colors">
-          View Results →
-        </button>
+
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={onViewAnswers}
+            className="w-full cursor-pointer rounded border border-gray-200 bg-white px-4 py-3 text-[13px] font-bold text-gray-900 transition-colors hover:bg-gray-50"
+          >
+            Review my answers
+          </button>
+
+          <button
+            onClick={onBackToTests}
+            className="w-full cursor-pointer rounded border-none bg-[#1a3b6e] px-4 py-3 text-[13px] font-bold text-white transition-colors hover:bg-[#0f2a52]"
+          >
+            Back to writing tests →
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
+// ─────────────────────────────────────────────────────────────
+// ANSWERS REVIEW MODAL
+// ─────────────────────────────────────────────────────────────
+export function AnswersReviewModal({ answers, PARTS, onClose }) {
+  return (
+    <div
+      className="fixed inset-0 z-[350] flex items-center justify-center bg-black/50 p-4"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">
+              Review
+            </p>
+            <h2 className="text-[17px] font-bold text-gray-900">
+              Your writing test answers
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:border-gray-400 hover:text-gray-900"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-4">
+          {PARTS.map((p, i) => {
+            const answer = answers[i] ?? "";
+            const wc = countWords(answer);
+            const min = p.minWords ?? 150;
+
+            return (
+              <div key={i} className="mb-6 last:mb-0">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="text-[14px] font-bold text-gray-900">
+                    {p.label}
+                  </h3>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                        wc >= min
+                          ? "bg-green-100 text-green-800"
+                          : "bg-amber-100 text-amber-900"
+                      }`}
+                    >
+                      {wc} / {min} words
+                    </span>
+                  </div>
+                </div>
+
+                <details className="mb-2 rounded border border-gray-200 bg-gray-50 px-3 py-2">
+                  <summary className="cursor-pointer text-[12px] font-semibold text-gray-700">
+                    Show prompt
+                  </summary>
+                  <p className="mt-2 whitespace-pre-line text-[12.5px] leading-relaxed text-gray-600">
+                    {p.prompt}
+                  </p>
+                </details>
+
+                <div className="rounded border border-gray-200 bg-white p-3">
+                  {answer.trim() ? (
+                    <p className="whitespace-pre-wrap font-sans text-[13.5px] leading-relaxed text-gray-800">
+                      {answer}
+                    </p>
+                  ) : (
+                    <p className="text-[13px] italic text-gray-400">
+                      No answer submitted for this part.
+                    </p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="border-t border-gray-200 px-5 py-3">
+          <button
+            onClick={onClose}
+            className="w-full rounded bg-[#1a3b6e] py-2.5 text-[13px] font-bold text-white transition-colors hover:bg-[#0f2a52]"
+          >
+            Close review
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// TABLE CHART
+// ─────────────────────────────────────────────────────────────
 export function TableChart({ title, columns, rows }) {
   return (
     <div className="mb-6">
       <p
-        className="font-bold text-[13px] text-center text-gray-900 mb-2.5"
-        style={{ fontFamily: "Arial, sans-serif" }}>
+        className="mb-2.5 text-center text-[13px] font-bold text-gray-900"
+        style={{ fontFamily: "Arial, sans-serif" }}
+      >
         {title}
       </p>
       <div className="overflow-x-auto">
         <table
           className="w-full border-collapse text-[11.5px] sm:text-[12px]"
-          style={{ fontFamily: "Arial, sans-serif" }}>
+          style={{ fontFamily: "Arial, sans-serif" }}
+        >
           <thead>
             <tr>
               {columns.map((col, i) => (
@@ -413,9 +574,10 @@ export function TableChart({ title, columns, rows }) {
                   key={i}
                   className={`border border-gray-400 px-2 py-1.5 text-gray-900 ${
                     i === 0
-                      ? "text-left bg-gray-50"
-                      : "text-center bg-gray-100 font-bold"
-                  }`}>
+                      ? "bg-gray-50 text-left"
+                      : "bg-gray-100 text-center font-bold"
+                  }`}
+                >
                   {col}
                 </th>
               ))}
@@ -429,7 +591,8 @@ export function TableChart({ title, columns, rows }) {
                     key={ci}
                     className={`border border-gray-300 px-2 py-1.5 text-gray-800 ${
                       ci === 0 ? "text-left font-medium" : "text-center"
-                    }`}>
+                    }`}
+                  >
                     {cell}
                   </td>
                 ))}
@@ -442,7 +605,9 @@ export function TableChart({ title, columns, rows }) {
   );
 }
 
-// ── LINE CHART (multi-series) ─────────────────
+// ─────────────────────────────────────────────────────────────
+// LINE CHART (multi-series)
+// ─────────────────────────────────────────────────────────────
 export function LineChart({
   title,
   xLabels,
@@ -534,16 +699,17 @@ export function LineChart({
   return (
     <div className="mb-6">
       <p
-        className="font-bold text-[13px] text-center text-gray-900 mb-3"
-        style={{ fontFamily: "Arial, sans-serif" }}>
+        className="mb-3 text-center text-[13px] font-bold text-gray-900"
+        style={{ fontFamily: "Arial, sans-serif" }}
+      >
         {title}
       </p>
       <div className="overflow-x-auto">
         <svg
           viewBox={`0 0 ${W} ${H}`}
-          className="w-full max-w-[640px] mx-auto"
-          style={{ fontFamily: "Arial, sans-serif" }}>
-          {/* Gridlines + Y ticks */}
+          className="mx-auto w-full max-w-[640px]"
+          style={{ fontFamily: "Arial, sans-serif" }}
+        >
           {yTicks.map((v, i) => {
             const y = yForValue(v);
             return (
@@ -561,14 +727,14 @@ export function LineChart({
                   y={y + 3}
                   textAnchor="end"
                   fontSize="10"
-                  fill="#444">
+                  fill="#444"
+                >
                   {v}
                 </text>
               </g>
             );
           })}
 
-          {/* Axes */}
           <line
             x1={padL}
             y1={padT}
@@ -586,7 +752,6 @@ export function LineChart({
             strokeWidth="1.2"
           />
 
-          {/* X labels */}
           {xLabels.map((lb, i) => (
             <text
               key={i}
@@ -594,33 +759,33 @@ export function LineChart({
               y={padT + plotH + 18}
               textAnchor="middle"
               fontSize="10.5"
-              fill="#333">
+              fill="#333"
+            >
               {lb}
             </text>
           ))}
 
-          {/* Y axis label */}
           <text
             x={14}
             y={padT + plotH / 2}
             textAnchor="middle"
             fontSize="10.5"
             fill="#333"
-            transform={`rotate(-90 14 ${padT + plotH / 2})`}>
+            transform={`rotate(-90 14 ${padT + plotH / 2})`}
+          >
             {yUnit}
           </text>
 
-          {/* X axis label */}
           <text
             x={padL + plotW / 2}
             y={H - 8}
             textAnchor="middle"
             fontSize="10.5"
-            fill="#333">
+            fill="#333"
+          >
             {xUnit}
           </text>
 
-          {/* Series lines + markers */}
           {series.map((s, si) => {
             const pts = s.values
               .map((v, i) => `${xForIndex(i)},${yForValue(v)}`)
@@ -643,7 +808,6 @@ export function LineChart({
             );
           })}
 
-          {/* Legend box */}
           <g>
             <rect
               x={padL + plotW + 14}
@@ -672,7 +836,8 @@ export function LineChart({
                     x={padL + plotW + 60}
                     y={ly + 3.5}
                     fontSize="10.5"
-                    fill="#222">
+                    fill="#222"
+                  >
                     {s.label}
                   </text>
                 </g>
@@ -685,7 +850,9 @@ export function LineChart({
   );
 }
 
-// ── GROUPED BAR CHART ─────────────────────────
+// ─────────────────────────────────────────────────────────────
+// GROUPED BAR CHART
+// ─────────────────────────────────────────────────────────────
 export function BarChart({
   title,
   xLabels,
@@ -733,21 +900,24 @@ export function BarChart({
   return (
     <div className="mb-6">
       <p
-        className="font-bold text-[13px] text-center text-gray-900 mb-1 leading-tight"
-        style={{ fontFamily: "Arial, sans-serif" }}>
+        className="mb-1 text-center text-[13px] font-bold leading-tight text-gray-900"
+        style={{ fontFamily: "Arial, sans-serif" }}
+      >
         {title}
       </p>
       <div className="overflow-x-auto">
         <svg
           viewBox={`0 0 ${W} ${H}`}
-          className="w-full max-w-[600px] mx-auto"
-          style={{ fontFamily: "Arial, sans-serif" }}>
+          className="mx-auto w-full max-w-[600px]"
+          style={{ fontFamily: "Arial, sans-serif" }}
+        >
           <defs>
             <pattern
               id="bar-hatch"
               patternUnits="userSpaceOnUse"
               width="5"
-              height="5">
+              height="5"
+            >
               <path
                 d="M-1,1 l2,-2 M0,5 l5,-5 M4,6 l2,-2"
                 stroke="#555"
@@ -758,19 +928,20 @@ export function BarChart({
               id="bar-dots"
               patternUnits="userSpaceOnUse"
               width="4"
-              height="4">
+              height="4"
+            >
               <circle cx="2" cy="2" r="0.9" fill="#666" />
             </pattern>
             <pattern
               id="bar-cross"
               patternUnits="userSpaceOnUse"
               width="6"
-              height="6">
+              height="6"
+            >
               <path d="M0,3 h6 M3,0 v6" stroke="#777" strokeWidth="0.7" />
             </pattern>
           </defs>
 
-          {/* Gridlines + Y ticks */}
           {yTicks.map((v, i) => {
             const y = yForValue(v);
             return (
@@ -788,14 +959,14 @@ export function BarChart({
                   y={y + 3}
                   textAnchor="end"
                   fontSize="10"
-                  fill="#444">
+                  fill="#444"
+                >
                   {v}
                 </text>
               </g>
             );
           })}
 
-          {/* Axes */}
           <line
             x1={padL}
             y1={padT}
@@ -813,7 +984,6 @@ export function BarChart({
             strokeWidth="1.2"
           />
 
-          {/* Bars + value labels */}
           {xLabels.map((lb, gi) => {
             const groupX = padL + gi * groupW + groupPad;
             return (
@@ -840,47 +1010,47 @@ export function BarChart({
                         textAnchor="middle"
                         fontSize="9.5"
                         fontWeight="700"
-                        fill="#222">
+                        fill="#222"
+                      >
                         {v}
                       </text>
                     </g>
                   );
                 })}
-                {/* X label */}
                 <text
                   x={groupX + (groupW - groupPad * 2) / 2}
                   y={padT + plotH + 18}
                   textAnchor="middle"
                   fontSize="10.5"
-                  fill="#333">
+                  fill="#333"
+                >
                   {lb}
                 </text>
               </g>
             );
           })}
 
-          {/* Y axis label */}
           <text
             x={14}
             y={padT + plotH / 2}
             textAnchor="middle"
             fontSize="10.5"
             fill="#333"
-            transform={`rotate(-90 14 ${padT + plotH / 2})`}>
+            transform={`rotate(-90 14 ${padT + plotH / 2})`}
+          >
             {yUnit}
           </text>
 
-          {/* X axis label */}
           <text
             x={padL + plotW / 2}
             y={padT + plotH + 40}
             textAnchor="middle"
             fontSize="10.5"
-            fill="#333">
+            fill="#333"
+          >
             {xUnit}
           </text>
 
-          {/* Legend */}
           <g>
             {series.map((s, i) => {
               const lx = padL + plotW / 2 - (series.length * 90) / 2 + i * 90;
@@ -909,14 +1079,17 @@ export function BarChart({
   );
 }
 
-// ── TOWN MAP PAIR (before / after) ────────────
+// ─────────────────────────────────────────────────────────────
+// MAP PAIR (before / after)
+// ─────────────────────────────────────────────────────────────
 function Compass({ x, y }) {
   return (
     <g
       transform={`translate(${x},${y})`}
       fontSize="9"
       fill="#222"
-      fontWeight="700">
+      fontWeight="700"
+    >
       <line x1="0" y1="-14" x2="0" y2="14" stroke="#333" strokeWidth="1" />
       <line x1="-14" y1="0" x2="14" y2="0" stroke="#333" strokeWidth="1" />
       <text x="0" y="-17" textAnchor="middle">
@@ -952,7 +1125,8 @@ function LabelBox({ x, y, w, h, label, fontSize = 10.5 }) {
         y={y + h / 2 + 4}
         textAnchor="middle"
         fontSize={fontSize}
-        fill="#222">
+        fill="#222"
+      >
         {label}
       </text>
     </g>
@@ -962,11 +1136,10 @@ function LabelBox({ x, y, w, h, label, fontSize = 10.5 }) {
 export function MapPair({ titleBefore, titleAfter }) {
   return (
     <div className="mb-6" style={{ fontFamily: "Arial, sans-serif" }}>
-      {/* ── BEFORE ── */}
-      <p className="font-bold text-[14px] text-center text-gray-900 mb-2">
+      <p className="mb-2 text-center text-[14px] font-bold text-gray-900">
         {titleBefore}
       </p>
-      <svg viewBox="0 0 500 300" className="w-full max-w-[500px] mx-auto mb-8">
+      <svg viewBox="0 0 500 300" className="mx-auto mb-8 w-full max-w-[500px]">
         <rect
           x="10"
           y="10"
@@ -976,18 +1149,17 @@ export function MapPair({ titleBefore, titleAfter }) {
           stroke="#333"
           strokeWidth="1.4"
         />
-        {/* countryside strip */}
         <text x="250" y="30" textAnchor="middle" fontSize="11" fontWeight="700">
           Farmland
         </text>
         <line x1="10" y1="42" x2="490" y2="42" stroke="#333" strokeWidth="1" />
-        {/* shop row 1 */}
         <text
           x="250"
           y="58"
           textAnchor="middle"
           fontSize="10.5"
-          fontWeight="700">
+          fontWeight="700"
+        >
           Shops
         </text>
         {[60, 110, 160, 240, 320, 400].map((x, i) => (
@@ -1015,7 +1187,8 @@ export function MapPair({ titleBefore, titleAfter }) {
           y="104"
           textAnchor="middle"
           fontSize="10.5"
-          fontWeight="700">
+          fontWeight="700"
+        >
           High Street
         </text>
         <line
@@ -1026,13 +1199,13 @@ export function MapPair({ titleBefore, titleAfter }) {
           stroke="#333"
           strokeWidth="1.4"
         />
-        {/* shop row 2 */}
         <text
           x="250"
           y="128"
           textAnchor="middle"
           fontSize="10.5"
-          fontWeight="700">
+          fontWeight="700"
+        >
           Shops
         </text>
         {[60, 110, 160, 240, 320, 400].map((x, i) => (
@@ -1062,7 +1235,8 @@ export function MapPair({ titleBefore, titleAfter }) {
           y="200"
           textAnchor="middle"
           fontSize="12"
-          fontWeight="700">
+          fontWeight="700"
+        >
           Residential area
         </text>
         <LabelBox x={340} y="175" w="110" h="55" label="Playing field" />
@@ -1078,16 +1252,16 @@ export function MapPair({ titleBefore, titleAfter }) {
           y="270"
           textAnchor="middle"
           fontSize="12"
-          fontWeight="700">
+          fontWeight="700"
+        >
           Residential area
         </text>
       </svg>
 
-      {/* ── AFTER ── */}
-      <p className="font-bold text-[14px] text-center text-gray-900 mb-2">
+      <p className="mb-2 text-center text-[14px] font-bold text-gray-900">
         {titleAfter}
       </p>
-      <svg viewBox="0 0 500 320" className="w-full max-w-[500px] mx-auto">
+      <svg viewBox="0 0 500 320" className="mx-auto w-full max-w-[500px]">
         <rect
           x="10"
           y="10"
@@ -1099,7 +1273,6 @@ export function MapPair({ titleBefore, titleAfter }) {
         />
         <Compass x={55} y={45} />
 
-        {/* ring road (double line) */}
         <path
           d="M 190 55 H 300 A 55 55 0 0 1 355 110 V 170 A 55 55 0 0 1 300 225 H 190 A 55 55 0 0 1 135 170 V 110 A 55 55 0 0 1 190 55 Z"
           fill="none"
@@ -1135,7 +1308,8 @@ export function MapPair({ titleBefore, titleAfter }) {
           y="185"
           textAnchor="middle"
           fontSize="10"
-          fontWeight="700">
+          fontWeight="700"
+        >
           Walkway zone
         </text>
         {[190, 225, 260, 295].map((x, i) => (
@@ -1159,7 +1333,8 @@ export function MapPair({ titleBefore, titleAfter }) {
           y="235"
           textAnchor="middle"
           fontSize="10"
-          fontWeight="700">
+          fontWeight="700"
+        >
           Residential
         </text>
         <text
@@ -1167,7 +1342,8 @@ export function MapPair({ titleBefore, titleAfter }) {
           y="235"
           textAnchor="middle"
           fontSize="10"
-          fontWeight="700">
+          fontWeight="700"
+        >
           New homes
         </text>
         <LabelBox x={300} y="222" w="45" h="24" label="Park" fontSize="9.5" />
@@ -1177,7 +1353,8 @@ export function MapPair({ titleBefore, titleAfter }) {
           y="235"
           textAnchor="middle"
           fontSize="9.5"
-          fontWeight="700">
+          fontWeight="700"
+        >
           Ring
         </text>
         <text
@@ -1185,7 +1362,8 @@ export function MapPair({ titleBefore, titleAfter }) {
           y="247"
           textAnchor="middle"
           fontSize="9.5"
-          fontWeight="700">
+          fontWeight="700"
+        >
           road
         </text>
 
@@ -1201,7 +1379,8 @@ export function MapPair({ titleBefore, titleAfter }) {
           y="300"
           textAnchor="middle"
           fontSize="11"
-          fontWeight="700">
+          fontWeight="700"
+        >
           Residential
         </text>
       </svg>
@@ -1209,19 +1388,23 @@ export function MapPair({ titleBefore, titleAfter }) {
   );
 }
 
-// ── PERCENTAGE CHANGE TABLE (with up/down arrows) ──
+// ─────────────────────────────────────────────────────────────
+// CHANGE TABLE
+// ─────────────────────────────────────────────────────────────
 export function ChangeTable({ title, rows }) {
   return (
     <div className="mb-6">
       <div className="overflow-x-auto">
         <table
-          className="w-full max-w-[420px] mx-auto border-collapse text-[12px]"
-          style={{ fontFamily: "Arial, sans-serif" }}>
+          className="mx-auto w-full max-w-[420px] border-collapse text-[12px]"
+          style={{ fontFamily: "Arial, sans-serif" }}
+        >
           <thead>
             <tr>
               <th
                 colSpan={2}
-                className="border border-gray-400 px-3 py-1.5 text-center bg-gray-100 font-bold text-gray-900">
+                className="border border-gray-400 bg-gray-100 px-3 py-1.5 text-center font-bold text-gray-900"
+              >
                 {title}
               </th>
             </tr>
@@ -1232,17 +1415,15 @@ export function ChangeTable({ title, rows }) {
                 <td className="border border-gray-300 px-3 py-1.5 text-gray-800">
                   {r.label}
                 </td>
-                <td className="border border-gray-300 px-3 py-1.5 text-center text-gray-900 font-medium">
-                  <span
-                    className={`inline-flex items-center gap-1.5 ${
-                      r.direction === "up" ? "text-gray-800" : "text-gray-800"
-                    }`}>
+                <td className="border border-gray-300 px-3 py-1.5 text-center font-medium text-gray-900">
+                  <span className="inline-flex items-center gap-1.5 text-gray-800">
                     {r.direction === "up" ? (
                       <svg
                         width="11"
                         height="11"
                         viewBox="0 0 24 24"
-                        fill="currentColor">
+                        fill="currentColor"
+                      >
                         <path d="M12 4l8 10H4z" />
                       </svg>
                     ) : (
@@ -1250,7 +1431,8 @@ export function ChangeTable({ title, rows }) {
                         width="11"
                         height="11"
                         viewBox="0 0 24 24"
-                        fill="currentColor">
+                        fill="currentColor"
+                      >
                         <path d="M12 20L4 10h16z" />
                       </svg>
                     )}
@@ -1266,7 +1448,9 @@ export function ChangeTable({ title, rows }) {
   );
 }
 
-// ── PROCESS DIAGRAM (snake layout, numbered steps) ──
+// ─────────────────────────────────────────────────────────────
+// PROCESS DIAGRAM
+// ─────────────────────────────────────────────────────────────
 function ProcessIcon({ type }) {
   const s = { width: 46, height: 46, viewBox: "0 0 46 46" };
   switch (type) {
@@ -1446,17 +1630,17 @@ function ProcessIcon({ type }) {
 
 function ProcessStep({ n, icon, label, sub }) {
   return (
-    <div className="flex flex-col items-center text-center w-[110px]">
-      <div className="flex items-center gap-1.5 mb-1.5">
-        <span className="w-5 h-5 rounded-full border border-gray-700 flex items-center justify-center text-[10px] font-bold text-gray-800 shrink-0">
+    <div className="flex w-[110px] flex-col items-center text-center">
+      <div className="mb-1.5 flex items-center gap-1.5">
+        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-gray-700 text-[10px] font-bold text-gray-800">
           {n}
         </span>
-        <span className="text-[11px] font-bold text-gray-900 leading-tight text-left">
+        <span className="text-left text-[11px] font-bold leading-tight text-gray-900">
           {label}
         </span>
       </div>
       {sub && (
-        <p className="text-[10px] text-gray-500 italic mb-1.5 leading-tight">
+        <p className="mb-1.5 text-[10px] italic leading-tight text-gray-500">
           {sub}
         </p>
       )}
@@ -1467,7 +1651,7 @@ function ProcessStep({ n, icon, label, sub }) {
 
 function HArrow() {
   return (
-    <svg width="34" height="14" viewBox="0 0 34 14" className="shrink-0 mt-6">
+    <svg width="34" height="14" viewBox="0 0 34 14" className="mt-6 shrink-0">
       <line x1="0" y1="7" x2="26" y2="7" stroke="#222" strokeWidth="2.2" />
       <path d="M26 2 L34 7 L26 12 Z" fill="#222" />
     </svg>
@@ -1483,17 +1667,18 @@ function VArrow() {
 }
 
 export function ProcessDiagram({ title, rows }) {
-  // rows: array of arrays of step objects; alternating direction (row 0 → L-R, row 1 → R-L, ...)
   return (
     <div className="mb-6">
       <p
-        className="font-bold text-[14px] text-center text-gray-900 mb-4"
-        style={{ fontFamily: "Arial, sans-serif" }}>
+        className="mb-4 text-center text-[14px] font-bold text-gray-900"
+        style={{ fontFamily: "Arial, sans-serif" }}
+      >
         {title}
       </p>
       <div
         className="flex flex-col items-center gap-2"
-        style={{ fontFamily: "Arial, sans-serif" }}>
+        style={{ fontFamily: "Arial, sans-serif" }}
+      >
         {rows.map((row, ri) => {
           const displayRow = ri % 2 === 0 ? row : [...row].reverse();
           return (
@@ -1508,12 +1693,17 @@ export function ProcessDiagram({ title, rows }) {
               </div>
               {ri < rows.length - 1 && (
                 <div
-                  className={`flex ${ri % 2 === 0 ? "justify-end w-full pr-6" : "justify-start w-full pl-6"}`}>
+                  className={`flex ${
+                    ri % 2 === 0
+                      ? "w-full justify-end pr-6"
+                      : "w-full justify-start pl-6"
+                  }`}
+                >
                   <VArrow />
                 </div>
               )}
             </div>
-          ); 
+          );
         })}
       </div>
     </div>

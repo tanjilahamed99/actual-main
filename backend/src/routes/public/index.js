@@ -3,10 +3,11 @@ const router = Router();
 
 const readingRoutes = require("./readingRoutes");
 // const listeningRoutes = require("./listeningRoutes");
-// const writingRoutes = require("./writingRoutes");
+const writingRoutes = require("./writingRoutes");
+const { authProtect } = require("../../middleware/authValidate");
 
-router.use("/reading", readingRoutes);
+router.use("/reading", authProtect, readingRoutes);
+router.use("/writing", authProtect, writingRoutes);
 // router.use("/listening", listeningRoutes);
-// router.use("/writing", writingRoutes);
 
 module.exports = router;
