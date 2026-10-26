@@ -43,6 +43,7 @@ export default function AdminPassagesPage() {
   const [duplicateMap, setDuplicateMap] = useState(new Map()); // normalizedTitle -> count
   const [duplicateTotals, setDuplicateTotals] = useState({ groups: 0, passages: 0 });
 
+
   useEffect(() => setPage(1), [search, status, priority]);
 
   const fetchPassages = useCallback(async () => {
@@ -61,6 +62,8 @@ export default function AdminPassagesPage() {
         }),
         getDuplicatePassages(),
       ]);
+
+      console.log(dupRes.data)
 
       setRows(pageRes.data.passages ?? []);
       setMeta(pageRes.data.pagination ?? { total: 0, totalPages: 1 });
@@ -500,7 +503,7 @@ function PassageRow({ row, duplicateCount, onView }) {
           </Link>
 
           <Link
-            href={`/admin/reading/edit/${row.testId}`}
+            href={`/admin/reading/edit/${row.testNumber}`}
             className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border border-line px-3 py-1.5 text-xs text-muted transition hover:border-indigo-deep/40 hover:text-indigo-deep"
           >
             <Pencil className="h-3.5 w-3.5" strokeWidth={2} />
