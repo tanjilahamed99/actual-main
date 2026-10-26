@@ -133,3 +133,67 @@ exports.getAllPassages = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+exports.getDuplicatePassages = async (req, res) => {
+  try {
+    const pipeline = [
+      // flatten passages
+      { $unwind: "$questions" },
+      // skip blank titles
+      {
+        $match: {
+          "questions.title": { $exists: true, $nin: [null, ""] },
+        },
+      },
+      // group by normalized title
+      {
+        $group: {
+          _id: {
+            $toLower: {
+              $trim: {
+                input: "$questions.title",
+              },
+            },
+          },
+          count: { $sum: 1 },
+          passages: {
+            $push: {
+              testId: "$_id",
+              testNumber: "$testNumber",
+              testTitle: "$title",
+              testStatus: "$status",
+              testPriority: "$priority",
+              passageId: "$questions.id",
+              passageLabel: "$questions.label",
+              passageTitle: "$questions.title",
+              passageSubtitle: "$questions.subtitle",
+              updatedAt: "$updatedAt",
+            },
+          },
+        },
+      },
+      // keep only groups with >1 passage
+      { $match: { count: { $gt: 1 } } },
+      // newest activity first
+      { $sort: { count: -1, "_id": 1 } },
+    ];
+
+    const groups = await ReadingTest.aggregate(pipeline);
+
+    const totalGroups = groups.length;
+    const totalPassages = groups.reduce((sum, g) => sum + g.count, 0);
+
+    res.json({
+      success: true,
+      groups: groups.map((g) => ({
+        normalizedTitle: g._id,
+        count: g.count,
+        passages: g.passages,
+      })),
+      totalGroups,
+      totalPassages,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

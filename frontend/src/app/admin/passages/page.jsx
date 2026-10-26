@@ -13,14 +13,13 @@ import {
   Copy,
   Filter,
 } from "lucide-react";
-import { getAllPassages } from "@/actions/admin";
+import { getAllPassages, getDuplicatePassages } from "@/actions/admin";
 import SearchBar from "../_components/SearchBar";
 import Pagination from "../_components/Pagination";
 
 const PAGE_SIZE = 20;
 
 // Normalise a title for comparison: trim, collapse spaces, lowercase.
-// So "The History of Tea" and "the history of tea " count as duplicates.
 function normalizeTitle(t) {
   return (t ?? "").trim().replace(/\s+/g, " ").toLowerCase();
 }
@@ -37,8 +36,12 @@ export default function AdminPassagesPage() {
   const [page, setPage] = useState(1);
   const [viewing, setViewing] = useState(null);
 
-  // ✅ New — filter to only show duplicates
+  // Filter to only show duplicates (on the current page)
   const [duplicatesOnly, setDuplicatesOnly] = useState(false);
+
+  // Global duplicate map (fetched from backend)
+  const [duplicateMap, setDuplicateMap] = useState(new Map()); // normalizedTitle -> count
+  const [duplicateTotals, setDuplicateTotals] = useState({ groups: 0, passages: 0 });
 
   useEffect(() => setPage(1), [search, status, priority]);
 
@@ -46,17 +49,32 @@ export default function AdminPassagesPage() {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await getAllPassages({
-        q: search || undefined,
-        status: status || undefined,
-        priority: priority || undefined,
-        page,
-        limit: PAGE_SIZE,
-        sort: "testNumber",
-        order: "asc",
+      const [pageRes, dupRes] = await Promise.all([
+        getAllPassages({
+          q: search || undefined,
+          status: status || undefined,
+          priority: priority || undefined,
+          page,
+          limit: PAGE_SIZE,
+          sort: "testNumber",
+          order: "asc",
+        }),
+        getDuplicatePassages(),
+      ]);
+
+      setRows(pageRes.data.passages ?? []);
+      setMeta(pageRes.data.pagination ?? { total: 0, totalPages: 1 });
+
+      // Build a normalized-title → count map for the whole DB
+      const map = new Map();
+      for (const g of dupRes.data.groups ?? []) {
+        map.set(g.normalizedTitle, g.count);
+      }
+      setDuplicateMap(map);
+      setDuplicateTotals({
+        groups: dupRes.data.totalGroups ?? 0,
+        passages: dupRes.data.totalPassages ?? 0,
       });
-      setRows(data.passages ?? []);
-      setMeta(data.pagination ?? { total: 0, totalPages: 1 });
     } catch (err) {
       console.error("Failed to load passages:", err);
       setError("Could not load passages. Please try again.");
@@ -70,47 +88,29 @@ export default function AdminPassagesPage() {
     fetchPassages();
   }, [fetchPassages]);
 
-  // ── Duplicate detection (client-side) ──────────────────────────────
-  // Groups passages by normalised title. Any group with >1 entry is a
-  // duplicate. Only considers the current page — see the note below if
-  // you want to check across all pages.
-  const duplicateInfo = useMemo(() => {
-    const groups = new Map(); // normalizedTitle -> [row, row, ...]
-    for (const r of rows) {
-      const key = normalizeTitle(r.passageTitle);
-      if (!key) continue; // skip blank titles
-      if (!groups.has(key)) groups.set(key, []);
-      groups.get(key).push(r);
-    }
+  // ── Duplicate helpers ──────────────────────────────────────────
+  const isDuplicateTitle = useCallback(
+    (title) => {
+      const key = normalizeTitle(title);
+      return (duplicateMap.get(key) ?? 0) > 1;
+    },
+    [duplicateMap],
+  );
 
-    const counts = new Map();      // normalizedTitle -> count
-    const dupeKeys = new Set();    // normalizedTitles that appear >1 time
-    for (const [key, list] of groups) {
-      counts.set(key, list.length);
-      if (list.length > 1) dupeKeys.add(key);
-    }
-
-    return { groups, counts, dupeKeys };
-  }, [rows]);
+  const getDuplicateCount = useCallback(
+    (title) => duplicateMap.get(normalizeTitle(title)) ?? 0,
+    [duplicateMap],
+  );
 
   // Rows filtered by "duplicates only" toggle
   const visibleRows = useMemo(() => {
     if (!duplicatesOnly) return rows;
-    return rows.filter((r) =>
-      duplicateInfo.dupeKeys.has(normalizeTitle(r.passageTitle)),
-    );
-  }, [rows, duplicatesOnly, duplicateInfo]);
+    return rows.filter((r) => isDuplicateTitle(r.passageTitle));
+  }, [rows, duplicatesOnly, isDuplicateTitle]);
 
-  // Count of unique titles that are duplicated
-  const duplicateTitleCount = duplicateInfo.dupeKeys.size;
-  // Count of passage rows whose title is duplicated
-  const duplicateRowCount = useMemo(
-    () =>
-      rows.filter((r) =>
-        duplicateInfo.dupeKeys.has(normalizeTitle(r.passageTitle)),
-      ).length,
-    [rows, duplicateInfo],
-  );
+  // Counts for the banner
+  const duplicateTitleCount = duplicateTotals.groups;
+  const duplicateRowCount = duplicateTotals.passages;
 
   const clearFilters = () => {
     setSearch("");
@@ -118,12 +118,7 @@ export default function AdminPassagesPage() {
     setPriority("");
     setDuplicatesOnly(false);
   };
-  const hasActiveFilters = !!(
-    search ||
-    status ||
-    priority ||
-    duplicatesOnly
-  );
+  const hasActiveFilters = !!(search || status || priority || duplicatesOnly);
 
   return (
     <div className="space-y-6">
@@ -159,12 +154,14 @@ export default function AdminPassagesPage() {
             <div>
               <p className="font-sans text-sm font-medium text-ink">
                 {duplicateTitleCount} duplicate title
-                {duplicateTitleCount === 1 ? "" : "s"} on this page
+                {duplicateTitleCount === 1 ? "" : "s"} in the database
               </p>
               <p className="mt-0.5 font-sans text-xs text-muted">
                 {duplicateRowCount} passage
-                {duplicateRowCount === 1 ? "" : "s"} share a title with another
-                on this page. Click below to filter them.
+                {duplicateRowCount === 1 ? "" : "s"} share a title with another.
+                {duplicatesOnly
+                  ? " Showing only duplicates on this page."
+                  : " Click below to filter this page."}
               </p>
             </div>
           </div>
@@ -240,7 +237,7 @@ export default function AdminPassagesPage() {
       ) : visibleRows.length === 0 ? (
         <div className="rounded-2xl border border-line bg-paper-raised p-10 text-center font-sans text-sm text-muted">
           {duplicatesOnly
-            ? "No duplicate titles on this page. Nice."
+            ? "No duplicate titles on this page. Try a different page or clear filters."
             : "No passages match your search."}
         </div>
       ) : (
@@ -251,9 +248,7 @@ export default function AdminPassagesPage() {
               <PassageCard
                 key={`${p.testId}-${p.passageId}`}
                 row={p}
-                duplicateCount={duplicateInfo.counts.get(
-                  normalizeTitle(p.passageTitle),
-                )}
+                duplicateCount={getDuplicateCount(p.passageTitle)}
                 onView={() => setViewing(p)}
               />
             ))}
@@ -283,9 +278,7 @@ export default function AdminPassagesPage() {
                     <PassageRow
                       key={`${p.testId}-${p.passageId}`}
                       row={p}
-                      duplicateCount={duplicateInfo.counts.get(
-                        normalizeTitle(p.passageTitle),
-                      )}
+                      duplicateCount={getDuplicateCount(p.passageTitle)}
                       onView={() => setViewing(p)}
                     />
                   ))}
@@ -318,7 +311,7 @@ function DuplicateBadge({ count }) {
   return (
     <span
       className="ml-2 inline-flex items-center gap-1 rounded-full bg-clay/15 px-2 py-0.5 font-mono text-[10px] font-semibold text-clay"
-      title={`This title appears ${count} times on this page`}
+      title={`This title appears ${count} times across all tests`}
     >
       <Copy className="h-3 w-3" strokeWidth={2} />
       ×{count}

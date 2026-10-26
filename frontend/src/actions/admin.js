@@ -71,3 +71,6 @@ export const adminDeleteUser = (id) =>
 
 export const getAllPassages = (params = {}) =>
   API.get("/admin/passages", { params });
+
+export const getDuplicatePassages = () =>
+  API.get("/admin/passages/duplicates");
