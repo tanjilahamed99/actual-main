@@ -63,8 +63,6 @@ export default function AdminPassagesPage() {
         getDuplicatePassages(),
       ]);
 
-      console.log(dupRes.data)
-
       setRows(pageRes.data.passages ?? []);
       setMeta(pageRes.data.pagination ?? { total: 0, totalPages: 1 });
 
@@ -247,9 +245,9 @@ export default function AdminPassagesPage() {
         <>
           {/* Mobile cards */}
           <div className="space-y-3 sm:hidden">
-            {visibleRows.map((p) => (
+            {visibleRows.map((p,idx) => (
               <PassageCard
-                key={`${p.testId}-${p.passageId}`}
+                key={idx}
                 row={p}
                 duplicateCount={getDuplicateCount(p.passageTitle)}
                 onView={() => setViewing(p)}
@@ -277,9 +275,9 @@ export default function AdminPassagesPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-line">
-                  {visibleRows.map((p) => (
+                  {visibleRows.map((p,idx) => (
                     <PassageRow
-                      key={`${p.testId}-${p.passageId}`}
+                     key={idx}
                       row={p}
                       duplicateCount={getDuplicateCount(p.passageTitle)}
                       onView={() => setViewing(p)}
