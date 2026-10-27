@@ -16,6 +16,7 @@ exports.getAllPublishedReadingTest = async (req, res) => {
 
 // GET /api/reading/:testNumber — single published test WITHOUT answers
 exports.getPublishedReadingTest = async (req, res) => {
+  console.log('collinlg')
   try {
     const test = await ReadingTest.findOne({
       testNumber: req.params.id,

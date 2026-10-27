@@ -18,10 +18,10 @@ API.interceptors.response.use(
   (error) => {
     const status = error.response?.status;
 
-    if (status === 401 || status === 403) {
-      useAuthStore.getState().clearAuth();
-      window.location.href = "/login";
-    }
+    // if (status === 401 || status === 403) {
+    //   useAuthStore.getState().clearAuth();
+    //   window.location.href = "/login";
+    // }
 
     return Promise.reject(error);
   },

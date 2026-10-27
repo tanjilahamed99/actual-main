@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ReadingMainPage from "@/components/Test/Reading/ReadingMainPage";
-import { getSingleReadingTest } from "@/actions/admin";
+import { getPublicReadingTest } from "@/actions/admin";
 
 export default function TestDetailPage() {
   const params = useParams();
@@ -14,7 +14,7 @@ export default function TestDetailPage() {
   useEffect(() => {
     if (testId) {
       const fetch = async () => {
-        const { data } = await getSingleReadingTest(testId);
+        const { data } = await getPublicReadingTest(testId);
         if (data.success) {
           setTest(data.test);
         }
