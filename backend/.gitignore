@@ -1,2 +1,5 @@
 .env
 node_modules
+backups
+backup-silent.bat
+log.txt
