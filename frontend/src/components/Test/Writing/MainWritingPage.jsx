@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, BookOpen, X } from "lucide-react";
 
 import { useModuleTestStore } from "@/features/Useteststore";
 import { useExitGuard } from "@/hooks/Useexitguard";
@@ -30,6 +30,9 @@ import WritingFeedbackPanel from "./WritingFeedbackPanel";
 import IntroModal from "@/components/Test/IntroModal";
 import { submitWritingAttempt } from "@/actions/writing";
 
+// ✅ Import the resources
+import { TASK_1_RESOURCES, TASK_2_RESOURCES } from "@/lib/writingResources";
+
 const TOTAL_SEC = 60 * 60;
 
 const fmt = (s) =>
@@ -53,6 +56,9 @@ const MainWritingPage = ({ testId, test }) => {
   const [showAnswersReview, setShowAnswersReview] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
   const [promptOpen, setPromptOpen] = useState(false);
+
+  // ✅ State for the Resources panel
+  const [showResources, setShowResources] = useState(false);
 
   // Submission
   const [submitting, setSubmitting] = useState(false);
@@ -120,7 +126,6 @@ const MainWritingPage = ({ testId, test }) => {
       "Your test is in progress. Leaving now will auto-submit your current answers.",
   });
 
-  // ── Submit: save the attempt to the backend ──
   const handleConfirm = async () => {
     setShowConfirm(false);
     setSubmitting(true);
@@ -253,6 +258,121 @@ const MainWritingPage = ({ testId, test }) => {
         />
       )}
 
+      {/* ✅ RESOURCES DRAWER */}
+      {showResources && (
+        <div className="fixed inset-0 z-[250] flex justify-end">
+          <div
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
+            onClick={() => setShowResources(false)}
+          />
+          <div className="relative flex h-full w-full max-w-md animate-slide-in-right flex-col bg-white shadow-2xl">
+            <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
+              <div>
+                <h2 className="font-bold text-gray-900">Writing Resources</h2>
+                <p className="text-xs text-gray-500">
+                  {activePart === 0 ? "Task 1 Templates & Vocab" : "Task 2 Ideas & Vocab"}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowResources(false)}
+                className="rounded-full p-2 text-gray-500 hover:bg-gray-100"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="flex-1 space-y-6 overflow-y-auto p-5 pb-20">
+              {activePart === 0 ? (
+                // TASK 1 CONTENT
+                <>
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+                      Templates
+                    </h3>
+                    {TASK_1_RESOURCES.templates.map((t, i) => (
+                      <div
+                        key={i}
+                        className="rounded-lg border border-gray-200 bg-gray-50 p-3"
+                      >
+                        <p className="text-sm font-semibold text-gray-800">
+                          {t.title}
+                        </p>
+                        {t.content && (
+                          <p className="mt-1 text-xs text-gray-600">{t.content}</p>
+                        )}
+                        {t.template && (
+                          <div className="mt-2 rounded border border-gray-200 bg-white p-2 font-mono text-xs text-indigo-700">
+                            {t.template}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-4">
+                    <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+                      High-Score Vocabulary
+                    </h3>
+                    {TASK_1_RESOURCES.vocabulary.map((v, i) => (
+                      <div
+                        key={i}
+                        className="rounded-lg border border-gray-200 bg-gray-50 p-3"
+                      >
+                        <p className="mb-2 text-sm font-semibold text-gray-800">
+                          {v.category}
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          {v.words.map((w, j) => (
+                            <span
+                              key={j}
+                              className="rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-700"
+                            >
+                              {w}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                // TASK 2 CONTENT
+                <div className="space-y-4">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-900">
+                    Topic Ideas
+                  </h3>
+                  {TASK_2_RESOURCES.map((topic, i) => (
+                    <details
+                      key={i}
+                      className="group overflow-hidden rounded-lg border border-gray-200 bg-gray-50"
+                    >
+                      <summary className="flex cursor-pointer items-center justify-between p-3 text-sm font-semibold text-gray-800 hover:bg-gray-100">
+                        {topic.category}
+                        <span className="text-gray-400 transition-transform group-open:rotate-180">
+                          ▼
+                        </span>
+                      </summary>
+                      <div className="border-t border-gray-200 bg-white p-3 pt-0">
+                        <ul className="mt-2 list-disc space-y-1.5 pl-4">
+                          {topic.points.map((p, j) => (
+                            <li
+                              key={j}
+                              className="text-xs leading-relaxed text-gray-600"
+                            >
+                              {p}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Submitting overlay ── */}
       {submitting && (
         <div className="fixed inset-0 z-[400] flex items-center justify-center bg-black/40">
@@ -318,6 +438,15 @@ const MainWritingPage = ({ testId, test }) => {
                 {fmt(timeLeft)}
               </span>
             </div>
+
+            {/* ✅ Resources Button */}
+            <button
+              onClick={() => setShowResources(true)}
+              className="flex flex-shrink-0 items-center gap-1.5 rounded border border-gray-300 bg-white px-2 py-[3px] text-[12px] text-gray-700 transition-colors hover:bg-gray-50 sm:px-2.5"
+            >
+              <BookOpen width="12" height="12" strokeWidth="2.5" />
+              <span className="hidden sm:inline">Resources</span>
+            </button>
 
             <button
               onClick={() => setShowNotesPanel(true)}
@@ -388,24 +517,10 @@ const MainWritingPage = ({ testId, test }) => {
                 onMouseDown={onMouseDown}
                 onTouchStart={onMouseDown}
               >
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="15,18 9,12 15,6" />
                 </svg>
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="9,18 15,12 9,6" />
                 </svg>
               </button>
@@ -593,6 +708,14 @@ const MainWritingPage = ({ testId, test }) => {
         ::highlight(app-highlight-writing-mobile-1) {
           background-color: #fef08a;
           color: #713f12;
+        }
+        
+        @keyframes slide-in-right {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        .animate-slide-in-right {
+          animation: slide-in-right 0.2s ease-out forwards;
         }
       `}</style>
     </div>
