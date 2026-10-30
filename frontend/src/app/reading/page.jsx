@@ -1,4 +1,4 @@
-// app/demo/page.jsx
+// app/demo/page.jsx (or app/reading/page.jsx)
 "use client";
 
 import { useState, useEffect, useMemo, useCallback, Suspense } from "react";
@@ -17,6 +17,7 @@ function MainReadingPage() {
   const searchParams = useSearchParams();
   const { getSession } = useModuleTestStore();
   const [readingData, setReadingData] = useState([]);
+  
   const urlQ = searchParams.get("q") ?? "";
   const urlType = searchParams.get("type") ?? "all";
   const urlPriority = searchParams.get("priority") ?? "all";
@@ -37,7 +38,6 @@ function MainReadingPage() {
   }, []);
 
   const [searchInput, setSearchInput] = useState(urlQ);
-  // Drives the grid's cross-fade whenever the visible result set changes
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
@@ -62,8 +62,6 @@ function MainReadingPage() {
     [router, pathname, searchParams],
   );
 
-  // Fixed: was [] — these stayed empty forever since readingData
-  // loads asynchronously after this first computes.
   const typeOptions = useMemo(
     () => ["all", ...new Set(readingData.map((t) => t.type))],
     [readingData],
@@ -80,8 +78,9 @@ function MainReadingPage() {
       if (urlType !== "all" && test.type !== urlType) return false;
       if (urlPriority !== "all" && test.priority !== urlPriority) return false;
       if (urlStatus !== "all") {
+        // ✅ FIX: Use testNumber instead of _id
         const completed =
-          getSession("reading", test._id)?.status === "completed";
+          getSession("reading", String(test.testNumber))?.status === "completed";
         if (urlStatus === "completed" && !completed) return false;
         if (urlStatus === "not-started" && completed) return false;
       }
@@ -103,11 +102,6 @@ function MainReadingPage() {
     currentPage * PAGE_SIZE,
   );
 
-  // ── Cross-fade the grid whenever the visible slice changes ──
-  // Fixed: added `readingData` to deps — this effect only re-ran on
-  // filter/page changes before, so when the async fetch resolved and
-  // populated readingData, displayedTests never got refreshed and
-  // stayed stuck at its initial empty value.
   const [displayedTests, setDisplayedTests] = useState(pageTests);
   useEffect(() => {
     setIsTransitioning(true);
@@ -137,7 +131,8 @@ function MainReadingPage() {
   const completedCount = useMemo(
     () =>
       readingData.filter(
-        (t) => getSession("reading", t._id)?.status === "completed",
+        // ✅ FIX: Use testNumber instead of _id
+        (t) => getSession("reading", String(t.testNumber))?.status === "completed",
       ).length,
     [readingData, getSession],
   );
@@ -237,8 +232,6 @@ function MainReadingPage() {
               <option value="not-started">Not started</option>
             </select>
 
-            {/* ── Always mounted — animates in place instead of
-              shifting the row when it appears/disappears ── */}
             <button
               onClick={clearFilters}
               aria-hidden={!hasActiveFilters}
@@ -252,7 +245,7 @@ function MainReadingPage() {
             </button>
           </div>
 
-          {/* Result count — fades with the grid */}
+          {/* Result count */}
           <p
             className={`mb-4 text-sm text-muted transition-opacity duration-150 ${
               isTransitioning ? "opacity-0" : "opacity-100"
@@ -262,7 +255,7 @@ function MainReadingPage() {
             {hasActiveFilters ? " (filtered)" : ""}
           </p>
 
-          {/* Test Cards Grid — cross-fades on filter/page change, staggers in */}
+          {/* Test Cards Grid */}
           <div
             id="test-grid"
             className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 transition-opacity duration-150 ease-out ${
@@ -270,7 +263,8 @@ function MainReadingPage() {
             }`}>
             {displayedTests.length > 0 ? (
               displayedTests.map((test, i) => {
-                const session = getSession("reading", test._id);
+                // ✅ FIX: Use testNumber instead of _id
+                const session = getSession("reading", String(test.testNumber));
                 const isCompleted = session?.status === "completed";
 
                 return (
