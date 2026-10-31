@@ -51,6 +51,9 @@ body {
   }
 }
 
+
+
+
 .paper-texture {
   background-image:
     radial-gradient(circle at 1px 1px, rgba(22, 29, 52, 0.055) 1px, transparent 0);
@@ -65,4 +68,13 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-gold);
   outline-offset: 3px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
 }

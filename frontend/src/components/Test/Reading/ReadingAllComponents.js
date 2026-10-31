@@ -2606,82 +2606,129 @@ export function PassageContent({
   );
 }
 
+
+function countWords(text) {
+  return text?.trim() ? text.trim().split(/\s+/).length : 0;
+}
+
 export function ResultModal({ vals, ANSWER_KEY, onClose, onRestart }) {
-  const { correct, wrong, total, band, desc, results } = scoreReadingAnswers(
-    vals,
-    ANSWER_KEY,
-  );
+  // Calculate score
+  const totalQuestions = Object.keys(ANSWER_KEY || {}).length;
+  let correctCount = 0;
+
+  // Sort the question keys (question_1, question_2, etc.) so they appear in order
+  const sortedKeys = Object.keys(ANSWER_KEY || {}).sort((a, b) => {
+    const numA = parseInt(a.replace(/\D/g, ''), 10);
+    const numB = parseInt(b.replace(/\D/g, ''), 10);
+    return numA - numB;
+  });
+
+  // Count correct answers
+  sortedKeys.forEach((key) => {
+    const studentAns = String(vals[key] || "").trim().toLowerCase();
+    const correctAns = String(ANSWER_KEY[key] || "").trim().toLowerCase();
+    if (studentAns === correctAns && studentAns !== "") {
+      correctCount++;
+    }
+  });
+
+  // IELTS Band Calculation (approximate for 40 questions)
+  const band = ((correctCount / totalQuestions) * 9).toFixed(1);
 
   return (
-    <div
-      className="fixed inset-0 z-800 bg-black/50 flex items-center justify-center p-4"
-      onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl">
-        <div className="text-center mb-6">
-          <div className="w-12 h-12 rounded-full border border-gray-300 flex items-center justify-center mx-auto mb-3">
-            <svg
-              className="w-5 h-5 text-gray-900"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2.5}
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4.5 12.75l6 6 9-13.5"
-              />
-            </svg>
-          </div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">
-            Reading Complete
-          </p>
-          <h2 className="text-xl font-bold text-gray-900">Your Results</h2>
-        </div>
-
-        {/* ── SCORE CARDS ── */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="rounded-xl bg-green-50 border border-green-200 p-3 text-center">
-            <p className="text-2xl font-bold text-green-700">{correct}</p>
-            <p className="text-[11px] font-semibold text-green-600 mt-0.5">
-              Correct
+    <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/50 p-4 sm:p-6 backdrop-blur-sm">
+      <div className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl">
+        
+        {/* Header */}
+        <div className="flex shrink-0 items-center justify-between border-b border-gray-200 bg-gray-50 px-5 py-4 sm:px-6">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Test Results</h2>
+            <p className="mt-1 text-sm text-gray-500">
+              You scored <strong className="text-indigo-600">{correctCount}</strong> out of {totalQuestions}
             </p>
           </div>
-          <div className="rounded-xl bg-red-50 border border-red-200 p-3 text-center">
-            <p className="text-2xl font-bold text-red-700">{wrong}</p>
-            <p className="text-[11px] font-semibold text-red-600 mt-0.5">
-              Wrong
-            </p>
-          </div>
-          <div className="rounded-xl bg-blue-50 border border-blue-200 p-3 text-center">
-            <p className="text-2xl font-bold text-blue-700">{band}</p>
-            <p className="text-[11px] font-semibold text-blue-600 mt-0.5">
-              Band
-            </p>
+          <div className="text-right">
+            <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Est. Band</p>
+            <p className="text-2xl font-bold text-green-600">{band}</p>
           </div>
         </div>
 
-        <p className="text-center text-sm text-gray-500 mb-6">
-          {correct}/{total} correct —{" "}
-          <span className="font-medium text-gray-700">{desc}</span>
-        </p>
+        {/* Answer Sheet Scroll Area */}
+        <div className="flex-1 overflow-y-auto p-5 sm:p-6">
+          <div className="rounded-lg border border-gray-200 overflow-hidden">
+            {/* Table Header */}
+            <div className="grid grid-cols-[50px_1fr_1fr] bg-gray-100 px-4 py-2 text-xs font-bold text-gray-600 uppercase tracking-wider sm:grid-cols-[60px_1fr_1fr]">
+              <div>Q#</div>
+              <div>Your Answer</div>
+              <div>Correct Answer</div>
+            </div>
 
-        <div className="flex gap-2.5">
+            {/* Answer Rows */}
+            <div className="divide-y divide-gray-100">
+              {sortedKeys.map((key) => {
+                const qNum = key.replace(/\D/g, ""); // Extracts "1" from "question_1"
+                const studentAns = vals[key] || "";
+                const correctAns = ANSWER_KEY[key] || "";
+                
+                const isCorrect =
+                  String(studentAns).trim().toLowerCase() ===
+                  String(correctAns).trim().toLowerCase() && studentAns !== "";
+
+                return (
+                  <div
+                    key={key}
+                    className={`grid grid-cols-[50px_1fr_1fr] items-center px-4 py-2.5 text-sm sm:grid-cols-[60px_1fr_1fr] ${
+                      isCorrect ? "bg-green-50/40" : "bg-red-50/40"
+                    }`}
+                  >
+                    <div className="font-mono font-bold text-gray-500">
+                      {qNum}
+                    </div>
+                    <div className="pr-2">
+                      {studentAns ? (
+                        <span
+                          className={`font-medium ${
+                            isCorrect ? "text-green-700" : "text-red-600 line-through"
+                          }`}
+                        >
+                          {studentAns}
+                        </span>
+                      ) : (
+                        <span className="italic text-gray-400">Blank</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="font-bold text-gray-800">
+                        {correctAns}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Buttons */}
+        <div className="flex shrink-0 flex-col gap-3 border-t border-gray-200 bg-gray-50 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
           <button
             onClick={onRestart}
-            className="flex-1 border border-gray-300 rounded-lg py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50">
-            Retake
+            className="w-full rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:w-auto"
+          >
+            Retake Test
           </button>
           <button
             onClick={onClose}
-            className="flex-1 bg-blue-900 text-white rounded-lg py-2.5 text-sm font-semibold hover:bg-blue-800">
-            Take Another
+            className="w-full rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 sm:w-auto"
+          >
+            Back to Tests
           </button>
         </div>
+
       </div>
     </div>
   );
 }
-
 // ── MATRIX MATCH (radio grid, e.g. "List of People") ──
 export function MatrixMatchBlock({
   block,
