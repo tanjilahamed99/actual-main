@@ -5,199 +5,184 @@ import Link from "next/link";
 import { DemoReadingTest } from "../../../demo/demoreading";
 import Footer from "@/components/Footer";
 import { useModuleTestStore } from "@/features/Useteststore";
-import { 
-  Search, 
-  ArrowLeft, 
-  Check, 
-  BookOpen, 
-  ArrowRight
-} from "lucide-react";
 
 export default function DemoPage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFilter, setSelectedFilter] = useState("all");
   const { getSession } = useModuleTestStore();
 
-  const filteredTests = DemoReadingTest.filter((test) => {
-    const matchesSearch = test.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          test.type.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const session = getSession("reading", test.id);
-    const isCompleted = session?.status === "completed";
-
-    if (selectedFilter === "completed") return matchesSearch && isCompleted;
-    if (selectedFilter === "academic") return matchesSearch && test.type.toLowerCase().includes("academic");
-    return matchesSearch;
-  });
-
+  const filteredTests = DemoReadingTest.filter((test) =>
+    test.title.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-[#111827]">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:px-8">
-        
-        {/* Back Link & Header */}
+    <div className="min-h-screen bg-paper">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:px-8">
+        {/* Header */}
         <div className="mb-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-[#4b5563] hover:text-[#111827] transition-colors">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to home</span>
+            className="inline-flex items-center gap-2 text-sm text-muted hover:text-ink transition-colors">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Back to home
           </Link>
-          
-          <div className="mt-4">
-            <h1 className="font-display text-3xl font-bold tracking-tight text-[#111827] sm:text-4xl">
-              Demo Tests
-            </h1>
-            <p className="mt-2 text-sm text-[#4b5563]">
-              Practice with real IELTS reading passages and questions from actual exam cycles.
-            </p>
-          </div>
+          <h1 className="mt-4 font-display text-3xl text-ink sm:text-4xl">
+            Demo Tests
+          </h1>
+          <p className="mt-2 text-muted">
+            Practice with real IELTS questions from actual tests
+          </p>
         </div>
 
-        {/* Search and Filters Toolbar */}
-        <div className="mb-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-          {/* Search Input */}
-          <div className="relative flex-1 max-w-md">
+        {/* Search Bar */}
+        <div className="mb-8">
+          <div className="relative max-w-md">
             <input
               type="text"
-              placeholder="Search tests by title or module type..."
+              placeholder="Search tests..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-xl border border-[#d1d5db] bg-white px-4 py-3 pl-11 text-sm text-[#111827] placeholder:text-[#9ca3af] shadow-xs focus:border-[#111827] focus:outline-none focus:ring-1 focus:ring-[#111827]"
+              className="w-full rounded-full border border-line bg-paper-raised px-5 py-3 pl-12 font-sans text-sm text-ink placeholder:text-muted focus:border-indigo-deep focus:outline-none focus:ring-2 focus:ring-indigo-deep/20"
             />
-            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#9ca3af]" />
-          </div>
-
-          {/* Filter Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
-            {[
-              { id: "all", label: "All Tests" },
-              { id: "academic", label: "Academic" },
-              { id: "completed", label: "Completed" },
-            ].map((filter) => (
-              <button
-                key={filter.id}
-                onClick={() => setSelectedFilter(filter.id)}
-                className={`rounded-lg px-4 py-2 text-xs font-medium transition shrink-0 ${
-                  selectedFilter === filter.id
-                    ? "bg-[#111827] text-white shadow-xs"
-                    : "border border-[#d1d5db] bg-white text-[#374151] hover:bg-[#f3f4f6]"
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))}
+            <svg
+              className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
           </div>
         </div>
 
-        {/* Tests Grid */}
-        {filteredTests.length > 0 ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredTests.map((test) => {
-              const session = getSession("reading", test.id);
-              const isCompleted = session?.status === "completed";
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredTests.map((test) => {
+            const session = getSession("reading", test.id);
+            const isCompleted = session?.status === "completed";
 
-              return (
-                <Link
-                  key={test.id}
-                  href={`/demo/reading/${test.id}`}
-                  className="group relative flex flex-col justify-between rounded-xl border border-[#e5e7eb] bg-white p-6 shadow-xs transition-all duration-200 hover:border-[#9ca3af] hover:shadow-md">
-                  
-                  {/* Completed Badge */}
-                  {isCompleted && (
-                    <span className="absolute -top-2.5 -right-2.5 flex items-center gap-1 bg-[#166534] text-white text-[11px] font-medium px-2.5 py-1 rounded-full shadow-xs border border-white">
-                      <Check className="h-3.5 w-3.5" />
-                      Completed
+            return (
+              <Link
+                key={test.id}
+                href={`/demo/reading/${test.id}`}
+                className="group relative rounded-2xl border border-line bg-paper-raised p-6 transition-all hover:border-indigo-deep/30 hover:shadow-[0_20px_40px_-30px_rgba(22,29,52,0.4)]">
+                {isCompleted && (
+                  <span className="absolute -top-2.5 -right-2.5 flex items-center gap-1 bg-green-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md">
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={3}
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.5 12.75l6 6 9-13.5"
+                      />
+                    </svg>
+                    Completed
+                  </span>
+                )}
+
+                <div className="flex items-start justify-between">
+                  <span className="rounded-full bg-indigo-deep/10 px-3 py-1 font-mono text-xs font-medium text-indigo-deep">
+                    {test.type}
+                  </span>
+                  <span className="rounded-full bg-gold-soft/40 px-3 py-1 font-mono text-xs font-medium text-gold">
+                    {test.priority}
+                  </span>
+                </div>
+                <h3 className="mt-4 font-display text-xl text-ink group-hover:text-indigo-deep transition-colors">
+                  {test.title}
+                </h3>
+
+                <div className="mt-3 flex items-center gap-2 text-sm text-muted">
+                  <svg
+                    className="h-4 w-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                  <span>{test.questions.length} passages</span>
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-1.5">
+                  {test.questions.map((q, idx) => (
+                    <span
+                      key={idx}
+                      className="rounded-full border border-line px-2.5 py-1 text-[10px] text-muted">
+                      {q.label}
                     </span>
-                  )}
+                  ))}
+                </div>
 
-                  <div>
-                    {/* Top Type & Priority Labels */}
-                    <div className="flex items-center justify-between">
-                      <span className="rounded-md bg-[#f3f4f6] px-2.5 py-1 font-mono text-xs font-medium text-[#374151]">
-                        {test.type}
-                      </span>
-                      <span className="rounded-md bg-[#f9fafb] border border-[#e5e7eb] px-2.5 py-1 font-mono text-xs font-medium text-[#4b5563]">
-                        {test.priority}
-                      </span>
-                    </div>
+                <div className="mt-5 flex items-center justify-between border-t border-line pt-4">
+                  <span className="text-sm font-medium text-indigo-deep group-hover:gap-2.5 inline-flex items-center gap-1.5 transition-all">
+                    Start test
+                    <span aria-hidden>→</span>
+                  </span>
+                  <span className="text-xs text-muted">
+                    {Object.keys(test.answers).length} questions
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
 
-                    <h3 className="mt-4 font-display text-lg font-semibold text-[#111827] group-hover:text-[#1d4ed8] transition-colors">
-                      {test.title}
-                    </h3>
-
-                    {/* Passages count */}
-                    <div className="mt-2 flex items-center gap-2 text-xs text-[#6b7280]">
-                      <BookOpen className="h-4 w-4 text-[#9ca3af]" />
-                      <span>{test.questions.length} Passages Included</span>
-                    </div>
-
-                    {/* Question Labels */}
-                    <div className="mt-4 flex flex-wrap gap-1.5">
-                      {test.questions.map((q, idx) => (
-                        <span
-                          key={idx}
-                          className="rounded-md border border-[#e5e7eb] bg-[#f9fafb] px-2 py-0.5 text-[11px] text-[#4b5563]">
-                          {q.label}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card Footer */}
-                  <div className="mt-6 flex items-center justify-between border-t border-[#f3f4f6] pt-4">
-                    <span className="text-sm font-medium text-[#111827] group-hover:text-[#1d4ed8] group-hover:translate-x-0.5 inline-flex items-center gap-1 transition-all">
-                      <span>Start test</span>
-                      <ArrowRight className="h-4 w-4" />
-                    </span>
-                    <span className="font-mono text-xs text-[#6b7280]">
-                      {Object.keys(test.answers).length} questions
-                    </span>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="rounded-xl border border-dashed border-[#d1d5db] bg-white p-12 text-center">
-            <h3 className="text-base font-semibold text-[#111827]">No matching tests found</h3>
-            <p className="mt-1 text-xs text-[#6b7280]">Try adjusting your search query or filter settings.</p>
-            <button 
-              onClick={() => { setSearchTerm(""); setSelectedFilter("all"); }}
-              className="mt-4 rounded-lg bg-[#111827] px-4 py-2 text-xs font-medium text-white transition hover:bg-[#1f2937]"
-            >
-              Reset Filters
-            </button>
-          </div>
-        )}
-
-        {/* Stats Dashboard */}
-        <div className="mt-12 rounded-xl border border-[#e5e7eb] bg-white p-6 shadow-xs">
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
+        {/* Stats */}
+        <div className="mt-12 rounded-2xl border border-line bg-paper-raised p-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <div>
-              <dt className="font-mono text-2xl font-bold text-[#111827]">
+              <dt className="font-mono text-2xl text-indigo-deep">
                 {DemoReadingTest.length}
               </dt>
-              <dd className="mt-1 text-xs text-[#6b7280]">Total tests</dd>
+              <dd className="mt-1 text-sm text-muted">Total tests</dd>
             </div>
             <div>
-              <dt className="font-mono text-2xl font-bold text-[#111827]">
-                {DemoReadingTest.reduce((acc, test) => acc + test.questions.length, 0)}
+              <dt className="font-mono text-2xl text-indigo-deep">
+                {DemoReadingTest.reduce(
+                  (acc, test) => acc + test.questions.length,
+                  0,
+                )}
               </dt>
-              <dd className="mt-1 text-xs text-[#6b7280]">Total passages</dd>
+              <dd className="mt-1 text-sm text-muted">Total passages</dd>
             </div>
             <div>
-              <dt className="font-mono text-2xl font-bold text-[#111827]">
-                {DemoReadingTest.reduce((acc, test) => acc + Object.keys(test.answers).length, 0)}
+              <dt className="font-mono text-2xl text-indigo-deep">
+                {DemoReadingTest.reduce(
+                  (acc, test) => acc + Object.keys(test.answers).length,
+                  0,
+                )}
               </dt>
-              <dd className="mt-1 text-xs text-[#6b7280]">Total questions</dd>
+              <dd className="mt-1 text-sm text-muted">Total questions</dd>
             </div>
             <div>
-              <dt className="font-mono text-2xl font-bold text-[#111827]">Free</dt>
-              <dd className="mt-1 text-xs text-[#6b7280]">Always free to practice</dd>
+              <dt className="font-mono text-2xl text-indigo-deep">Free</dt>
+              <dd className="mt-1 text-sm text-muted">
+                Always free to practice
+              </dd>
             </div>
           </div>
         </div>
-
       </div>
       <Footer />
     </div>
