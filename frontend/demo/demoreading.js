@@ -82,7 +82,7 @@ Experts who visited the Brooklyn group’s site were optimistic but cautious. �
             items: [
               {
                 n: 1,
-                text: "The online map provides users with a store’s name",
+                text: "The online map provides users with a store’s name,",
                 afterText: "and details of its produce.",
               },
               {

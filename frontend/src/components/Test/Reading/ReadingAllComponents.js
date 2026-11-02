@@ -2535,7 +2535,7 @@ export function PassageContent({
   submitted,
 }) {
   const paragraphs = passage.text.split(/\n\n+/);
-  const paraLabelRe = /^\[Paragraph ([A-I])\]\s*/;
+  const paraLabelRe = /^\[Paragraph ([A-Z])\]\s*/;
 
   return (
     <div className="w-full px-4 sm:px-8 py-5 sm:py-6 pb-20 max-w-3xl mx-auto">
