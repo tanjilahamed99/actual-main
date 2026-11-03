@@ -2611,6 +2611,28 @@ function countWords(text) {
   return text?.trim() ? text.trim().split(/\s+/).length : 0;
 }
 
+
+function getOfficialReadingBand(correct, total) {
+  // Scale to 40 if the test is shorter
+  const scaled = Math.round((correct / total) * 40);
+  
+  if (scaled >= 39) return "9.0";
+  if (scaled >= 37) return "8.5";
+  if (scaled >= 35) return "8.0";
+  if (scaled >= 33) return "7.5";
+  if (scaled >= 30) return "7.0";
+  if (scaled >= 27) return "6.5";
+  if (scaled >= 23) return "6.0";
+  if (scaled >= 19) return "5.5";
+  if (scaled >= 15) return "5.0";
+  if (scaled >= 13) return "4.5";
+  if (scaled >= 10) return "4.0";
+  if (scaled >= 6)  return "3.5";
+  if (scaled >= 3)  return "3.0";
+  return "2.5";
+}
+
+
 export function ResultModal({ vals, ANSWER_KEY, onClose, onRestart }) {
   // Calculate score
   const totalQuestions = Object.keys(ANSWER_KEY || {}).length;
@@ -2632,8 +2654,7 @@ export function ResultModal({ vals, ANSWER_KEY, onClose, onRestart }) {
     }
   });
 
-  // IELTS Band Calculation (approximate for 40 questions)
-  const band = ((correctCount / totalQuestions) * 9).toFixed(1);
+const band = getOfficialReadingBand(correctCount, totalQuestions);
 
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/50 p-4 sm:p-6 backdrop-blur-sm">
