@@ -13,6 +13,7 @@ import {
   NoteModal,
   NotesPanel,
   useHighlightsAndNotes,
+  RestoreAnswersPopup,
 } from "@/components/Test/Reading/ReadingAllComponents";
 import { BottomNav } from "@/components/Test/BottomNav";
 import { useExitGuard } from "@/hooks/Useexitguard";
@@ -40,18 +41,52 @@ export default function ReadingMainPage({
   const submitted = phase === "done";
   const { split, setSplit, containerRef, onMouseDown } = useDivider(50);
   const router = useRouter();
-  const {
-    getSession,
-    initModule,
-    startModule,
-    saveAllAnswers,
-    submitModule,
-    tickTimer,
-  } = useModuleTestStore();
+  const { getSession, initModule, startModule, saveAllAnswers, submitModule } =
+    useModuleTestStore();
+  const [showRestorePrompt, setShowRestorePrompt] = useState(false);
+  const [savedAnswers, setSavedAnswers] = useState({});
 
   useEffect(() => {
     initModule("reading", testId, `Reading Test ${testId}`);
   }, [testId]);
+
+  useEffect(() => {
+    // Get the saved session for this specific test
+    const session = getSession("reading", String(testId));
+
+    // If they have answers saved, show the prompt
+    if (session?.answers && Object.keys(session.answers).length > 0) {
+      setSavedAnswers(session.answers);
+      setShowRestorePrompt(true);
+    }
+
+    initModule("reading", String(testId), `Reading Test ${testId}`);
+  }, [testId, getSession, initModule]);
+
+  const handleRestore = () => {
+    // The answers in the store are saved as { question_1: "A", question_2: "B" }
+    // We need to convert them back to the format the inputs expect: { 1: "A", 2: "B" }
+    const formattedVals = {};
+    Object.entries(savedAnswers).forEach(([key, value]) => {
+      const qNum = key.replace("question_", ""); // Strips "question_" to just leave "1"
+      formattedVals[qNum] = value;
+    });
+
+    setVals(formattedVals);
+    setShowRestorePrompt(false);
+    // Optional: Automatically start the test if they restore
+    if (phase === "intro") {
+      startModule("reading", String(testId));
+      setPhase("test");
+    }
+  };
+
+  const handleDiscard = () => {
+    // If they click "No, delete them", we clear the store and close the popup
+    saveAllAnswers("reading", String(testId), {});
+    setSavedAnswers({});
+    setShowRestorePrompt(false);
+  };
 
   const scrollRef = useRef(null);
   const guardActive = phase === "test";
@@ -205,6 +240,12 @@ export default function ReadingMainPage({
           onClose={defineType}
           onRestart={handleRestart}
           ANSWER_KEY={ANSWER_KEY}
+        />
+      )}
+      {showRestorePrompt && (
+        <RestoreAnswersPopup
+          onRestore={handleRestore}
+          onDiscard={handleDiscard}
         />
       )}
 

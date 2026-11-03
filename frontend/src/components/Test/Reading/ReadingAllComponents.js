@@ -2606,16 +2606,35 @@ export function PassageContent({
   );
 }
 
-
 function countWords(text) {
   return text?.trim() ? text.trim().split(/\s+/).length : 0;
 }
 
+// ✅ Add this component to your ReadingAllComponents.jsx
+export function RestoreAnswersPopup({ onRestore, onDiscard }) {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-[500] flex items-center justify-between border-t border-gray-300 bg-white px-4 py-3 shadow-[0_-10px_30px_rgba(0,0,0,0.1)] sm:px-6">
+      <div className="flex items-center gap-2 text-sm font-semibold text-gray-800">
+        Would you like to restore your answers?
+        <button
+          onClick={onDiscard}
+          className="ml-2 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white transition hover:bg-red-700">
+          No, delete them
+        </button>
+        <button
+          onClick={onRestore}
+          className="rounded-full bg-green-600 px-5 py-1 text-xs font-bold text-white transition hover:bg-green-700">
+          Yes
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function getOfficialReadingBand(correct, total) {
   // Scale to 40 if the test is shorter
   const scaled = Math.round((correct / total) * 40);
-  
+
   if (scaled >= 39) return "9.0";
   if (scaled >= 37) return "8.5";
   if (scaled >= 35) return "8.0";
@@ -2627,11 +2646,10 @@ function getOfficialReadingBand(correct, total) {
   if (scaled >= 15) return "5.0";
   if (scaled >= 13) return "4.5";
   if (scaled >= 10) return "4.0";
-  if (scaled >= 6)  return "3.5";
-  if (scaled >= 3)  return "3.0";
+  if (scaled >= 6) return "3.5";
+  if (scaled >= 3) return "3.0";
   return "2.5";
 }
-
 
 export function ResultModal({ vals, ANSWER_KEY, onClose, onRestart }) {
   // Calculate score
@@ -2640,36 +2658,43 @@ export function ResultModal({ vals, ANSWER_KEY, onClose, onRestart }) {
 
   // Sort the question keys (question_1, question_2, etc.) so they appear in order
   const sortedKeys = Object.keys(ANSWER_KEY || {}).sort((a, b) => {
-    const numA = parseInt(a.replace(/\D/g, ''), 10);
-    const numB = parseInt(b.replace(/\D/g, ''), 10);
+    const numA = parseInt(a.replace(/\D/g, ""), 10);
+    const numB = parseInt(b.replace(/\D/g, ""), 10);
     return numA - numB;
   });
 
   // Count correct answers
   sortedKeys.forEach((key) => {
-    const studentAns = String(vals[key] || "").trim().toLowerCase();
-    const correctAns = String(ANSWER_KEY[key] || "").trim().toLowerCase();
+    const studentAns = String(vals[key] || "")
+      .trim()
+      .toLowerCase();
+    const correctAns = String(ANSWER_KEY[key] || "")
+      .trim()
+      .toLowerCase();
     if (studentAns === correctAns && studentAns !== "") {
       correctCount++;
     }
   });
 
-const band = getOfficialReadingBand(correctCount, totalQuestions);
+  const band = getOfficialReadingBand(correctCount, totalQuestions);
 
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/50 p-4 sm:p-6 backdrop-blur-sm">
       <div className="flex max-h-[90vh] w-full max-w-3xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl">
-        
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-gray-200 bg-gray-50 px-5 py-4 sm:px-6">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Test Results</h2>
             <p className="mt-1 text-sm text-gray-500">
-              You scored <strong className="text-indigo-600">{correctCount}</strong> out of {totalQuestions}
+              You scored{" "}
+              <strong className="text-indigo-600">{correctCount}</strong> out of{" "}
+              {totalQuestions}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-xs font-bold uppercase tracking-wider text-gray-400">Est. Band</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-gray-400">
+              Est. Band
+            </p>
             <p className="text-2xl font-bold text-green-600">{band}</p>
           </div>
         </div>
@@ -2690,18 +2715,18 @@ const band = getOfficialReadingBand(correctCount, totalQuestions);
                 const qNum = key.replace(/\D/g, ""); // Extracts "1" from "question_1"
                 const studentAns = vals[key] || "";
                 const correctAns = ANSWER_KEY[key] || "";
-                
+
                 const isCorrect =
                   String(studentAns).trim().toLowerCase() ===
-                  String(correctAns).trim().toLowerCase() && studentAns !== "";
+                    String(correctAns).trim().toLowerCase() &&
+                  studentAns !== "";
 
                 return (
                   <div
                     key={key}
                     className={`grid grid-cols-[50px_1fr_1fr] items-center px-4 py-2.5 text-sm sm:grid-cols-[60px_1fr_1fr] ${
                       isCorrect ? "bg-green-50/40" : "bg-red-50/40"
-                    }`}
-                  >
+                    }`}>
                     <div className="font-mono font-bold text-gray-500">
                       {qNum}
                     </div>
@@ -2709,9 +2734,10 @@ const band = getOfficialReadingBand(correctCount, totalQuestions);
                       {studentAns ? (
                         <span
                           className={`font-medium ${
-                            isCorrect ? "text-green-700" : "text-red-600 line-through"
-                          }`}
-                        >
+                            isCorrect
+                              ? "text-green-700"
+                              : "text-red-600 line-through"
+                          }`}>
                           {studentAns}
                         </span>
                       ) : (
@@ -2734,18 +2760,15 @@ const band = getOfficialReadingBand(correctCount, totalQuestions);
         <div className="flex shrink-0 flex-col gap-3 border-t border-gray-200 bg-gray-50 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
           <button
             onClick={onRestart}
-            className="w-full rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:w-auto"
-          >
+            className="w-full rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 sm:w-auto">
             Retake Test
           </button>
           <button
             onClick={onClose}
-            className="w-full rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 sm:w-auto"
-          >
+            className="w-full rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 sm:w-auto">
             Back to Tests
           </button>
         </div>
-
       </div>
     </div>
   );
@@ -3402,17 +3425,17 @@ export function QuestionBlock({
   highlights,
   onSelect,
 }) {
-if (block?.type === "diagram")
-  return (
-    <DiagramBlock
-      block={block}
-      vals={vals}
-      onChange={onChange}
-      submitted={submitted}
-      highlights={highlights}
-      onSelect={onSelect}
-    />
-  );
+  if (block?.type === "diagram")
+    return (
+      <DiagramBlock
+        block={block}
+        vals={vals}
+        onChange={onChange}
+        submitted={submitted}
+        highlights={highlights}
+        onSelect={onSelect}
+      />
+    );
   if (block?.type === "sentence_ending")
     return (
       <SentenceEndingBlock
