@@ -311,7 +311,7 @@ export function SelectionPopup({
   );
 }
 
-// ── NOTE MODAL (Reading-owned, was missing) ───
+// ── NOTE MODAL ───
 export function NoteModal({ selection, existingNote, onSave, onClose }) {
   const [text, setText] = useState(existingNote || "");
   return (
@@ -2663,15 +2663,30 @@ export function ResultModal({ vals, ANSWER_KEY, onClose, onRestart }) {
     return numA - numB;
   });
 
-  // Count correct answers
+  // Count correct answers (Supports both String and Array answers)
   sortedKeys.forEach((key) => {
     const studentAns = String(vals[key] || "")
       .trim()
       .toLowerCase();
-    const correctAns = String(ANSWER_KEY[key] || "")
-      .trim()
-      .toLowerCase();
-    if (studentAns === correctAns && studentAns !== "") {
+    const correctAnsRaw = ANSWER_KEY[key];
+
+    let isCorrect = false;
+
+    if (Array.isArray(correctAnsRaw)) {
+      // If correct answer is an array (e.g. ["A", "B"])
+      const normalizedArray = correctAnsRaw.map((a) =>
+        String(a).trim().toLowerCase(),
+      );
+      isCorrect = normalizedArray.includes(studentAns);
+    } else {
+      // If correct answer is a single string
+      const correctAns = String(correctAnsRaw || "")
+        .trim()
+        .toLowerCase();
+      isCorrect = studentAns === correctAns && studentAns !== "";
+    }
+
+    if (isCorrect) {
       correctCount++;
     }
   });
@@ -2714,12 +2729,23 @@ export function ResultModal({ vals, ANSWER_KEY, onClose, onRestart }) {
               {sortedKeys.map((key) => {
                 const qNum = key.replace(/\D/g, ""); // Extracts "1" from "question_1"
                 const studentAns = vals[key] || "";
-                const correctAns = ANSWER_KEY[key] || "";
+                const correctAnsRaw = ANSWER_KEY[key] || "";
 
-                const isCorrect =
-                  String(studentAns).trim().toLowerCase() ===
-                    String(correctAns).trim().toLowerCase() &&
-                  studentAns !== "";
+                // Figure out if this specific row is correct
+                let isCorrect = false;
+                if (Array.isArray(correctAnsRaw)) {
+                  const normalizedArray = correctAnsRaw.map((a) =>
+                    String(a).trim().toLowerCase(),
+                  );
+                  isCorrect = normalizedArray.includes(
+                    String(studentAns).trim().toLowerCase(),
+                  );
+                } else {
+                  isCorrect =
+                    String(studentAns).trim().toLowerCase() ===
+                      String(correctAnsRaw).trim().toLowerCase() &&
+                    studentAns !== "";
+                }
 
                 return (
                   <div
@@ -2746,7 +2772,9 @@ export function ResultModal({ vals, ANSWER_KEY, onClose, onRestart }) {
                     </div>
                     <div>
                       <span className="font-bold text-gray-800">
-                        {correctAns}
+                        {Array.isArray(correctAnsRaw)
+                          ? correctAnsRaw.join(" OR ")
+                          : correctAnsRaw}
                       </span>
                     </div>
                   </div>
