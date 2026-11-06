@@ -18,6 +18,7 @@ import {
 import { BottomNav } from "@/components/Test/BottomNav";
 import { useExitGuard } from "@/hooks/Useexitguard";
 import Image from "next/image";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 const TOTAL_SEC = 60 * 60;
 const fmt = (s) =>
@@ -157,7 +158,10 @@ export default function ReadingMainPage({
     setPhase("done");
     setShowResult(true);
     // no forced navigation to "writing" — reading is standalone now
+
+    sendGTMEvent({ event: 'test_submitted', test_type: 'reading' });
   }, [vals, saveAllAnswers, submitModule, testId]);
+
 
   const handleRestart = useCallback(() => {
     setVals({});
