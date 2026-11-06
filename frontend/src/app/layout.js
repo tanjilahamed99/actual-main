@@ -1,6 +1,7 @@
 import { Fraunces, Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 // ── Fonts ─────────────────────────────────────────────────────────────
 const fraunces = Fraunces({
@@ -151,6 +152,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${fraunces.variable} ${inter.variable} ${plexMono.variable} antialiased`}
       >
+         <GoogleTagManager gtmId="GTM-MJLB4S2S" />
         {children}
         <Toaster position="top-center" richColors />
       </body>
