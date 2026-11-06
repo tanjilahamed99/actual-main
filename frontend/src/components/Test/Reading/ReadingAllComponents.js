@@ -6,7 +6,7 @@ const supportsCSSHighlight =
   !!window.CSS?.highlights;
 
 // ── SCORING ────────────────────────────────────
-// Handles both single-value answers ("TRUE") and multi-value ones
+// Handles both single-value answers ("TRUE") and multi-value one
 // (arrays, e.g. multi-select MCQ where either order is acceptable).
 export function scoreReadingAnswers(vals, answerKey) {
   const results = []; // [{ n, userAnswer, correctAnswer, isCorrect }]
