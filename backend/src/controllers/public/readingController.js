@@ -4,7 +4,8 @@ const ReadingTest = require("../../models/ReadingTest");
 exports.getAllPublishedReadingTest = async (req, res) => {
   try {
     const tests = await ReadingTest.find({ status: "published" })
-      .select("testNumber title priority updatedAt questions.label")
+      // ✅ ADDED questions.title HERE
+      .select("testNumber title priority updatedAt questions.label questions.title")
       .sort({ testNumber: 1 })
       .lean();
 
@@ -14,9 +15,10 @@ exports.getAllPublishedReadingTest = async (req, res) => {
   }
 };
 
+
 // GET /api/reading/:testNumber — single published test WITHOUT answers
 exports.getPublishedReadingTest = async (req, res) => {
-  console.log('collinlg')
+  console.log("collinlg");
   try {
     const test = await ReadingTest.findOne({
       testNumber: req.params.id,
