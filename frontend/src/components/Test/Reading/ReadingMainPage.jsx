@@ -458,7 +458,7 @@ export default function ReadingMainPage({
                       vals={vals}
                       onChange={onChange}
                       submitted={submitted}
-                      isReviewMode={isReviewMode} // ✅ Add this
+                      isReviewMode={isReviewMode} // ✅ Add thi
                       ANSWER_KEY={ANSWER_KEY} // ✅ Add this
                     />
                   ))}
