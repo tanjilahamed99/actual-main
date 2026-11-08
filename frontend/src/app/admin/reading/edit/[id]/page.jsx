@@ -40,7 +40,7 @@ export default function EditReadingTestPage() {
 
   async function handleUpdate(payload) {
     await updateReadingTest(id, payload);
-    router.push("/admin/reading");
+    // router.push("/admin/reading");
   }
 
   if (loading) {
