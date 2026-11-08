@@ -46,6 +46,13 @@ export default function ReadingMainPage({
     useModuleTestStore();
   const [showRestorePrompt, setShowRestorePrompt] = useState(false);
   const [savedAnswers, setSavedAnswers] = useState({});
+  const [isReviewMode, setIsReviewMode] = useState(false);
+
+  const handleReview = useCallback(() => {
+    setShowResult(false);
+    setPhase("done"); // Keeps inputs disabled
+    setIsReviewMode(true); // Enables the "Answer Badges" on the passage
+  }, []);
 
   useEffect(() => {
     initModule("reading", testId, `Reading Test ${testId}`);
@@ -159,9 +166,8 @@ export default function ReadingMainPage({
     setShowResult(true);
     // no forced navigation to "writing" — reading is standalone now
 
-    sendGTMEvent({ event: 'test_submitted', test_type: 'reading' });
+    sendGTMEvent({ event: "test_submitted", test_type: "reading" });
   }, [vals, saveAllAnswers, submitModule, testId]);
-
 
   const handleRestart = useCallback(() => {
     setVals({});
@@ -244,6 +250,7 @@ export default function ReadingMainPage({
           onClose={defineType}
           onRestart={handleRestart}
           ANSWER_KEY={ANSWER_KEY}
+          onReview={handleReview} // ✅ Add this
         />
       )}
       {showRestorePrompt && (
@@ -395,6 +402,8 @@ export default function ReadingMainPage({
                   vals={vals}
                   onChange={onChange}
                   submitted={submitted}
+                  isReviewMode={isReviewMode} // ✅ Add this
+                  ANSWER_KEY={ANSWER_KEY}
                 />
               </HighlightRoot>
             </div>
@@ -449,6 +458,8 @@ export default function ReadingMainPage({
                       vals={vals}
                       onChange={onChange}
                       submitted={submitted}
+                      isReviewMode={isReviewMode} // ✅ Add this
+                      ANSWER_KEY={ANSWER_KEY} // ✅ Add this
                     />
                   ))}
                 </HighlightRoot>
@@ -471,6 +482,12 @@ export default function ReadingMainPage({
               { label: "Part 2", qRange: "14–26", s: 14, e: 26 },
               { label: "Part 3", qRange: "27–40", s: 27, e: 40 },
             ]}
+            isReviewMode={isReviewMode}
+            onReviewSubmit={() => setShowResult(true)}
+            onRetake={() => {
+              setIsReviewMode(false);
+              handleRestart();
+            }}
           />
 
           {/* ── SELECTION POPUP ── */}

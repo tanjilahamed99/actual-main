@@ -2,7 +2,6 @@ const { default: mongoose } = require("mongoose");
 const ReadingTest = require("../../models/ReadingTest");
 const { readingTestPayloadSchema } = require("../../validation/validation");
 
-// ---------- CREATE ----------
 exports.createReadingTest = async (req, res) => {
   const parsed = readingTestPayloadSchema.safeParse(req.body);
   if (!parsed.success) {
@@ -11,6 +10,7 @@ exports.createReadingTest = async (req, res) => {
       errors: parsed.error.flatten(),
     });
   }
+
   try {
     const exists = await ReadingTest.findOne({
       testNumber: parsed.data.testNumber,
@@ -18,6 +18,7 @@ exports.createReadingTest = async (req, res) => {
     if (exists) {
       return res.status(409).json({ message: "Test number already exists" });
     }
+
     const test = await ReadingTest.create(parsed.data);
     res.status(201).json({ success: true, test });
   } catch (err) {
@@ -28,24 +29,24 @@ exports.createReadingTest = async (req, res) => {
   }
 };
 
-// ---------- UPDATE ----------
 exports.updateReadingTest = async (req, res) => {
   const parsed = readingTestPayloadSchema.partial().safeParse(req.body);
   if (!parsed.success) {
-    return res
-      .status(400)
-      .json({ message: "Invalid payload", errors: parsed.error.flatten() });
+    return res.status(400).json({
+      message: "Invalid payload",
+      errors: parsed.error.flatten(),
+    });
   }
+
+
   if (!req.params.id) {
-    return res.status(400).json({ message: "Invalid id" });
+    return res.status(400).json({ message: "Id required" });
   }
-  const test = await ReadingTest.findOneAndUpdate(
-    { testNumber: req.params.id },
-    parsed.data,
-    {
-      new: true,
-    },
-  );
+
+  const test = await ReadingTest.findOneAndUpdate({ testNumber: req.params.id }, parsed.data, {
+    new: true,
+  });
+  
   if (!test) return res.status(404).json({ message: "Not found" });
   res.json({ success: true, test });
 };

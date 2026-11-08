@@ -5,48 +5,246 @@ export const DemoReadingTest = [
     priority: "demo",
     title: "Demo Reading test-1",
     answers: {
-      1: "location",
-      2: "policies",
-      3: "government",
-      4: "incomes",
-      5: "land",
-      6: "suburban",
-      7: "FALSE",
-      8: "TRUE",
-      9: "NOT GIVEN",
-      10: "FALSE",
-      11: "TRUE",
-      12: "NOT GIVEN",
-      13: "TRUE",
-
-      14: "v",
-      15: "i",
-      16: "vi",
-      17: "x",
-      18: "ix",
-      19: "iv",
-      20: "ii",
-      21: "TRUE",
-      22: "TRUE",
-      23: "NOT GIVEN",
-      24: ["C", "D", "E"],
-      25: ["C", "D", "E"],
-      26: ["C", "D", "E"],
-
-      27: "half-yawns",
-      28: "sneeze",
-      29: "fixed action pattern",
-      30: "6 seconds",
-      31: "68 seconds",
-      32: "long yawns",
-      33: "B",
-      34: "C",
-      35: "D",
-      36: "C",
-      37: "B",
-      38: "TRUE",
-      39: "NOT GIVEN",
-      40: "TRUE",
+      1: {
+        answer: "location",
+        location: "Paragraph 1",
+        explanation: "The text says the map shows the store's name and details.",
+        quote: "Clicking on a dot will show you the store's name and whether it carries fresh fruit and vegetables",
+      },
+      2: {
+        answer: "policies",
+        location: "Paragraph 2",
+        explanation: "The aim of the project is to assist in forming future policies.",
+        quote: "The aim of the project is also to assist government officials in assessing food availability, and in forming future policies about what kind of food should be sold and where",
+      },
+      3: {
+        answer: "government",
+        location: "Paragraph 3",
+        explanation: "Citizen map makers make maps when there is no good government map.",
+        quote: "citizen map makers may make maps because there is no good government map",
+      },
+      4: {
+        answer: "incomes",
+        location: "Paragraph 4",
+        explanation: "People with low incomes frequently live in food deserts.",
+        quote: "people at higher risk of chronic disease and who receive minimal incomes for the work they do, frequently live in neighborhoods located in food deserts",
+      },
+      5: {
+        answer: "land",
+        location: "Paragraph 4",
+        explanation: "Supermarkets cannot afford the amount of land required in cities.",
+        quote: "supermarkets often can’t afford the amount of land required for their stores in cities",
+      },
+      6: {
+        answer: "suburban",
+        location: "Paragraph 4",
+        explanation: "Smaller groceries close due to competition from suburban supermarkets.",
+        quote: "smaller urban groceries tend to close due to competition from suburban supermarkets",
+      },
+      7: {
+        answer: "FALSE",
+        location: "Paragraph 7",
+        explanation: "The project is run by volunteers, not professional researchers.",
+        quote: "The Brooklyn project differs in that it’s run by a local core of five volunteers who have worked on the project for the past year, rather than trained, academic researchers",
+      },
+      8: {
+        answer: "TRUE",
+        location: "Paragraph 7",
+        explanation: "They get permission from the storekeeper before assessing.",
+        quote: "once the storekeeper's permission has been obtained, check off boxes on their list against the products for sole in the store",
+      },
+      9: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 7",
+        explanation: "No technical difficulties are mentioned.",
+        quote: "It was launched only recently, but its creators haven’t yet set up systems to see who’s looking at it",
+      },
+      10: {
+        answer: "FALSE",
+        location: "Paragraph 7",
+        explanation: "The website hasn't caught much official attention yet.",
+        quote: "Their website hasn’t caught them much local or official attention yet",
+      },
+      11: {
+        answer: "TRUE",
+        location: "Paragraph 8",
+        explanation: "Michele Ver Ploeg wants to see price data added.",
+        quote: "she would like to see price data for healthy products, too",
+      },
+      12: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 8",
+        explanation: "The text doesn't predict if the internet rate will increase.",
+        quote: "a significant proportion of Brooklyn residents don’t have internet access at home and 8 percent rely on dial-up service, instead of high-speed internet access",
+      },
+      13: {
+        answer: "TRUE",
+        location: "Paragraph 8",
+        explanation: "He hopes to draw out fresh volunteers.",
+        quote: "He also hopes warmer days in the spring will draw out fresh volunteers to spread awareness and to finish surveying",
+      },
+      14: {
+        answer: "v",
+        location: "Paragraph A",
+        explanation: "Paragraph A introduces the two great pioneers.",
+        quote: "The 16th and 17th centuries saw two great pioneers",
+      },
+      15: {
+        answer: "i",
+        location: "Paragraph B",
+        explanation: "Paragraph B details his early life.",
+        quote: "Gilbert’s birth pre-dated Galileo. Born in an eminent local family in Colchester County in the UK",
+      },
+      16: {
+        answer: "vi",
+        location: "Paragraph C",
+        explanation: "Paragraph C discusses his professional success.",
+        quote: "He was a very successful and eminent doctor. All this culminated in his election to the president of the Royal Science Society",
+      },
+      17: {
+        answer: "x",
+        location: "Paragraph D",
+        explanation: "Paragraph D explains his change of focus.",
+        quote: "Gilbert was first interested in chemistry but later changed his focus due to the large portion of mysticism of alchemy involved",
+      },
+      18: {
+        answer: "ix",
+        location: "Paragraph E",
+        explanation: "Paragraph E details his discovery of magnetism.",
+        quote: "Gilbert’s discovery was so important to modern physics. He investigated the nature of magnetism and electricity",
+      },
+      19: {
+        answer: "iv",
+        location: "Paragraph F",
+        explanation: "Paragraph F questions traditional beliefs.",
+        quote: "He also questioned the traditional astronomical beliefs",
+      },
+      20: {
+        answer: "ii",
+        location: "Paragraph G",
+        explanation: "Paragraph G talks about his new research method.",
+        quote: "His research method was revolutionary in that he used experiments rather than pure logic and reasoning",
+      },
+      21: {
+        answer: "TRUE",
+        location: "Paragraph A",
+        explanation: "He is less well known than he deserves.",
+        quote: "However, he is less well known than he deserves.",
+      },
+      22: {
+        answer: "TRUE",
+        location: "Paragraph C",
+        explanation: "He was a successful doctor before serving the Queen.",
+        quote: "He was a very successful and eminent doctor. All this culminated in his election to the president of the Royal Science Society. He was also appointed personal physician to the Queen",
+      },
+      23: {
+        answer: "NOT GIVEN",
+        location: "Paragraph D",
+        explanation: "No information about losing faith in medical theories.",
+        quote: "He gradually developed his interest in physics after the great minds of the ancient",
+      },
+      24: {
+        answer: ["C", "D", "E"],
+        location: "Paragraph E",
+        explanation: "Metals can be magnetised, earth wobbles, and there are two charges.",
+        quote: "Gilbert also found that metals can be magnetised by rubbing materials such as fur, plastic or the like on them. He named the ends of a magnet 'north pole' and 'south pole'.",
+      },
+      25: {
+        answer: ["C", "D", "E"],
+        location: "Paragraph E",
+        explanation: "C, D, and E are the valid options.",
+        quote: "He even likened the polarity of the magnet to the polarity of the earth and built an entire magnetic philosophy on this analogy",
+      },
+      26: {
+        answer: ["C", "D", "E"],
+        location: "Paragraph E",
+        explanation: "C, D, and E are the valid options.",
+        quote: "It is a French guy named du Fay that discovered that there are actually two electrical charges, positive and negative",
+      },
+      27: {
+        answer: "half-yawns",
+        location: "Paragraph 3",
+        explanation: "There are no half-yawns.",
+        quote: "There are no half-yawns: this is an example of the typical intensity of fixed action patterns",
+      },
+      28: {
+        answer: "sneeze",
+        location: "Paragraph 3",
+        explanation: "A yawn progresses like a sneeze.",
+        quote: "a yawn progresses with the inevitability of a sneeze",
+      },
+      29: {
+        answer: "fixed action pattern",
+        location: "Paragraph 3",
+        explanation: "It is an example of a fixed action pattern.",
+        quote: "It is an excellent example of the instinctive 'fixed action pattern' of classical animal-behavior study",
+      },
+      30: {
+        answer: "6 seconds",
+        location: "Paragraph 3",
+        explanation: "The average yawn lasts about 6 seconds.",
+        quote: "The standard yawn runs its course over about six seconds on average",
+      },
+      31: {
+        answer: "68 seconds",
+        location: "Paragraph 3",
+        explanation: "The interval is generally 68 seconds.",
+        quote: "which is generally about 68 seconds but rarely more than 70",
+      },
+      32: {
+        answer: "long yawns",
+        location: "Paragraph 3",
+        explanation: "Short or long yawns do not compensate by yawning more.",
+        quote: "producers of short or long yawns do not compensate by yawning more or less often",
+      },
+      33: {
+        answer: "B",
+        location: "Paragraph 4",
+        explanation: "The mouth provides a sufficient airway.",
+        quote: "the inhalation at the onset of a yawn, and the exhalation at its end, need not involve the nostrils - the mouth provides a sufficient airway",
+      },
+      34: {
+        answer: "C",
+        location: "Paragraph 5",
+        explanation: "Gaping of the jaws is essential.",
+        quote: "This shows that gaping of the jaws is an essential component of the fixed action pattern of the yawn",
+      },
+      35: {
+        answer: "D",
+        location: "Paragraph 6",
+        explanation: "Yawning is impossible via nasal inhalation alone.",
+        quote: "Unlike normal breathing, which can be performed equally well through mouth or nose, yawning is impossible via nasal inhalation alone",
+      },
+      36: {
+        answer: "C",
+        location: "Paragraph 8",
+        explanation: "The paralyzed arm moves automatically.",
+        quote: "they are startled and mystified to observe that their otherwise paralyzed arm rises and flexes automatically",
+      },
+      37: {
+        answer: "B",
+        location: "Paragraph 9",
+        explanation: "Yawning links us to the animal world.",
+        quote: "Yawning is also a reminder that ancient and unconscious behavior linking US to the animal world lurks beneath the veneer of culture",
+      },
+      38: {
+        answer: "TRUE",
+        location: "Paragraph 1",
+        explanation: "It was difficult to convince students.",
+        quote: "it was difficult for him to convince research students of the merits of 'yawning science'",
+      },
+      39: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 8",
+        explanation: "No mention of learning to control movement.",
+        quote: "observed a link between yawning and stretching",
+      },
+      40: {
+        answer: "TRUE",
+        location: "Paragraph 9",
+        explanation: "Selecting one function is unrealistic.",
+        quote: "selecting a single function from the available options may be an unrealistic goal",
+      },
     },
     questions: [
       {
@@ -180,6 +378,7 @@ Experts who visited the Brooklyn group’s site were optimistic but cautious. �
 [Paragraph F] He also questioned the traditional astronomical beliefs. Though a Copernican, he didn’t express in his quintessential beliefs whether the earth is at the centre of the universe or in orbit around the sun. However, he believed that stars are not equidistant from the earth but have their own earth-like planets orbiting around them. The earth itself is like a giant magnet, which is also why compasses always point north. They spin on an axis that is aligned with the earth’s polarity. He even likened the polarity of the magnet to the polarity of the earth and built an entire magnetic philosophy on this analogy. In his explanation, magnetism is the soul of the earth. Thus a perfectly spherical lodestone, when aligned with the earth’s poles, would wobble all by itself in 24 hours. Further, he also believed that the sun and other stars wobble just like the earth does around a crystal core, and speculated that the moon might also be a magnet caused to orbit by its magnetic attraction to the earth. This was perhaps the first proposal that a force might cause a heavenly orbit.
 
 [Paragraph G] His research method was revolutionary in that he used experiments rather than pure logic and reasoning like the ancient Greek philosophers did. It was a new attitude towards scientific investigation. Until then, scientific experiments were not in fashion. It was because of this scientific attitude, together with his contri­bution to our knowledge of magnetism, that a unit of magneto motive force, also known as magnetic potential, was named Gilbert in his honour. His approach of careful observation and experimentation rather than the authoritative opinion or deductive philosophy of others had laid the very foundation for modern science.`,
+
         headingsList: [
           { id: "i", text: "Early years of Gilbert" },
           {
@@ -496,46 +695,246 @@ Provine speculated that, in general, yawning may have many functions, and select
     priority: "demo",
     title: "Demo Reading test-2",
     answers: {
-      1: "religious ceremonies",
-      2: "fidelity",
-      3: "two kisses",
-      4: "400 years",
-      5: "swine flu",
-      6: "social contacts",
-      7: "germs or bacteria",
-      8: "TRUE",
-      9: "FALSE",
-      10: "NOT GIVEN",
-      11: "TRUE",
-      12: "TRUE",
-      13: "FALSE",
-      14: "D",
-      15: "C",
-      16: "G",
-      17: "A",
-      18: "H",
-      19: "E",
-      20: "A",
-      21: "NOT GIVEN",
-      22: "TRUE",
-      23: "NOT GIVEN",
-      24: "threat",
-      25: "scientists",
-      26: "sanctuaries",
-      27: "C",
-      28: "C",
-      29: "NOT GIVEN",
-      30: "FALSE",
-      31: "TRUE",
-      32: "TRUE",
-      33: "NOT GIVEN",
-      34: ["C", "E"],
-      35: ["C", "E"],
-      36: "COMPLEXITY",
-      37: "EVOLUTION AND ECONOMICS",
-      38: "COMPLEX ADAPTIVE SYSTEMS",
-      39: "RANDOM GENETIC MUTATIONS",
-      40: "PERMUTATIONS",
+      1: {
+        answer: "religious ceremonies",
+        location: "Paragraph 5",
+        explanation: "The text states that cheek kissing was used in early Christianity in religious ceremonies.",
+        quote: "It was incorporated into early Christianity and used in religious ceremonies"
+      },
+      2: {
+        answer: "fidelity",
+        location: "Paragraph 5",
+        explanation: "In the Middle Ages, the kiss was used to show fidelity and seal agreements.",
+        quote: "In the Middle Ages, a kiss was used as a sign of fidelity and to seal agreements like property transfers"
+      },
+      3: {
+        answer: "two kisses",
+        location: "Paragraph 6",
+        explanation: "The text states that in Paris, two kisses are common.",
+        quote: "In Paris, two kisses are common"
+      },
+      4: {
+        answer: "400 years",
+        location: "Paragraph 6",
+        explanation: "The text states that la bise stopped during the plague and wasn't revived until 400 years later.",
+        quote: "It is thought that during the plague in the 14th century, la bise may have stopped and was not revived again until 400 years later"
+      },
+      5: {
+        answer: "swine flu",
+        location: "Paragraph 6",
+        explanation: "The passage states that in 2009, la bise was temporarily paused as swine flu became a concern.",
+        quote: "In 2009, la bise was temporarily paused as swine flu became a concern"
+      },
+      6: {
+        answer: "social contacts",
+        location: "Paragraph 6",
+        explanation: "The French Health Minister advised reducing physical social contacts to prevent the spread.",
+        quote: "The reduction in social contacts of a physical nature is advised"
+      },
+      7: {
+        answer: "germs or bacteria",
+        location: "Paragraph 9",
+        explanation: "The text notes that hands are agents of bacterial transfer and can spread germs.",
+        quote: "She warned that hands “are agents of bacterial transfer” and cited early studies showing that a handshake could easily spread germs"
+      },
+      8: {
+        answer: "TRUE",
+        location: "Paragraph 1",
+        explanation: "The text states a greeting was used to signal friendship, finalize business transactions, or religious devotion.",
+        quote: "Throughout history, such a greeting was used to signal friendship, finalize a business transaction, or indicate religious devotion"
+      },
+      9: {
+        answer: "FALSE",
+        location: "Paragraph 2",
+        explanation: "The text says there is no reliable evidence to prove the handshake started as a sign of peace.",
+        quote: "So far, there has not been any reliable evidence to prove this assumption"
+      },
+      10: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 2",
+        explanation: "The passage mentions checking for hidden weapons, but says nothing about rolling up sleeves.",
+        quote: "Grasping hands proved one was not holding a weapon—and shaking them was a way to ensure a partner had nothing hiding up their sleeve"
+      },
+      11: {
+        answer: "TRUE",
+        location: "Paragraph 3",
+        explanation: "The text states the handshake's catch-all utility makes interpretation difficult.",
+        quote: "The handshake’s catch-all utility, used in friendship, romance, and business alike, makes interpretation difficult"
+      },
+      12: {
+        answer: "TRUE",
+        location: "Paragraph 4",
+        explanation: "The text states Quakers used the handshake as a more democratic form of greeting.",
+        quote: "In their efforts to eschew the hierarchy and social rank, they found the handshake a more democratic form of greeting"
+      },
+      13: {
+        answer: "FALSE",
+        location: "Paragraph 5",
+        explanation: "The study found nearly a quarter (not exactly 25%) sniffed their hands.",
+        quote: "researchers in Israel filmed handshakes between hundreds of strangers and found nearly a quarter of participants sniffed their hands afterwards"
+      },
+      14: {
+        answer: "D",
+        location: "Paragraph D",
+        explanation: "Paragraph D states the highest temperature ever recorded.",
+        quote: "temperatures hit an all-time high in the Antarctic with 18.3 Celsius"
+      },
+      15: {
+        answer: "C",
+        location: "Paragraph C",
+        explanation: "Paragraph C compares the past and present records of penguin populations.",
+        quote: "Elephant Island was last surveyed in 1971, and there were 122,550 pairs of penguins across all colonies. However, the recent count revealed just 52,786 pairs"
+      },
+      16: {
+        answer: "G",
+        location: "Paragraph G",
+        explanation: "Paragraph G mentions sanctuaries that would be off-limits to humans.",
+        quote: "These would be off-limits to humans"
+      },
+      17: {
+        answer: "A",
+        location: "Paragraph A",
+        explanation: "Paragraph A mentions the habitats of the chinstrap penguin.",
+        quote: "The northern part of the Antarctic Peninsula, several Antarctic and subantarctic islands, and the uninhabited Balleny Islands between Antarctica and New Zealand are the habitats of the species"
+      },
+      18: {
+        answer: "H",
+        location: "Paragraph H",
+        explanation: "Paragraph H mentions measures to protect marine life.",
+        quote: "create a network of ocean sanctuaries to protect marine life"
+      },
+      19: {
+        answer: "E",
+        location: "Paragraph E",
+        explanation: "Paragraph E discusses the climate change and its impact on krill, the penguin's food.",
+        quote: "The reduced sea ice and warmer oceans due to climate change have led to less krill, the main component of the penguins’ diet"
+      },
+      20: {
+        answer: "F",
+        location: "Paragraph F",
+        explanation: "Paragraph F describes the Gentoo penguins expanding their territory.",
+        quote: "Gentoo is a species from further north and they appear to be colonizing the area and are actually increasing in numbers"
+      },
+      21: {
+        answer: "NOT GIVEN",
+        location: "Paragraph B",
+        explanation: "The IUCN deemed them 'least concern', but this does not say they showed little concern about the fall.",
+        quote: "the chinstraps have been deemed of “least concern” by the International Union for Conservation of Nature (IUCN)"
+      },
+      22: {
+        answer: "TRUE",
+        location: "Paragraph E",
+        explanation: "The text says climate change is the underlying factor affecting the food chain.",
+        quote: "Climate change is probably the underlying factor, and the effects are rippling through the food chain"
+      },
+      23: {
+        answer: "NOT GIVEN",
+        location: "Paragraph F",
+        explanation: "The text says Gentoo numbers are increasing, but doesn't say they are unaffected by climate change.",
+        quote: "Gentoo is a species from further north and they appear to be colonizing the area and are actually increasing in numbers"
+      },
+      24: {
+        answer: "threat",
+        location: "Paragraph G",
+        explanation: "The text says the ship is documenting the threat to the oceans.",
+        quote: "The Greenpeace ship Esperanza has been documenting the threat to the oceans worldwide"
+      },
+      25: {
+        answer: "scientists",
+        location: "Paragraph G",
+        explanation: "The ship is taking scientists abroad.",
+        quote: "taking the scientists for travelling abroad"
+      },
+      26: {
+        answer: "sanctuaries",
+        location: "Paragraph G",
+        explanation: "Greenpeace campaigns for the establishment of Antarctic sanctuaries.",
+        quote: "campaigning for the three Antarctic sanctuaries that it would establish to offer protection"
+      },
+      27: {
+        answer: "C",
+        location: "Paragraph D",
+        explanation: "The writer states that humans infer a top-down government designer is needed, but this often fails.",
+        quote: "humans also (understandably) infer that a top-down government designer is needed in nearly every aspect of the economy"
+      },
+      28: {
+        answer: "C",
+        location: "Paragraph D",
+        explanation: "The text says too much top-down interference fails because markets are too complex.",
+        quote: "When such attempts have been made in the past, they have failed—because markets are far too complex, interactive and autocatalytic to be designed from the top down"
+      },
+      29: {
+        answer: "NOT GIVEN",
+        location: "Paragraph A",
+        explanation: "The text mentions SKUs but doesn't explicitly state it's a more precise measurement.",
+        quote: "differences in Stock Keeping Units (SKUs, a measure of the number of types of retail products available)"
+      },
+      30: {
+        answer: "NO",
+        location: "Paragraph C",
+        explanation: "The author provides many concrete examples like VHS over Betamax, etc.",
+        quote: "VHS over Betamax, DVDs over VHS, CDs over vinyl records"
+      },
+      31: {
+        answer: "YES",
+        location: "Paragraph D",
+        explanation: "The author states the correspondence between evolution and economics is not perfect.",
+        quote: "The correspondence between evolution and economics is not perfect"
+      },
+      32: {
+        answer: "YES",
+        location: "Paragraph E",
+        explanation: "The text quotes 'Where goods do not cross frontiers, armies will.'",
+        quote: "Where goods do not cross frontiers, armies will"
+      },
+      33: {
+        answer: "NOT GIVEN",
+        location: "Paragraph D",
+        explanation: "The text mentions the invisible hand, but doesn't say profit is the invisible hand.",
+        quote: "the economy is moulded from the bottom up by the invisible hand"
+      },
+      34: {
+        answer: ["C", "E"],
+        location: "Paragraph E",
+        explanation: "The text mentions masking motives through 'trade' and 'reciprocal feasting'.",
+        quote: "they mask the real motives for alliance through trade and reciprocal feasting"
+      },
+      35: {
+        answer: ["C", "E"],
+        location: "Paragraph E",
+        explanation: "The tools used to ask for union are trade and feasting.",
+        quote: "mask the real motives for alliance through trade and reciprocal feasting"
+      },
+      36: {
+        answer: "COMPLEXITY",
+        location: "Paragraph B",
+        explanation: "The explanation is found in complexity theory.",
+        quote: "the explanation is to be found in complexity theory"
+      },
+      37: {
+        answer: "EVOLUTION AND ECONOMICS",
+        location: "Paragraph B",
+        explanation: "The relationship between evolution and economics is discussed.",
+        quote: "Evolution and economics are not just analogous to each other"
+      },
+      38: {
+        answer: "COMPLEX ADAPTIVE SYSTEMS",
+        location: "Paragraph B",
+        explanation: "They are two forms of a larger phenomenon called complex adaptive systems.",
+        quote: "they are actually two forms of a larger phenomenon called complex adaptive systems"
+      },
+      39: {
+        answer: "RANDOM GENETIC MUTATIONS",
+        location: "Paragraph C",
+        explanation: "Nature selects from variation produced by random genetic mutations.",
+        quote: "nature selects from the variation produced by random genetic mutations"
+      },
+      40: {
+        answer: "PERMUTATIONS",
+        location: "Paragraph C",
+        explanation: "The economy proceeds through the production and selection of permutations.",
+        quote: "our material economy proceeds through the production and selection of numerous permutations"
+      }
     },
     questions: [
       {
@@ -916,7 +1315,6 @@ Louisa Casson, Greenpeace Oceans Campaigner, said in a statement: “Penguins ar
               },
             ],
           },
-          ,
         ],
       },
     ],
@@ -927,46 +1325,246 @@ Louisa Casson, Greenpeace Oceans Campaigner, said in a statement: “Penguins ar
     priority: "demo",
     title: "Demo Reading test-3",
     answers: {
-      1: "NOT GIVEN",
-      2: "NOT GIVEN",
-      3: "TRUE",
-      4: "NOT GIVEN",
-      5: "FALSE",
-      6: "ACQUIRED",
-      7: "DIFFERENTIATE",
-      8: "GOOD",
-      9: "AROMA",
-      10: "SEASONINGS",
-      11: "FLAVOUR",
-      12: "INDELIBLE",
-      13: "CHEMICAL AROMAS",
-      14: "D",
-      15: "G",
-      16: "E",
-      17: "A",
-      18: "G",
-      19: "FALSE",
-      20: "TRUE",
-      21: "TRUE",
-      22: "NOT GIVEN",
-      23: "the military",
-      24: "high density",
-      25: "self-sharpening",
-      26: "chemical toxicity",
-      27: "FALSE",
-      28: "TRUE",
-      29: "FALSE",
-      30: "TRUE",
-      31: "NOT GIVEN",
-      32: "FALSE",
-      33: "seeds",
-      34: "shells",
-      35: "fish",
-      36: "canals",
-      37: "maize",
-      38: "cotton",
-      39: "flotation",
-      40: "shellfish",
+      1: {
+        answer: "NOT GIVEN",
+        location: "Paragraph A",
+        explanation: "The text mentions the brain filters aromas, but doesn't state the brain determines which aromas we are aware of.",
+        quote: "The mind filters out the overwhelming majority of chemical aromas that surround us, focusing intently on some, ignoring others"
+      },
+      2: {
+        answer: "NOT GIVEN",
+        location: "Paragraph A",
+        explanation: "The text compares taste and smell but does not state taste is as efficient as smell.",
+        quote: "Tastebuds offers a limited means of detection, however, compared with the human olfactory system, which can perceive thousands of different chemical aromas"
+      },
+      3: {
+        answer: "TRUE",
+        location: "Paragraph C",
+        explanation: "A person's food preferences are formed during the first few years of life.",
+        quote: "A person’s food preferences, like his or her personality, are formed during the first few years of life, through a process of socialization"
+      },
+      4: {
+        answer: "NOT GIVEN",
+        location: "Paragraph E",
+        explanation: "The text states he set sail to find new seasonings, but doesn't say he found many.",
+        quote: "In 1492, Christopher Columbus set sail in order to try to find new seasonings and thus to make his fortune"
+      },
+      5: {
+        answer: "FALSE",
+        location: "Paragraph F",
+        explanation: "The first artificial flavor was discovered by accident, not on purpose.",
+        quote: "Legend has it that a German scientist discovered methyl anthranilate, one of the first artificial flavours, by accident while mixing chemicals in his laboratory"
+      },
+      6: {
+        answer: "ACQUIRED",
+        location: "Paragraph A",
+        explanation: "The sense of taste was acquired to avoid being poisoned.",
+        quote: "human beings acquired the sense of taste as a way to avoid being poisoned"
+      },
+      7: {
+        answer: "DIFFERENTIATE",
+        location: "Paragraph A",
+        explanation: "Taste helps us differentiate good food from bad food.",
+        quote: "Taste is supposed to help us differentiate food that’s good for us from food that’s not"
+      },
+      8: {
+        answer: "GOOD",
+        location: "Paragraph A",
+        explanation: "Taste helps differentiate food that is good for us.",
+        quote: "Taste is supposed to help us differentiate food that’s good for us from food that’s not"
+      },
+      9: {
+        answer: "AROMA",
+        location: "Paragraph A",
+        explanation: "The aroma of food can be responsible for most of its flavor.",
+        quote: "The aroma of food can be responsible for as much as 90% of its flavor"
+      },
+      10: {
+        answer: "SEASONINGS",
+        location: "Paragraph E",
+        explanation: "Columbus set sail to find new seasonings.",
+        quote: "Christopher Columbus set sail in order to try to find new seasonings"
+      },
+      11: {
+        answer: "FLAVOUR",
+        location: "Paragraph E",
+        explanation: "He wanted to find seasonings to make his fortune with the most desired commodity.",
+        quote: "find new seasonings and thus to make his fortune with this most desired commodity of that time"
+      },
+      12: {
+        answer: "INDELIBLE",
+        location: "Paragraph D",
+        explanation: "The flavors of childhood foods leave an indelible mark.",
+        quote: "The flavours of childhood foods seem to leave an indelible mark"
+      },
+      13: {
+        answer: "CHEMICAL AROMAS",
+        location: "Paragraph G",
+        explanation: "Sophisticated spectrometers detect chemical aromas in food.",
+        quote: "spectrometers, gas chromatograph, and headspace vapor analyzers provide a detailed map of a food’s flavour components, detecting chemical aromas in amounts as low as one part per billion"
+      },
+      14: {
+        answer: "D",
+        location: "Paragraph D",
+        explanation: "Paragraph D invokes the photoelectric effect.",
+        quote: "Their theory invokes a well-known process called the photoelectric effect"
+      },
+      15: {
+        answer: "G",
+        location: "Paragraph G",
+        explanation: "Paragraph G mentions Hans-Georg Menzel who acknowledges but doubts the theory.",
+        quote: "Hans-Georg Menzel, who chairs the International Commission on Radiological Protection’s committee on radiation doses, acknowledges that the theory should be considered, but he doubts that it will prove significant"
+      },
+      16: {
+        answer: "E",
+        location: "Paragraph E",
+        explanation: "Paragraph E explains how depleted uranium damages DNA.",
+        quote: "various studies have shown that dissolved uranium - ingested in food or water, for example - is liable to attach to DNA strands within cells, because uranium binds strongly to DNA phosphate"
+      },
+      17: {
+        answer: "A",
+        location: "Paragraph A",
+        explanation: "Paragraph A gives a debatable explanation of how depleted uranium causes problems.",
+        quote: "It may be, if a controversial claim by two researchers is right. They say that minute quantities of the material lodged in the body may kick out energetic electrons that mimic the effect of beta radiation"
+      },
+      18: {
+        answer: "G",
+        location: "Paragraph G",
+        explanation: "Paragraph G states organisations have no plans to investigate the hypothesis.",
+        quote: "Organisations in the UK, including the Ministry of Defence and the Health Protection Agency, say they have no plans to investigate Busby’s hypothesis"
+      },
+      19: {
+        answer: "FALSE",
+        location: "Paragraph B",
+        explanation: "Governments and the military disagree that it is harmful.",
+        quote: "Some researchers and campaigners are convinced that depleted uranium left in the people exposed to it. Governments and the military disagree"
+      },
+      20: {
+        answer: "TRUE",
+        location: "Paragraph D",
+        explanation: "Heavier elements are better at intercepting gamma radiation.",
+        quote: "heavy elements are far better at intercepting gamma radiation and X-rays than light elements"
+      },
+      21: {
+        answer: "TRUE",
+        location: "Paragraph F",
+        explanation: "Calculations indicate phantom photoelectrons are the predominant effect.",
+        quote: "Our detailed calculations indicate that the phantom photoelectrons are the predominant effect by far for uranium genome toxicity"
+      },
+      22: {
+        answer: "NOT GIVEN",
+        location: "Paragraph H",
+        explanation: "The text doesn't state that most scientists support Mark Hill's opinion.",
+        quote: "Radiation biophysicist Mark Hill of the University of Oxford would like to see a fuller investigation, though he suggests this might show that the photoelectric effect is not as powerful as Busby claims"
+      },
+      23: {
+        answer: "the military",
+        location: "Paragraph B",
+        explanation: "Depleted uranium is highly valued by the military.",
+        quote: "Depleted uranium is highly valued by the military, who use it in the tips of armour­piercing weapons"
+      },
+      24: {
+        answer: "high density",
+        location: "Paragraph B",
+        explanation: "The material's high density helps it penetrate armour.",
+        quote: "The material’s high density and self-sharpening properties help it to penetrate the armour of enemy tanks and bunkers"
+      },
+      25: {
+        answer: "self-sharpening",
+        location: "Paragraph B",
+        explanation: "The self-sharpening properties help it penetrate.",
+        quote: "The material’s high density and self-sharpening properties help it to penetrate the armour of enemy tanks and bunkers"
+      },
+      26: {
+        answer: "chemical toxicity",
+        location: "Paragraph C",
+        explanation: "Research is needed on the effects of uranium's chemical toxicity.",
+        quote: "The authors of the NRC report argue that more long-term and quantitative research is needed on the effects of uranium’s chemical toxicity"
+      },
+      27: {
+        answer: "FALSE",
+        location: "Paragraph 1",
+        explanation: "Caral was built around 5,000 years ago, older than the Egyptian pyramids.",
+        quote: "the remains of a city known as Caral that flourished nearly 5,000 years ago. It true, it would be the oldest known urban center in the America"
+      },
+      28: {
+        answer: "TRUE",
+        location: "Paragraph 3",
+        explanation: "Not finding pots meant Caral could be pre-ceramic.",
+        quote: "Not finding any only made her more excited: it meant Caral could be what archaeologists term pre-ceramic"
+      },
+      29: {
+        answer: "FALSE",
+        location: "Paragraph 3",
+        explanation: "The stones were from a nearby quarry, not far away.",
+        quote: "must have filled these bags with stones from a nearby quarry"
+      },
+      30: {
+        answer: "TRUE",
+        location: "Paragraph 4",
+        explanation: "Thousands of manual laborers and architects were needed.",
+        quote: "Thousands of manual laborers would have been needed to build such a project, not counting the many architects, craftsmen, and managers"
+      },
+      31: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 4",
+        explanation: "Instruments were found, but it doesn't say they were highly skilled musicians.",
+        quote: "Shady's team found the remains of a large amphitheater, containing almost 70 musical instruments made of bird and deer bones"
+      },
+      32: {
+        answer: "FALSE",
+        location: "Paragraph 4",
+        explanation: "Housing indicates a hierarchy, not no class distinctions.",
+        quote: "These indicate a hierarchy of living arrangements: large, well-kept rooms atop pyramids for the elite, ground-level quarters for shabbier outlying dwellings for workers"
+      },
+      33: {
+        answer: "seeds",
+        location: "Paragraph 5",
+        explanation: "Seeds of the cocoa bush were found.",
+        quote: "including seeds of the cocoa bush and necklaces of shells"
+      },
+      34: {
+        answer: "shells",
+        location: "Paragraph 5",
+        explanation: "Shells were used to make necklaces.",
+        quote: "including seeds of the cocoa bush and necklaces of shells"
+      },
+      35: {
+        answer: "fish",
+        location: "Paragraph 6",
+        explanation: "Bones of small edible fish were found.",
+        quote: "Shady and her team found the bones of small edible fish"
+      },
+      36: {
+        answer: "canals",
+        location: "Paragraph 6",
+        explanation: "Canals still exist today.",
+        quote: "diverted the area's rivers into canals, which still cross the Supe Valley today"
+      },
+      37: {
+        answer: "maize",
+        location: "Paragraph 6",
+        explanation: "No traces of maize were found.",
+        quote: "because she found no traces of maize"
+      },
+      38: {
+        answer: "cotton",
+        location: "Paragraph 7",
+        explanation: "Cotton seeds, fibers and textiles were found.",
+        quote: "her team discovered evidence of cotton - seeds, fibers and textiles"
+      },
+      39: {
+        answer: "flotation",
+        location: "Paragraph 7",
+        explanation: "Dried squash used as flotation devices.",
+        quote: "used dried squash grown by the Caral people as flotation devices for their nets"
+      },
+      40: {
+        answer: "shellfish",
+        location: "Paragraph 7",
+        explanation: "Fishermen gave shellfish and dried fish in exchange.",
+        quote: "the fishermen gave them shellfish and dried fish in exchange for these nets"
+      }
     },
     questions: [
       {
@@ -1348,7 +1946,6 @@ It was evidence of another crop in the excavations that gave Shady the best clue
               },
             ],
           },
-          ,
         ],
       },
     ],
@@ -1359,46 +1956,246 @@ It was evidence of another crop in the excavations that gave Shady the best clue
     priority: "demo",
     title: "Demo Reading test-4",
     answers: {
-      1: "FALSE",
-      2: "TRUE",
-      3: "FALSE",
-      4: "TRUE",
-      5: "FALSE",
-      6: "NOT GIVEN",
-      7: "Roman army",
-      8: "gardens",
-      9: "floors",
-      10: "wall",
-      11: "93",
-      12: "gold ring",
-      13: "modern museum",
-      14: "FALSE",
-      15: "NOT GIVEN",
-      16: "TRUE",
-      17: "FALSE",
-      18: "FALSE",
-      19: "TRUE",
-      20: "1906",
-      21: "Australia",
-      22: "family",
-      23: "bankruptancy",
-      24: "writers",
-      25: "reputation",
-      26: "husband",
-      27: "D",
-      28: "B",
-      29: "A",
-      30: "C",
-      31: "B",
-      32: "NO",
-      33: "NOT GIVEN",
-      34: "YES",
-      35: "NOT GIVEN",
-      36: "E",
-      37: "C",
-      38: "D",
-      39: "G",
-      40: "B",
+      1: {
+        answer: "FALSE",
+        location: "Paragraph 4",
+        explanation: "The site had earlier buildings before the palace was built.",
+        quote: "The first buildings to be erected on the site were constructed in the early part of the conquest in 43 AD"
+      },
+      2: {
+        answer: "TRUE",
+        location: "Paragraph 1",
+        explanation: "The palace had extensive alterations and was re-planned.",
+        quote: "There were extensive alterations in the 2nd and 3rd centuries AD"
+      },
+      3: {
+        answer: "FALSE",
+        location: "Paragraph 3",
+        explanation: "The palace was equivalent to or larger than those in Italy.",
+        quote: "Fishbourne Palace would have been approximately equivalent to some of the great Roman palaces of Italy"
+      },
+      4: {
+        answer: "TRUE",
+        location: "Paragraph 3",
+        explanation: "An ongoing excavation is taking place.",
+        quote: "A team of volunteers and professional archaeologists are involved in an ongoing archaeological excavation on the site of nearby, possibly military, buildings"
+      },
+      5: {
+        answer: "FALSE",
+        location: "Paragraph 5",
+        explanation: "There are a number of theories about who lived there.",
+        quote: "With regard to who lived in Fishbourne Palace, there are a number of theories"
+      },
+      6: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 6",
+        explanation: "The text says it burnt down in 270 AD, but doesn't say local people did it.",
+        quote: "the north wing was destroyed in a fire in around 270 AD"
+      },
+      7: {
+        answer: "Roman army",
+        location: "Paragraph 1",
+        explanation: "The first buildings were Roman army grain stores.",
+        quote: "on the site of Roman army grain stores which had been established after the invasion"
+      },
+      8: {
+        answer: "gardens",
+        location: "Paragraph 1",
+        explanation: "The rectangular palace was built around formal gardens.",
+        quote: "The rectangular palace was built around formal gardens"
+      },
+      9: {
+        answer: "floors",
+        location: "Paragraph 1",
+        explanation: "Mosaic floors were overlaid with more sophisticated coloured ones.",
+        quote: "many of the original black and white mosaic floors being overlaid with more sophisticated coloured ones"
+      },
+      10: {
+        answer: "wall",
+        location: "Paragraph 2",
+        explanation: "Workmen uncovered a wall while laying a water main.",
+        quote: "workmen had accidentally uncovered a wall while they were laying a water main"
+      },
+      11: {
+        answer: "93",
+        location: "Paragraph 5",
+        explanation: "Lucullus was executed shortly after 93 AD.",
+        quote: "Lucullus was executed by the Emperor Domitian in or shortly after 93 AD"
+      },
+      12: {
+        answer: "gold ring",
+        location: "Paragraph 6",
+        explanation: "A gold ring belonging to Catuarus was discovered.",
+        quote: "following the recent discovery of a gold ring belonging to him"
+      },
+      13: {
+        answer: "modern museum",
+        location: "Paragraph 7",
+        explanation: "A modern museum was built by the Sussex Archaeological Society.",
+        quote: "A modern museum had been built by the Sussex Archaeological Society"
+      },
+      14: {
+        answer: "FALSE",
+        location: "Paragraph 1",
+        explanation: "Katherine Mansfield was a pen name, her original name was Katherine Mansfield Beauchamp Murry.",
+        quote: "Katherine Mansfield Beauchamp Murry was born in 1888"
+      },
+      15: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 2",
+        explanation: "The text says her stories appeared in the magazine, but doesn't mention a prize.",
+        quote: "Her first published stories appeared in the High School Reporter"
+      },
+      16: {
+        answer: "TRUE",
+        location: "Paragraph 2",
+        explanation: "Maori were often portrayed sympathetically in her stories.",
+        quote: "who were often portrayed in a sympathetic light in her later stories, such as How Pearl Button was Kidnapped"
+      },
+      17: {
+        answer: "FALSE",
+        location: "Paragraph 3",
+        explanation: "At Queen's college she wanted to be a professional cellist.",
+        quote: "an occupation that she believed, during her time at Queen's, she would take up professionally"
+      },
+      18: {
+        answer: "FALSE",
+        location: "Paragraph 3",
+        explanation: "She was appreciated by her fellow students.",
+        quote: "she was appreciated amongst fellow students at Queen's for her lively and charismatic approach to life and work"
+      },
+      19: {
+        answer: "TRUE",
+        location: "Paragraph 3",
+        explanation: "She did not actively support the suffragette movement.",
+        quote: "Mansfield did not actively support the suffragette movement in the Uk"
+      },
+      20: {
+        answer: "1906",
+        location: "Paragraph 4",
+        explanation: "She returned to her New Zealand home in 1906.",
+        quote: "she returned to her New Zealand home in 1906"
+      },
+      21: {
+        answer: "Australia",
+        location: "Paragraph 4",
+        explanation: "She had works published in Australia.",
+        quote: "She had several works published in Australia in a magazine called Native Comparison"
+      },
+      22: {
+        answer: "family",
+        location: "Paragraph 5",
+        explanation: "She grew discontented with the lifestyle and her family.",
+        quote: "Mansfield rapidly grew discontented with the provincial New Zealand lifestyle, and with her family"
+      },
+      23: {
+        answer: "bankruptancy",
+        location: "Paragraph 6",
+        explanation: "Murry's bankruptcy prevented them staying in Paris.",
+        quote: "Their attempt to set up as writers in Paris was cut short by Murry's bankruptcy"
+      },
+      24: {
+        answer: "writers",
+        location: "Paragraph 7",
+        explanation: "They developed close contact with well-known writers.",
+        quote: "She and Murry developed close contact with other well-known writers of the time"
+      },
+      25: {
+        answer: "reputation",
+        location: "Paragraph 7",
+        explanation: "Publication of Bliss solidified her reputation.",
+        quote: "It was the publication of Bliss and Other Stories in 1920 that was to solidify Mansfield's reputation as a writer"
+      },
+      26: {
+        answer: "husband",
+        location: "Paragraph 9",
+        explanation: "Her husband edited and published her works after her death.",
+        quote: "After her death, her husband, Murry, took on the task of editing and publishing her works"
+      },
+      27: {
+        answer: "D",
+        location: "Paragraph 1",
+        explanation: "The writer states they are unable to discriminate tones, sing in tune, etc.",
+        quote: "It is not simply that people with tone deafness (or' amusia\") are unable to sing in tune, they are also unable to discriminate between tones or recognize familiar melodies"
+      },
+      28: {
+        answer: "B",
+        location: "Paragraph 2",
+        explanation: "The paragraph summarizes findings about amusia.",
+        quote: "According to the research of Dr. Isabelie Peretz of the University of Montreat, amusia is more complicated than the inability to distinguish pitches"
+      },
+      29: {
+        answer: "A",
+        location: "Paragraph 3",
+        explanation: "Language and music ability are independent.",
+        quote: "People with brain damage in areas critical to language are often still able to sing, despite being unable to communicate through speech"
+      },
+      30: {
+        answer: "C",
+        location: "Paragraph 3",
+        explanation: "Amusics can detect the mood of a melody.",
+        quote: "Amusics are also successful most of the time at detecting the mood of a melody"
+      },
+      31: {
+        answer: "B",
+        location: "Paragraph 4",
+        explanation: "The paragraph outlines progress in understanding the brains of amusics.",
+        quote: "Recent work has been focused on locating the part of the brain that is responsible for amusia"
+      },
+      32: {
+        answer: "NO",
+        location: "Paragraph 5",
+        explanation: "The writer is skeptical of calling it a disorder.",
+        quote: "Looking only at the research of Peretz in the field of neuropsychology of music, it would appear that amusia is some sort of disorder. As a student of neurobiology, however, I am skeptical"
+      },
+      33: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 6",
+        explanation: "The text doesn't say they are happier.",
+        quote: "What makes an amusic worse off than a musical prodigy?"
+      },
+      34: {
+        answer: "YES",
+        location: "Paragraph 7",
+        explanation: "The writer concludes it's inappropriate to consider it a disorder.",
+        quote: "If no disadvantages can be found of having amusia, then it is no more a disability than having poor fashion sense or bad handwriting"
+      },
+      35: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 7",
+        explanation: "Bad handwriting is mentioned as a comparison, not a symptom.",
+        quote: "no more a disability than having poor fashion sense or bad handwriting"
+      },
+      36: {
+        answer: "E",
+        location: "Paragraph 1",
+        explanation: "Congenital amusia cause is not yet well understood.",
+        quote: "research has been undertaken in an attempt to discover the cause of congenital amusia"
+      },
+      37: {
+        answer: "C",
+        location: "Paragraph 2",
+        explanation: "An inability to follow the beat of music.",
+        quote: "amusics perform significantly worse at singing and tapping a rhythm along with a melody"
+      },
+      38: {
+        answer: "D",
+        location: "Paragraph 3",
+        explanation: "Discrimination of meaning in speech is not a problem for amusics.",
+        quote: "The linguistic cues inherent in speech make discrimination of meaning much easier for amusics"
+      },
+      39: {
+        answer: "G",
+        location: "Paragraph 4",
+        explanation: "Certain reactions in the brain are more marked.",
+        quote: "their brains overreact, showing twice as much activity on the right side of the brain"
+      },
+      40: {
+        answer: "B",
+        location: "Paragraph 6",
+        explanation: "Musical ability is culturally valued.",
+        quote: "Musical ability is culturally valued"
+      }
     },
     questions: [
       {
@@ -1862,46 +2659,246 @@ While the idea of amusia is interesting, it seems to be just one end of the cont
     priority: "demo",
     title: "Demo Reading test-5",
     answers: {
-      1: "FALSE",
-      2: "NOT GIVEN",
-      3: "NOT GIVEN",
-      4: "TRUE",
-      5: "TRUE",
-      6: "FALSE",
-      7: "rule",
-      8: "river",
-      9: "confidence",
-      10: "schools",
-      11: "statistics",
-      12: "clinics",
-      13: "language",
-      14: "i",
-      15: "ix",
-      16: "iv",
-      17: "vii",
-      18: "v",
-      19: "iii",
-      20: "FALSE",
-      21: "FALSE",
-      22: "FALSE",
-      23: "TRUE",
-      24: ["B", "C", "E"],
-      25: ["B", "C", "E"],
-      26: ["B", "C", "E"],
-      27: "TRUE",
-      28: "FALSE",
-      29: "TRUE",
-      30: "TRUE",
-      31: "NOT GIVEN",
-      32: "A",
-      33: "C",
-      34: "D",
-      35: "anatomy",
-      36: "resistance",
-      37: "stress",
-      38: "hypertension",
-      39: "organs",
-      40: "soles",
+      1: {
+        answer: "FALSE",
+        location: "Paragraph 1",
+        explanation: "The text says the medicine was passed down orally, not written texts.",
+        quote: "was a system of healing that was passed down through the generations orally"
+      },
+      2: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 2",
+        explanation: "The text says the average age of death was 30, but doesn't say Europeans were surprised.",
+        quote: "When Europeans first visited New Zealand, the average age of death for Maori adults was around 30"
+      },
+      3: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 4",
+        explanation: "The text divides illnesses into two types but doesn't say which is more serious.",
+        quote: "In Maori culture, illnesses were divided into diseases of the gods (mate atua) and physical diseases (mate tangata)"
+      },
+      4: {
+        answer: "TRUE",
+        location: "Paragraph 5",
+        explanation: "The leaves of the pepper tree were used for toothache.",
+        quote: "People who had toothache were instructed to chew the leaves of this same tree"
+      },
+      5: {
+        answer: "TRUE",
+        location: "Paragraph 6",
+        explanation: "Western religion (Christianity) was one reason traditional medicine became less popular.",
+        quote: "Some western missionaries attributed the spread of disease to the fact the Maori did not believe in Christianity, and as Maori healers appeared powerless, many Maori accepted this explanation and turned to Christianity"
+      },
+      6: {
+        answer: "FALSE",
+        location: "Paragraph 8",
+        explanation: "Modern healers have no widespread agreement about treatments.",
+        quote: "their modern day work has no standard system of diagnosis or widespread agreement about treatments"
+      },
+      7: {
+        answer: "rule",
+        location: "Paragraph 4",
+        explanation: "Diseases were caused by disobeying a spiritual rule.",
+        quote: "Diseases sent by the gods were often attributed to attacks by evil spirits, because the person had broken a religious rule"
+      },
+      8: {
+        answer: "river",
+        location: "Paragraph 4",
+        explanation: "Taking food from a sacred river caused sickness.",
+        quote: "if someone took food from a river where someone had died"
+      },
+      9: {
+        answer: "confidence",
+        location: "Paragraph 6",
+        explanation: "The failure affected Maori confidence in their healers.",
+        quote: "this failure still strongly affected Maori confidence in their healers"
+      },
+      10: {
+        answer: "schools",
+        location: "Paragraph 6",
+        explanation: "The schools of higher learning began to close.",
+        quote: "the schools of higher learning which ahd trained healers started to close"
+      },
+      11: {
+        answer: "statistics",
+        location: "Paragraph 7",
+        explanation: "Statistics from the 1970s showed poorer health.",
+        quote: "statistics from the 1970s came out revealing that Maori health continued to be poorer"
+      },
+      12: {
+        answer: "clinics",
+        location: "Paragraph 8",
+        explanation: "Modern healers work in urban clinics.",
+        quote: "Many modern healers work in urban clinics, some alongside mainstream health professionals"
+      },
+      13: {
+        answer: "language",
+        location: "Paragraph 8",
+        explanation: "The Maori language is seen as important by patients.",
+        quote: "The Maori language is also seen as important by many of those receiving treatment"
+      },
+      14: {
+        answer: "i",
+        location: "Paragraph A",
+        explanation: "Paragraph A is an overview of E-training benefits.",
+        quote: "E-learning is the unifying term to describe the fields of online learning, web-based training, and technology-delivered instruction, which can be a great benefit to corporate e-learning"
+      },
+      15: {
+        answer: "ix",
+        location: "Paragraph B",
+        explanation: "Paragraph B lists other advantages besides economic.",
+        quote: "In addition to generally positive economic benefits, other advantages such as convenience, standardized delivery, self-paced learning, and a variety of available content"
+      },
+      16: {
+        answer: "iv",
+        location: "Paragraph C",
+        explanation: "Paragraph C mentions learners' achievement and advanced materials.",
+        quote: "E-training promises more effective teaching techniques by integrating audio, video, animation, text and interactive materials"
+      },
+      17: {
+        answer: "vii",
+        location: "Paragraph D",
+        explanation: "Paragraph D discusses the huge financial burden.",
+        quote: "On the other hand, nobody said E-training technology would be cheap"
+      },
+      18: {
+        answer: "v",
+        location: "Paragraph E",
+        explanation: "Paragraph E lists limitations compared to traditional class.",
+        quote: "E-learning isn’t expected to replace the classroom entirely"
+      },
+      19: {
+        answer: "iii",
+        location: "Paragraph F",
+        explanation: "Paragraph F discusses future directions and blended learning.",
+        quote: "Nowadays, a go-between style of Blended learning, which refers to a mixing of different learning environments, is gaining popularity"
+      },
+      20: {
+        answer: "FALSE",
+        location: "Paragraph A",
+        explanation: "Basic Blue trained new managers, not experienced senior executives.",
+        quote: "Basic Blue, whose purpose is to train new managers"
+      },
+      21: {
+        answer: "FALSE",
+        location: "Paragraph B",
+        explanation: "E-training is especially effective for IT certification.",
+        quote: "It can be especially effective at helping employees prepare for IT certification programs"
+      },
+      22: {
+        answer: "FALSE",
+        location: "Paragraph D",
+        explanation: "The cost varies depending on the media used.",
+        quote: "This price varies depending on the complexity of the training topic and the media used"
+      },
+      23: {
+        answer: "TRUE",
+        location: "Paragraph F",
+        explanation: "Blended learning combines traditional and computer methods.",
+        quote: "It combines traditional face-to-face classroom methods with more modern computer-mediated activities"
+      },
+      24: {
+        answer: ["B", "C", "E"],
+        location: "Paragraph E",
+        explanation: "B: bandwidth limits, C: ineffective for corporate culture, E: more prep time.",
+        quote: "bandwidth limitations are still an issue in presenting multimedia over the Internet"
+      },
+      25: {
+        answer: ["B", "C", "E"],
+        location: "Paragraph E",
+        explanation: "The valid options are B, C, and E.",
+        quote: "it’s rather ineffective imparting cultural values or building teams"
+      },
+      26: {
+        answer: ["B", "C", "E"],
+        location: "Paragraph E",
+        explanation: "The valid options are B, C, and E.",
+        quote: "Professor Wallin estimated that it required between 500 and 1,000 person-hours"
+      },
+      27: {
+        answer: "TRUE",
+        location: "Paragraph 1",
+        explanation: "They were the first researchers to pioneer this.",
+        quote: "Research into the idea that flat floors could be detrimental to our health was pioneered back in the late 1960s"
+      },
+      28: {
+        answer: "FALSE",
+        location: "Paragraph 4",
+        explanation: "The control group improved but not as dramatically.",
+        quote: "People in a control group who walked on ordinary floors also improved but not as dramatically"
+      },
+      29: {
+        answer: "TRUE",
+        location: "Paragraph 4",
+        explanation: "Production is being scaled up.",
+        quote: "The mats are now available for purchase and production is being scaled up"
+      },
+      30: {
+        answer: "TRUE",
+        location: "Paragraph 4",
+        explanation: "He got the concept from regular visits to China.",
+        quote: "Fisher admits he got the concept from regular visits to the country"
+      },
+      31: {
+        answer: "NOT GIVEN",
+        location: "Paragraph 6",
+        explanation: "The text doesn't say the shoes are made for all ages.",
+        quote: "Known as the Masai Barefoot Technology, the shoes have rounded soles"
+      },
+      32: {
+        answer: "A",
+        location: "Paragraph 3",
+        explanation: "The flooring of the world's largest workplaces remains smooth, so they were ignored.",
+        quote: "Yet decades later, the flooring of the world's largest workplaces remains relentlessly smooth"
+      },
+      33: {
+        answer: "C",
+        location: "Paragraph 4",
+        explanation: "They believe it's a useful nonpharmacological approach.",
+        quote: "if this footstimulating activity really is a 'useful nonpharmacological approach for preventing or controlling hypertension of older adults'"
+      },
+      34: {
+        answer: "D",
+        location: "Paragraph 8",
+        explanation: "The natural environment is disappearing.",
+        quote: "our concrete cities are growing at a terrifying rate"
+      },
+      35: {
+        answer: "anatomy",
+        location: "Paragraph 2",
+        explanation: "They looked at the anatomy of the foot.",
+        quote: "They understood that the anatomy of the foot parallels that of the human hand"
+      },
+      36: {
+        answer: "resistance",
+        location: "Paragraph 3",
+        explanation: "Spongy mats with varying degrees of resistance.",
+        quote: "spongy mats with varying degrees of resistance across the surface"
+      },
+      37: {
+        answer: "stress",
+        location: "Paragraph 3",
+        explanation: "Reducing the stress on the heart.",
+        quote: "reducing the stress on the heart and circulation"
+      },
+      38: {
+        answer: "hypertension",
+        location: "Paragraph 4",
+        explanation: "Preventing or controlling hypertension.",
+        quote: "useful nonpharmacological approach for preventing or controlling hypertension"
+      },
+      39: {
+        answer: "organs",
+        location: "Paragraph 4",
+        explanation: "Pressure connects to particular organs.",
+        quote: "connects directly to particular organs of the body"
+      },
+      40: {
+        answer: "soles",
+        location: "Paragraph 6",
+        explanation: "The shoes have rounded soles.",
+        quote: "the shoes have rounded soles that cause you to rock slightly"
+      }
     },
     questions: [
       {

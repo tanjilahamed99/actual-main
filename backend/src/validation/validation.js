@@ -142,7 +142,6 @@ const sentenceEndingQuestion = z.object({
   items: z.array(z.object({ n: z.number(), text: z.string() })),
 });
 
-
 const diagramQuestion = z.object({
   type: z.literal("diagram"),
   heading: z.string().optional(),
@@ -192,7 +191,10 @@ const readingTestPayloadSchema = z.object({
   priority: z.enum(["main", "extra"]).default("main"),
   title: z.string(),
   status: z.enum(["draft", "published"]).default("draft"),
-  answers: z.record(z.union([z.string(), z.array(z.string())])),
+
+  // ✅ UPDATED: Accepts both the old format ("TRUE") and the new Rich Format ({ answer: "TRUE", ... })
+  answers: z.record(z.any()),
+
   questions: z.array(passageSchema),
 });
 
