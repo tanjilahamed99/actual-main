@@ -9,7 +9,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://103.243.232.236:130"],
+    origin: ["http://localhost:3000", "https://actual-ielts.strixdevs.com"],
     credentials: true,
   }),
 );
