@@ -2245,7 +2245,7 @@ export function DiagramBlock({
               id={`q-${n}`}
               className="flex flex-col gap-1 text-base sm:text-lg text-[#000000] leading-relaxed">
               <div className="flex items-center gap-2 flex-wrap">
-                {isReviewMode && v !== "" && !isCorrect && (
+                {isReviewMode && !isCorrect && (
                   <span className="text-green-600 font-bold bg-green-50 border border-green-200 px-2 py-0.5 rounded text-sm">
                     {Array.isArray(correctAnswer)
                       ? correctAnswer.join(" OR ")
@@ -2937,6 +2937,7 @@ export function SummaryCompleteDragBlock({
   const [draggedId, setDraggedId] = useState(null);
   const [dragOverSlot, setDragOverSlot] = useState(null);
   const [touchDrag, setTouchDrag] = useState(null);
+
   const options = block.wordList?.options ?? [];
   const blankNs = block.items
     .filter((seg) => seg.n !== undefined)
@@ -2945,13 +2946,17 @@ export function SummaryCompleteDragBlock({
     .map((n) => vals[n])
     .filter(Boolean)
     .map((v) => v.toUpperCase());
+
   const getOption = (id) => options.find((o) => o.id === id?.toUpperCase());
+
   const clearFromOtherBlanks = (id) => {
     blankNs.forEach((otherN) => {
-      if ((vals[otherN] || "").toUpperCase() === id.toUpperCase())
+      if ((vals[otherN] || "").toUpperCase() === id.toUpperCase()) {
         onChange(otherN, "");
+      }
     });
   };
+
   const onDragStart = (e, id) => {
     setDraggedId(id);
     e.dataTransfer.effectAllowed = "move";
@@ -3024,51 +3029,59 @@ export function SummaryCompleteDragBlock({
           onSelect={onSelect}
         />
       </div>
+
       {block.questionTitle && (
         <h2 className="text-base font-bold tracking-[0.08em] text-[#000000] my-3">
           {block.questionTitle}
         </h2>
       )}
-      <div
-        className="bg-blue-50 border border-blue-200 rounded p-2.5 sm:p-3 mb-4"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          setDraggedId(null);
-        }}>
-        <p className="text-[10px] font-bold uppercase tracking-wide text-[#000000] mb-2">
-          {block.wordList?.heading || "Word list"}
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {options.map((opt) => {
-            const placed = placedIds.includes(opt.id);
-            const dragging = draggedId === opt.id;
-            return (
-              <div
-                key={opt.id}
-                draggable={!placed && !submitted}
-                onDragStart={
-                  !placed && !submitted
-                    ? (e) => onDragStart(e, opt.id)
-                    : undefined
-                }
-                onDragEnd={onDragEnd}
-                onTouchStart={
-                  !placed && !submitted
-                    ? (e) => onTouchStartChip(e, opt.id)
-                    : undefined
-                }
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded border text-sm transition-all select-none border-blue-200 bg-white ${placed ? "opacity-25 cursor-not-allowed" : dragging ? "opacity-40 cursor-grab" : "cursor-grab hover:bg-blue-100"}`}>
-                <span className="font-bold text-[#000000]">{opt.id} –</span>
-                <span className="text-[#000000]">{opt.text}</span>
-              </div>
-            );
-          })}
+
+      {/* Word bank (Hidden in Review Mode) */}
+      {!isReviewMode && (
+        <div
+          className="bg-blue-50 border border-blue-200 rounded p-2.5 sm:p-3 mb-4"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            e.preventDefault();
+            setDraggedId(null);
+          }}>
+          <p className="text-[10px] font-bold uppercase tracking-wide text-[#000000] mb-2">
+            {block.wordList?.heading || "Word list"}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {options.map((opt) => {
+              const placed = placedIds.includes(opt.id);
+              const dragging = draggedId === opt.id;
+              return (
+                <div
+                  key={opt.id}
+                  draggable={!placed && !submitted}
+                  onDragStart={
+                    !placed && !submitted
+                      ? (e) => onDragStart(e, opt.id)
+                      : undefined
+                  }
+                  onDragEnd={onDragEnd}
+                  onTouchStart={
+                    !placed && !submitted
+                      ? (e) => onTouchStartChip(e, opt.id)
+                      : undefined
+                  }
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded border text-sm transition-all select-none border-blue-200 bg-white
+                    ${placed ? "opacity-25 cursor-not-allowed" : dragging ? "opacity-40 cursor-grab" : "cursor-grab hover:bg-blue-100"}`}>
+                  <span className="font-bold text-[#000000]">{opt.id} –</span>
+                  <span className="text-[#000000]">{opt.text}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Summary paragraph */}
       <p className="text-base sm:text-lg text-[#000000] leading-[2.1]">
         {block.items.map((seg, i) => {
-          if (seg.text !== undefined)
+          if (seg.text !== undefined) {
             return (
               <span key={i} style={{ whiteSpace: "pre-line" }}>
                 <HighlightableText
@@ -3079,22 +3092,37 @@ export function SummaryCompleteDragBlock({
                 />
               </span>
             );
+          }
+
           const n = seg.n;
           const placedId = vals[n] ? vals[n].toUpperCase() : null;
           const option = placedId ? getOption(placedId) : null;
           const over = dragOverSlot === n;
+
           const { isCorrect, correctAnswer } = getReviewState(
             n,
-            vals[n],
+            vals[n] || "",
             ANSWER_KEY,
           );
+          const showCorrection = isReviewMode && !isCorrect;
 
           return (
             <span
               key={i}
               id={`q-${n}`}
               data-scslot={n}
-              className={`inline-flex flex-col items-start gap-1 align-middle mx-1 px-2 py-0.5 border rounded transition-all ${isReviewMode ? (isCorrect ? "border-green-600 bg-green-50" : "border-red-600 bg-red-50") : over ? "border-blue-700 bg-blue-50 border-solid" : option ? "border-blue-600 border-solid bg-blue-50" : "border-dashed border-gray-400 bg-gray-50"}`}
+              className={`inline-flex items-center gap-1 align-middle mx-1 px-1 py-0.5 border rounded transition-all
+                ${
+                  isReviewMode
+                    ? isCorrect
+                      ? "border-green-600 bg-green-50"
+                      : "border-red-600 bg-red-50"
+                    : over
+                      ? "border-blue-700 bg-blue-50 border-solid"
+                      : option
+                        ? "border-blue-600 border-solid bg-blue-50"
+                        : "border-dashed border-gray-400 bg-gray-50"
+                }`}
               style={{
                 userSelect: "none",
                 WebkitUserSelect: "none",
@@ -3108,29 +3136,38 @@ export function SummaryCompleteDragBlock({
               }}
               onDragLeave={() => setDragOverSlot(null)}
               onDrop={(e) => onDropSlot(e, n)}>
-              {isReviewMode && vals[n] && !isCorrect && (
-                <span className="text-green-600 font-bold text-xs bg-white px-1 rounded border border-green-200 mb-1">
-                  Correct: {correctAnswer}
+              
+              {/* ✅ SHOW CORRECT ANSWER TO THE LEFT IF WRONG */}
+              {showCorrection && (
+                <span className="text-green-600 font-bold text-xs bg-green-100 px-1.5 py-0.5 rounded mr-1 whitespace-nowrap">
+                  Correct: {Array.isArray(correctAnswer) ? correctAnswer.join(" OR ") : correctAnswer}
                 </span>
               )}
+
+              {/* ✅ SHOW NUMBER BADGE */}
+              <span className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] font-bold shrink-0 ${isReviewMode ? (isCorrect ? 'bg-green-600 text-white' : 'bg-red-600 text-white') : 'bg-gray-200 text-gray-600'}`}>
+                {n}
+              </span>
+
+              {/* THE DRAG CHIP / EMPTY STATE */}
               {option ? (
                 <span
                   className={`flex items-center gap-1 ${isReviewMode ? (isCorrect ? "text-green-700 font-bold" : "text-red-600 line-through") : "cursor-grab"}`}
-                  draggable={!submitted}
+                  draggable={!submitted && !isReviewMode}
                   onDragStart={
-                    !submitted
+                    !submitted && !isReviewMode
                       ? (e) => onDragStartFromSlot(e, n, placedId)
                       : undefined
                   }
                   onDragEnd={onDragEnd}
                   onTouchStart={
-                    !submitted
+                    !submitted && !isReviewMode
                       ? (e) => onTouchStartSlotChip(e, n, placedId)
                       : undefined
                   }>
                   <span className="font-bold">{option.id}</span>
                   <span>{option.text}</span>
-                  {!submitted && (
+                  {!submitted && !isReviewMode && (
                     <button
                       type="button"
                       className="text-gray-400 hover:text-red-500 text-xs ml-1"
@@ -3141,9 +3178,11 @@ export function SummaryCompleteDragBlock({
                 </span>
               ) : (
                 <span className="text-gray-400 italic text-sm">
-                  {over ? "Release" : "Drop here"}
+                  {isReviewMode ? "Blank" : over ? "Release" : "Drop here"}
                 </span>
               )}
+
+              {/* EXPLAIN BUTTON */}
               {isReviewMode && (
                 <ExplainButton
                   qNum={n}
@@ -3155,6 +3194,7 @@ export function SummaryCompleteDragBlock({
           );
         })}
       </p>
+
       {touchDrag && (
         <div
           className="fixed z-[9999] pointer-events-none flex items-center gap-1.5 bg-blue-800 rounded px-3 py-1.5 text-white text-xs shadow-xl"
