@@ -4,14 +4,11 @@ import API from "../lib/axios";
 // ── ADMIN ──
 export const getAllWritingTest = (params = {}) =>
   API.get("/admin/writing", { params });
-export const getSingleWritingTest = (id) =>
-  API.get(`/admin/writing/${id}`);
-export const createWritingTest = (data) =>
-  API.post("/admin/writing", data);
+export const getSingleWritingTest = (id) => API.get(`/admin/writing/${id}`);
+export const createWritingTest = (data) => API.post("/admin/writing", data);
 export const updateWritingTest = (id, payload) =>
   API.put(`/admin/writing/${id}`, payload);
-export const deleteWritingTest = (id) =>
-  API.delete(`/admin/writing/${id}`);
+export const deleteWritingTest = (id) => API.delete(`/admin/writing/${id}`);
 export const getWritingStats = () => API.get("/admin/writing/stats");
 
 // ── ADMIN: ATTEMPTS ──
@@ -27,7 +24,24 @@ export const getWritingAttemptStats = () =>
   API.get("/admin/writing/attempts/stats");
 
 // ── PUBLIC ──
-export const listPublicWritingTests = () => API.get("/writing");
+export async function listPublicWritingTests({
+  q = "",
+  kind = "",
+  priority = "",
+  page = 1,
+  limit = 12,
+} = {}) {
+  console.log("listPublicWritingTests");
+  const params = new URLSearchParams();
+  if (q) params.set("q", q);
+  if (kind) params.set("kind", kind);
+  if (priority) params.set("priority", priority);
+  params.set("page", String(page));
+  params.set("limit", String(limit));
+
+  const res = await API.get(`/writing?${params.toString()}`);
+  return res; // { success, test, pagination, filters }
+}
 export const getPublicWritingTest = (testNumber) =>
   API.get(`/writing/${testNumber}`);
 export const scoreWritingAnswer = (testNumber, body) =>
