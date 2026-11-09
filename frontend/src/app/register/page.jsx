@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { register } from "@/actions/auth";
 import { useAuthStore } from "@/features/Useauthstore";
 import Toast from "@/components/Toast";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 const features = [
   { icon: "📝", text: "Every skill's real questions, updated weekly" },
@@ -69,6 +70,7 @@ export default function RegisterPage() {
       console.log(data);
       setAuth({ token: data.token, user: data.user });
       setToast({ type: "success", message: "Account created" });
+      sendGTMEvent({ event: "test_submitted", test_type: "reading" });
       setTimeout(() => router.push("/"), 500);
     } catch (err) {
       setToast({

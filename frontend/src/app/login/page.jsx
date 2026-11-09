@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { login, persistAuth } from "@/actions/auth";
 import { useAuthStore } from "@/features/Useauthstore";
 import Toast from "@/components/Toast";
+import { sendGTMEvent } from "@next/third-parties/google";
 
 const stats = [
   { num: "10.3k", label: "Verified questions" },
@@ -35,6 +36,7 @@ export default function LoginPage() {
       const { data } = await login(form.email, form.password);
       setAuth({ token: data.token, user: data.user });
       setToast({ type: "success", message: "Welcome back!" });
+      sendGTMEvent({ event: "test_submitted", test_type: "reading" });
       setTimeout(() => router.push("/"), 500);
     } catch (err) {
       setToast({
