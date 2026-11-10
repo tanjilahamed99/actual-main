@@ -1740,6 +1740,7 @@ export function MultiSelectMCQBlock({
         qRange={block.heading}
         highlights={highlights}
         onSelect={onSelect}
+        sub={block.sub}
       />
       {block.items.map((item) => {
         const nums = item.n;
