@@ -139,9 +139,6 @@ function MainReadingPage() {
     [readingData, getSession],
   );
 
-
-  console.log(displayedTests)
-
   const selectClass =
     "w-full sm:w-auto rounded-xl border border-line bg-paper-raised py-2.5 pl-3 pr-8 font-sans text-xs font-semibold text-ink shadow-sm outline-none transition-all focus:border-indigo-deep focus:ring-2 focus:ring-indigo-deep/20 cursor-pointer appearance-none";
 

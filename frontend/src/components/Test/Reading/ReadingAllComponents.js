@@ -1733,6 +1733,8 @@ export function MultiSelectMCQBlock({
   ANSWER_KEY,
 }) {
   const labels = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+  
   return (
     <div className="mb-5 p-3">
       <SectionLabel
