@@ -54,9 +54,20 @@ export default function ReadingMainPage({
     setIsReviewMode(true); // Enables the "Answer Badges" on the passage
   }, []);
 
-  useEffect(() => {
-    initModule("reading", testId, `Reading Test ${testId}`);
-  }, [testId]);
+useEffect(() => {
+  const stringId = String(testId);
+  
+  // Get the saved session
+  const session = getSession("reading", stringId);
+
+  // If they have answers saved, show the prompt
+  if (session?.answers && Object.keys(session.answers).length > 0) {
+    setSavedAnswers(session.answers);
+    setShowRestorePrompt(true);
+  }
+
+  initModule("reading", stringId, `Reading Test ${stringId}`);
+}, [testId, getSession, initModule]);
 
   useEffect(() => {
     // Get the saved session for this specific test
@@ -71,27 +82,24 @@ export default function ReadingMainPage({
     initModule("reading", String(testId), `Reading Test ${testId}`);
   }, [testId, getSession, initModule]);
 
-  const handleRestore = () => {
-    // The answers in the store are saved as { question_1: "A", question_2: "B" }
-    // We need to convert them back to the format the inputs expect: { 1: "A", 2: "B" }
-    const formattedVals = {};
-    Object.entries(savedAnswers).forEach(([key, value]) => {
-      const qNum = key.replace("question_", ""); // Strips "question_" to just leave "1"
-      formattedVals[qNum] = value;
-    });
+ const handleRestore = () => {
+  const formattedVals = {};
+  Object.entries(savedAnswers).forEach(([key, value]) => {
+    // The key is "question_1", we split by "_" and take the last part "1"
+    const qNum = key.split("_").pop(); 
+    formattedVals[qNum] = value;
+  });
 
-    setVals(formattedVals);
-    setShowRestorePrompt(false);
-    // Optional: Automatically start the test if they restore
-    if (phase === "intro") {
-      startModule("reading", String(testId));
-      setPhase("test");
-    }
-  };
+  setVals(formattedVals);
+  setShowRestorePrompt(false);
+  
+  if (phase === "intro") {
+    startModule("reading", String(testId));
+    setPhase("test");
+  }
+};
 
   const handleDiscard = () => {
-    // If they click "No, delete them", we clear the store and close the popup
-    saveAllAnswers("reading", String(testId), {});
     setSavedAnswers({});
     setShowRestorePrompt(false);
   };
@@ -150,10 +158,27 @@ export default function ReadingMainPage({
   }, [phase, timeLeft]);
 
   const onChange = useCallback(
-    (n, v) => setVals((p) => ({ ...p, [n]: v })),
-    [],
-  );
+    (n, v) => {
+      // 1. Update the local React state
+      setVals((prev) => {
+        return { ...prev, [n]: v };
+      });
 
+      // 2. We need the LATEST vals to save to Zustand. 
+      // Since setVals is async, we read the current state directly from the hook variable.
+      // But to be absolutely safe, we use a functional approach to construct the next state.
+      const nextVals = { ...vals, [n]: v };
+      
+      const formattedAnswers = {};
+      Object.entries(nextVals).forEach(([qNum, answer]) => {
+        formattedAnswers[`question_${qNum}`] = answer;
+      });
+      
+      // 3. Save to Zustand OUTSIDE the setVals function
+      saveAllAnswers("reading", String(testId), formattedAnswers);
+    },
+    [vals, testId, saveAllAnswers] // Add `vals` to dependencies
+  );
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const handleSubmit = useCallback(() => {
     const formattedAnswers = {};

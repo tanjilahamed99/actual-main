@@ -38,7 +38,8 @@ export default function TestDetailPage() {
     <div>
       <ReadingMainPage
         ANSWER_KEY={test.answers}
-        testId={testId}
+        // ✅ Pass testNumber so Zustand uses "1" instead of "65f1..."
+        testId={String(test.testNumber)}
         ReadingPassage={test.questions}
         testType="main"
         title={test.title}
