@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { v4: uuidv4 } = require("uuid");
 const crypto = require("crypto");
 const sendEmail = require("../config/sendEmail");
+const bcrypt = require("bcryptjs");
 
 // Generate JWT
 const generateToken = (id) => {
