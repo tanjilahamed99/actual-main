@@ -3,7 +3,8 @@ const sendEmail = require("../../config/sendEmail");
 const bcrypt = require("bcryptjs");
 const {
   getAccountApprovedTemplate,
-  getUserStatusTemplate,
+  getAccountRejectedTemplate,
+  getAccountDeletedTemplate,
 } = require("../../utils/emailTemplate");
 
 // ✅ Updated to ONLY show users (role: "user")
@@ -50,24 +51,16 @@ exports.updateUserStatus = async (req, res) => {
         .json({ success: false, message: "User not found" });
 
     if (status === "approved") {
-      console.log("approved");
       await sendEmail({
         to: user.email,
-        subject: "Account Approved - Actual IELTS Questions",
-        html: getAccountApprovedTemplate(
-          "https://your-website.com/login",
-          user.name || "Actual IELTS USERS",
-        ),
+        subject: "Welcome! Your Account is Approved 🎉",
+        html: getAccountApprovedTemplate(user.fullName),
       });
     } else if (status === "rejected") {
       await sendEmail({
         to: user.email,
-        subject: "Account Status Update",
-        html: getUserStatusTemplate(
-          "Account Update",
-          "Unfortunately, your account request has been rejected. If you think this is a mistake, please contact support.",
-          user.name || "Actual IELTS USERS",
-        ),
+        subject: "Update on your Account Application",
+        html: getAccountRejectedTemplate(user.fullName),
       });
     }
 
@@ -91,8 +84,8 @@ exports.deleteUser = async (req, res) => {
     // ✅ Send Email on Delete
     await sendEmail({
       to: user.email,
-      subject: "Account Deleted - Actual IELTS Questions",
-      html: `<p>Hello ${user.name || "Actual IELTS USERS"},</p><p>Your account has been deleted by an administrator. You no longer have access to our platform.</p>`,
+      subject: "Your Account has been Deleted",
+      html: getAccountDeletedTemplate(user.fullName),
     });
 
     res.json({ success: true, message: "User deleted successfully" });
