@@ -31,8 +31,6 @@ exports.updateUserStatus = async (req, res) => {
   try {
     const { id, status } = req.params;
 
-    console.log(status);
-
     const mainStatus = ["pending", "approved", "rejected"];
 
     if (!mainStatus.includes(status)) {
@@ -52,12 +50,13 @@ exports.updateUserStatus = async (req, res) => {
         .json({ success: false, message: "User not found" });
 
     if (status === "approved") {
+      console.log("approved");
       await sendEmail({
         to: user.email,
         subject: "Account Approved - Actual IELTS Questions",
         html: getAccountApprovedTemplate(
           "https://your-website.com/login",
-          user.name,
+          user.name || "Actual IELTS USERS",
         ),
       });
     } else if (status === "rejected") {
@@ -67,7 +66,7 @@ exports.updateUserStatus = async (req, res) => {
         html: getUserStatusTemplate(
           "Account Update",
           "Unfortunately, your account request has been rejected. If you think this is a mistake, please contact support.",
-          user.name,
+          user.name || "Actual IELTS USERS",
         ),
       });
     }
@@ -93,7 +92,7 @@ exports.deleteUser = async (req, res) => {
     await sendEmail({
       to: user.email,
       subject: "Account Deleted - Actual IELTS Questions",
-      html: `<p>Hello ${user.name},</p><p>Your account has been deleted by an administrator. You no longer have access to our platform.</p>`,
+      html: `<p>Hello ${user.name || "Actual IELTS USERS"},</p><p>Your account has been deleted by an administrator. You no longer have access to our platform.</p>`,
     });
 
     res.json({ success: true, message: "User deleted successfully" });
