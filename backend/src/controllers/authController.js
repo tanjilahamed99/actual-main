@@ -142,9 +142,10 @@ exports.resetPassword = async (req, res) => {
     if (!user)
       return res.status(400).json({ message: "Invalid or expired token" });
 
-    // Hash new password
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(req.body.password, salt);
+    // ✅ FIX: Just assign the plain password.
+    // The User model's pre('save') hook will hash it automatically.
+    user.password = req.body.password;
+
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
     await user.save();

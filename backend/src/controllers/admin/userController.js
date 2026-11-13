@@ -99,12 +99,11 @@ exports.adminUpdateUser = async (req, res) => {
     const { id } = req.params;
     const { name, email, password } = req.body;
 
-    let updateData = { name, email };
+    let updateData = { fullName: name, email };
 
     // If admin typed a new password, hash it
     if (password && password.trim() !== "") {
-      const salt = await bcrypt.genSalt(10);
-      updateData.password = await bcrypt.hash(password, salt);
+      updateData.password = password;
     }
 
     const user = await User.findByIdAndUpdate(
