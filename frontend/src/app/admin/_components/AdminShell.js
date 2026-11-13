@@ -13,7 +13,8 @@ const nav = [
   { href: "/admin/writing", label: "Writing", icon: "pen" },
   { href: "/admin/writing/attempts", label: "Submissions", icon: "inbox" },
   { href: "/admin/users", label: "Users", icon: "user" },
-  { href: "#", label: "Speaking", icon: "mic", soon: true },
+  { href: "/admin/admins", label: "Admins", icon: "user" },
+  // { href: "#", label: "Speaking", icon: "mic", soon: true },
 ];
 
 const icons = {

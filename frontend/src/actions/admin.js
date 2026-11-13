@@ -4,7 +4,6 @@ import API from "../lib/axios";
 // ADMIN — READING
 // ─────────────────────────────────────────────────────────────
 
-
 export const adminGetStats = () => API.get("/admin/stats");
 
 export const adminGetReadingTests = (params = {}) =>
@@ -12,7 +11,6 @@ export const adminGetReadingTests = (params = {}) =>
 
 export const adminGetUsers = (params = {}) =>
   API.get("/admin/users", { params });
-
 
 /**
  * List reading tests (admin).
@@ -22,28 +20,24 @@ export const getAllReadingTest = (params = {}) =>
   API.get("/admin/reading", { params });
 
 /** Get one reading test by Mongo _id (full doc, admin only). */
-export const getSingleReadingTest = (id) =>
-  API.get(`/admin/reading/${id}`);
+export const getSingleReadingTest = (id) => API.get(`/admin/reading/${id}`);
 
 /** Create a new reading test. */
-export const createReadingTest = (data) =>
-  API.post("/admin/reading", data);
+export const createReadingTest = (data) => API.post("/admin/reading", data);
 
 /** Update a reading test by _id. */
 export const updateReadingTest = (id, payload) =>
   API.put(`/admin/reading/${id}`, payload);
 
 /** Delete a reading test by _id. */
-export const deleteReadingTest = (id) =>
-  API.delete(`/admin/reading/${id}`);
+export const deleteReadingTest = (id) => API.delete(`/admin/reading/${id}`);
 
 // ─────────────────────────────────────────────────────────────
 // PUBLIC — READING
 // ─────────────────────────────────────────────────────────────
 
 /** List of published reading tests (lightweight). */
-export const listPublicReadingTests = () =>
-  API.get("/reading");
+export const listPublicReadingTests = () => API.get("/reading");
 
 /** One published reading test by testNumber (no answer key). */
 export const getPublicReadingTest = (testNumber) =>
@@ -54,8 +48,11 @@ export const getPublicReadingTest = (testNumber) =>
 // ─────────────────────────────────────────────────────────────
 
 /** List all users (admin). */
-export const adminGetAllUserData = () =>
-  API.get("/admin/users");
+export const adminGetAllUserData = () => API.get("/admin/users");
+
+export const adminUpdateUser = (id, data) => API.put(`/admin/users/${id}`, data);
+
+export const adminGetAllAdmins = () => API.get("/admin/users/admins");
 
 /**
  * Update a user's status.
@@ -65,12 +62,9 @@ export const adminUpdateUserStatus = (id, status) =>
   API.put(`/admin/users/${id}/${status}`);
 
 /** Delete a user by _id (admin). */
-export const adminDeleteUser = (id) =>
-  API.delete(`/admin/users/${id}`);
-
+export const adminDeleteUser = (id) => API.delete(`/admin/users/${id}`);
 
 export const getAllPassages = (params = {}) =>
   API.get("/admin/passages", { params });
 
-export const getDuplicatePassages = () =>
-  API.get("/admin/passages/duplicates");
+export const getDuplicatePassages = () => API.get("/admin/passages/duplicates");

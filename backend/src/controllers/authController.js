@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const sendEmail = require("../config/sendEmail");
 const { v4: uuidv4 } = require("uuid");
+const crypto = require("crypto");
+const sendEmail = require("../config/sendEmail");
 
 // Generate JWT
 const generateToken = (id) => {
@@ -94,152 +95,61 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-exports.updateProfileData = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const userId = req.user._id.toString();
-
-    if (id !== userId) {
-      return res.status(403).json({ message: "Unauthorized", success: false });
-    }
-
-    const { fullName, phone } = req.body;
-
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { $set: { fullName, phone } },
-      { new: true, runValidators: true }, // ✅ returns updated doc, not old one
-    ).select("-password"); // ✅ never send password to client
-
-    if (!updatedUser) {
-      return res
-        .status(404)
-        .json({ message: "User not found", success: false });
-    }
-
-    res.json({
-      success: true,
-      message: "Profile updated successfully",
-      user: updatedUser, // ✅ this is now the fresh updated data
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
 exports.forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body;
-
-    console.log(email);
-
-    const user = await User.findOne({ email });
-
+    const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate a random token
+    const resetToken = crypto.randomBytes(20).toString("hex");
 
-    user.resetPasswordOTP = otp;
-    user.resetPasswordExpires = Date.now() + 30 * 60 * 1000; // 30 mins
+    // Hash it and save to DB (expires in 15 mins)
+    user.resetPasswordToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+    user.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
     await user.save();
 
-    // Send email
-    await sendEmail(
-      user.email,
-      "Password Reset OTP",
-      `Your OTP for password reset is: ${otp}. It will expire in 10 minutes.`,
-    );
-
-    res.json({ message: "OTP sent to email" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// // Reset password
-exports.validateOtp = async (req, res) => {
-  try {
-    const { email, code } = req.body;
-
-    const user = await User.findOne({
-      email,
-      resetPasswordOTP: code,
-      resetPasswordExpires: { $gt: Date.now() },
+    // Send Email
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    await sendEmail({
+      to: user.email,
+      subject: "Password Reset Request",
+      html: `<p>You requested a password reset. Click the link below to reset your password. This link expires in 15 minutes.</p><a href="${resetUrl}">${resetUrl}</a>`,
     });
 
-    if (!user)
-      return res.status(400).json({ message: "Invalid or expired OTP" });
-
-    res.json({ message: "token validated", success: true });
+    res.json({ success: true, message: "Email sent" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
-// // Reset password
 exports.resetPassword = async (req, res) => {
   try {
-    const { email, code, password } = req.body;
+    const resetToken = req.params.token;
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
 
     const user = await User.findOne({
-      email,
-      resetPasswordOTP: code,
-      resetPasswordExpires: { $gt: Date.now() },
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
     });
 
     if (!user)
-      return res.status(400).json({ message: "Invalid or expired OTP" });
+      return res.status(400).json({ message: "Invalid or expired token" });
 
-    user.password = password;
-    user.resetPasswordOTP = undefined;
-    user.resetPasswordExpires = undefined;
-
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(req.body.password, salt);
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
     await user.save();
 
-    res.json({ message: "Password reset successful" });
+    res.json({ success: true, message: "Password reset successful" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-// // Change password
-exports.changePassword = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const userId = req.user._id.toString();
-
-    if (id !== userId) {
-      return res.status(403).json({ message: "Unauthorized", success: false });
-    }
-
-    const { currentPassword, newPassword } = req.body;
-
-    if (!currentPassword || !newPassword) {
-      return res.status(400).json({ message: "Both fields are required" });
-    }
-
-    if (currentPassword === newPassword) {
-      return res.status(400).json({
-        message: "New password must be different from current password",
-      });
-    }
-
-    const user = await User.findById(id);
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    // ✅ verify current password against hashed DB password
-    const isMatch = await user.comparePassword(currentPassword);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Current password is incorrect" });
-    }
-
-    // ✅ just assign — the pre-save hook will hash it automatically
-    user.password = newPassword;
-    await user.save();
-
-    res.json({ success: true, message: "Password changed successfully" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };

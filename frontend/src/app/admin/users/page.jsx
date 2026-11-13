@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 import {
   adminDeleteUser,
   adminGetAllUserData,
   adminUpdateUserStatus,
+  adminUpdateUser, // ✅ Make sure to export this from actions/admin.js
 } from "@/actions/admin";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -55,6 +58,112 @@ function avatarStyle(id) {
   return AVATAR_STYLES[id.charCodeAt(id.length - 1) % AVATAR_STYLES.length];
 }
 
+// ─── Update User Modal ──────────────────────────────────────────────────────
+function UpdateUserModal({ user, onClose, onSuccess }) {
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [password, setPassword] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const payload = { name, email };
+      if (password.trim() !== "") payload.password = password;
+
+      const { data } = await adminUpdateUser(user._id, payload);
+      if (data.success) {
+        toast.success("User updated successfully!");
+        onSuccess({ ...user, name, email }); // Update the UI list
+        onClose();
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to update user");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div
+      className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <form
+        onClick={(e) => e.stopPropagation()}
+        onSubmit={handleSubmit}
+        className="animate-fade-in-up w-full max-w-md rounded-2xl border border-line bg-paper-raised p-6 shadow-2xl"
+      >
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h3 className="font-display text-lg text-ink">Update User</h3>
+            <p className="font-sans text-xs text-muted">Edit details or reset password.</p>
+          </div>
+          <button type="button" onClick={onClose} className="text-muted hover:text-ink">
+            ✕
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <label className="block">
+            <span className="mb-1 block font-sans text-xs font-semibold text-ink-soft">Full Name</span>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full rounded-xl border border-line bg-paper px-3.5 py-2.5 font-sans text-sm text-ink outline-none transition focus:border-indigo-deep focus:ring-2 focus:ring-indigo-deep/20"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block font-sans text-xs font-semibold text-ink-soft">Email Address</span>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full rounded-xl border border-line bg-paper px-3.5 py-2.5 font-sans text-sm text-ink outline-none transition focus:border-indigo-deep focus:ring-2 focus:ring-indigo-deep/20"
+            />
+          </label>
+
+          <label className="block">
+            <span className="mb-1 flex items-center justify-between font-sans text-xs font-semibold text-ink-soft">
+              <span>New Password</span>
+              <span className="text-[10px] font-normal text-muted">(Leave blank to keep current)</span>
+            </span>
+            <input
+              type="text"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter new password"
+              className="w-full rounded-xl border border-line bg-paper px-3.5 py-2.5 font-sans text-sm text-ink outline-none transition focus:border-indigo-deep focus:ring-2 focus:ring-indigo-deep/20"
+            />
+          </label>
+        </div>
+
+        <div className="mt-6 flex gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-full border border-line py-2.5 font-sans text-sm font-medium text-ink-soft transition-colors hover:bg-paper"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={saving}
+            className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-indigo-deep py-2.5 font-sans text-sm font-semibold text-paper transition-all hover:bg-ink active:scale-[0.98] disabled:opacity-70"
+          >
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save Changes"}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
 // ─── Confirm Dialog ──────────────────────────────────────────────────────────
 function ConfirmDialog({
   open,
@@ -76,18 +185,22 @@ function ConfirmDialog({
   return (
     <div
       className="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4 backdrop-blur-sm"
-      onClick={onCancel}>
+      onClick={onCancel}
+    >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="animate-fade-in-up w-full max-w-sm rounded-2xl border border-line bg-paper-raised p-6 shadow-2xl">
+        className="animate-fade-in-up w-full max-w-sm rounded-2xl border border-line bg-paper-raised p-6 shadow-2xl"
+      >
         <div
-          className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full ${t.badge}`}>
+          className={`mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full ${t.badge}`}
+        >
           <svg
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth={1.8}
-            className="h-6 w-6">
+            className="h-6 w-6"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -103,13 +216,15 @@ function ConfirmDialog({
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-full border border-line py-2.5 font-sans text-sm font-medium text-ink-soft transition-colors duration-200 hover:bg-paper">
+            className="flex-1 rounded-full border border-line py-2.5 font-sans text-sm font-medium text-ink-soft transition-colors duration-200 hover:bg-paper"
+          >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className={`flex-1 rounded-full py-2.5 font-sans text-sm font-semibold text-white transition-all duration-200 active:scale-[0.98] ${t.btn}`}>
+            className={`flex-1 rounded-full py-2.5 font-sans text-sm font-semibold text-white transition-all duration-200 active:scale-[0.98] ${t.btn}`}
+          >
             {confirmLabel}
           </button>
         </div>
@@ -119,18 +234,19 @@ function ConfirmDialog({
 }
 
 // ─── User Row ────────────────────────────────────────────────────────────────
-function UserRow({ user, index, onApprove, onReject, onDelete }) {
+function UserRow({ user, index, onApprove, onReject, onDelete, onEdit }) {
   const sc = STATUS_CONFIG[user.status] || STATUS_CONFIG.pending;
 
   return (
     <tr
       className="animate-fade-in-up group border-b border-line/70 text-sm transition-colors duration-150 last:border-0 hover:bg-paper"
-      style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}>
-      {/* User */}
+      style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
+    >
       <td className="px-5 py-4">
         <div className="flex items-center gap-3">
           <div
-            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-xs font-medium shadow-sm ${avatarStyle(user._id)}`}>
+            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-xs font-medium shadow-sm ${avatarStyle(user._id)}`}
+          >
             {getInitials(user.name)}
           </div>
           <div className="min-w-0">
@@ -144,26 +260,23 @@ function UserRow({ user, index, onApprove, onReject, onDelete }) {
         </div>
       </td>
 
-      {/* Status */}
       <td className="px-5 py-4">
         <span
-          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[11px] ${sc.badge}`}>
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[11px] ${sc.badge}`}
+        >
           <span className={`h-1.5 w-1.5 rounded-full ${sc.dot}`} />
           {sc.label}
         </span>
       </td>
 
-      {/* Joined */}
       <td className="hidden px-5 py-4 font-mono text-xs text-muted sm:table-cell">
         {formatDate(user.createdAt)}
       </td>
 
-      {/* Tests */}
       <td className="hidden px-5 py-4 font-mono text-xs text-ink-soft md:table-cell">
-        {user.testsAttempted}
+        {user.testsAttempted || 0}
       </td>
 
-      {/* Actions */}
       <td className="px-5 py-4">
         <div className="flex items-center justify-end gap-2">
           {user.status === "pending" && (
@@ -171,13 +284,15 @@ function UserRow({ user, index, onApprove, onReject, onDelete }) {
               <button
                 type="button"
                 onClick={() => onApprove(user._id)}
-                className="rounded-full bg-sage-soft px-3 py-1.5 font-sans text-xs font-semibold text-sage transition-transform duration-150 hover:scale-105">
+                className="rounded-full bg-sage-soft px-3 py-1.5 font-sans text-xs font-semibold text-sage transition-transform duration-150 hover:scale-105"
+              >
                 Approve
               </button>
               <button
                 type="button"
                 onClick={() => onReject(user._id)}
-                className="rounded-full bg-clay/10 px-3 py-1.5 font-sans text-xs font-semibold text-clay transition-transform duration-150 hover:scale-105">
+                className="rounded-full bg-clay/10 px-3 py-1.5 font-sans text-xs font-semibold text-clay transition-transform duration-150 hover:scale-105"
+              >
                 Reject
               </button>
             </>
@@ -186,7 +301,8 @@ function UserRow({ user, index, onApprove, onReject, onDelete }) {
             <button
               type="button"
               onClick={() => onApprove(user._id)}
-              className="rounded-full bg-sage-soft px-3 py-1.5 font-sans text-xs font-semibold text-sage transition-transform duration-150 hover:scale-105">
+              className="rounded-full bg-sage-soft px-3 py-1.5 font-sans text-xs font-semibold text-sage transition-transform duration-150 hover:scale-105"
+            >
               Approve
             </button>
           )}
@@ -194,22 +310,48 @@ function UserRow({ user, index, onApprove, onReject, onDelete }) {
             <button
               type="button"
               onClick={() => onReject(user._id)}
-              className="rounded-full bg-paper px-3 py-1.5 font-sans text-xs font-semibold text-muted transition-colors duration-150 hover:text-ink">
+              className="rounded-full bg-paper px-3 py-1.5 font-sans text-xs font-semibold text-muted transition-colors duration-150 hover:text-ink"
+            >
               Revoke
             </button>
           )}
 
+          {/* ✅ Edit Button */}
           <button
             type="button"
-            onClick={() => onDelete(user._id)}
-            title="Delete user"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-muted opacity-0 transition-all duration-150 hover:bg-clay/10 hover:text-clay group-hover:opacity-100">
+            onClick={() => onEdit(user)}
+            title="Edit user"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-muted opacity-0 transition-all duration-150 hover:bg-indigo-deep/10 hover:text-indigo-deep group-hover:opacity-100"
+          >
             <svg
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth={1.8}
-              className="h-4 w-4">
+              className="h-4 w-4"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
+              />
+            </svg>
+          </button>
+
+          {/* Delete Button */}
+          <button
+            type="button"
+            onClick={() => onDelete(user._id)}
+            title="Delete user"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-muted opacity-0 transition-all duration-150 hover:bg-clay/10 hover:text-clay group-hover:opacity-100"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.8}
+              className="h-4 w-4"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -230,6 +372,9 @@ export default function AdminUsersPage() {
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [confirm, setConfirm] = useState(null);
+  
+  // ✅ State for the Edit Modal
+  const [editingUser, setEditingUser] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -274,7 +419,7 @@ export default function AdminUsersPage() {
           setUsers((prev) => prev.filter((u) => u._id !== userId));
         }
       } catch (error) {
-        console.log(error);
+        toast.error("Failed to delete user");
       }
     } else {
       const newStatus = type === "approve" ? "approved" : "rejected";
@@ -288,7 +433,7 @@ export default function AdminUsersPage() {
           );
         }
       } catch (error) {
-        console.log(error);
+        toast.error("Failed to update status");
       }
     }
     setConfirm(null);
@@ -298,7 +443,7 @@ export default function AdminUsersPage() {
     { key: "all", label: "All users", count: stats.total },
     { key: "pending", label: "Pending", count: stats.pending, tint: "gold" },
     { key: "approved", label: "Approved", count: stats.approved, tint: "sage" },
-    { key: "rejected", label: "Rejected", count: stats.reject, tint: "clay" },
+    { key: "rejected", label: "Rejected", count: stats.rejected, tint: "clay" }, // ✅ Fixed stats.reject bug
   ];
 
   const confirmConfig = {
@@ -333,6 +478,19 @@ export default function AdminUsersPage() {
         />
       )}
 
+      {/* ✅ Edit User Modal */}
+      {editingUser && (
+        <UpdateUserModal
+          user={editingUser}
+          onClose={() => setEditingUser(null)}
+          onSuccess={(updatedUser) => {
+            setUsers((prev) =>
+              prev.map((u) => (u._id === updatedUser._id ? updatedUser : u))
+            );
+          }}
+        />
+      )}
+
       {/* Stat chips */}
       <div className="flex flex-wrap gap-3">
         {[
@@ -353,13 +511,14 @@ export default function AdminUsersPage() {
           },
           {
             label: "Rejected",
-            value: stats.reject,
+            value: stats.rejected,
             tint: "bg-clay/10 text-clay",
           },
         ].map((s) => (
           <div
             key={s.label}
-            className={`flex items-center gap-2 rounded-full border border-line px-3.5 py-1.5 ${s.tint}`}>
+            className={`flex items-center gap-2 rounded-full border border-line px-3.5 py-1.5 ${s.tint}`}
+          >
             <span className="font-mono text-xs font-semibold">{s.value}</span>
             <span className="font-sans text-xs">{s.label}</span>
           </div>
@@ -380,7 +539,8 @@ export default function AdminUsersPage() {
                   filter === f.key
                     ? "bg-indigo-deep text-paper"
                     : "text-muted hover:text-ink"
-                }`}>
+                }`}
+              >
                 {f.label}
                 {f.count > 0 && (
                   <span className="ml-1.5 opacity-70">{f.count}</span>
@@ -395,7 +555,8 @@ export default function AdminUsersPage() {
               fill="none"
               stroke="currentColor"
               strokeWidth="1.8"
-              className="h-4 w-4 shrink-0 text-muted">
+              className="h-4 w-4 shrink-0 text-muted"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -448,6 +609,7 @@ export default function AdminUsersPage() {
                     onApprove={handleApprove}
                     onReject={handleReject}
                     onDelete={handleDelete}
+                    onEdit={() => setEditingUser(user)} // ✅ Trigger Modal
                   />
                 ))}
               </tbody>

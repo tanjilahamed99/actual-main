@@ -1,36 +1,75 @@
-const { default: mongoose } = require("mongoose");
 const User = require("../../models/User");
+const sendEmail = require("../../config/sendEmail");
+const bcrypt = require("bcryptjs");
+const {
+  getAccountApprovedTemplate,
+  getUserStatusTemplate,
+} = require("../../utils/emailTemplate");
 
+// ✅ Updated to ONLY show users (role: "user")
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find().select("-password").lean();
+    const users = await User.find({ role: "user" }).select("-password").lean();
     res.json({ success: true, message: "Users Data", users });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
 
+// ✅ NEW: Only show admins (role: "admin")
+exports.getAllAdmins = async (req, res) => {
+  try {
+    const admins = await User.find({ role: "admin" })
+      .select("-password")
+      .lean();
+    res.json({ success: true, message: "Admins Data", admins });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 exports.updateUserStatus = async (req, res) => {
   try {
     const { id, status } = req.params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid user id" });
-    }
+    console.log(status);
 
     const mainStatus = ["pending", "approved", "rejected"];
+
     if (!mainStatus.includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid status" });
     }
 
     const user = await User.findByIdAndUpdate(
       id,
       { $set: { status } },
-      { new: true }
-    ).select("-password");
+      { new: true },
+    );
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
 
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
+    if (status === "approved") {
+      await sendEmail({
+        to: user.email,
+        subject: "Account Approved - Actual IELTS Questions",
+        html: getAccountApprovedTemplate(
+          "https://your-website.com/login",
+          user.name,
+        ),
+      });
+    } else if (status === "rejected") {
+      await sendEmail({
+        to: user.email,
+        subject: "Account Status Update",
+        html: getUserStatusTemplate(
+          "Account Update",
+          "Unfortunately, your account request has been rejected. If you think this is a mistake, please contact support.",
+          user.name,
+        ),
+      });
     }
 
     res.json({ success: true, message: "User updated", user });
@@ -42,17 +81,46 @@ exports.updateUserStatus = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid user id" });
-    }
+    await User.findByIdAndDelete(id);
 
-    const user = await User.findByIdAndDelete(id);
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
+    // ✅ Send Email on Delete
+    await sendEmail({
+      to: user.email,
+      subject: "Account Deleted - Actual IELTS Questions",
+      html: `<p>Hello ${user.name},</p><p>Your account has been deleted by an administrator. You no longer have access to our platform.</p>`,
+    });
 
     res.json({ success: true, message: "User deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+exports.adminUpdateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, email, password } = req.body;
+
+    let updateData = { name, email };
+
+    // If admin typed a new password, hash it
+    if (password && password.trim() !== "") {
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(password, salt);
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true },
+    );
+    res.json({ success: true, user });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
