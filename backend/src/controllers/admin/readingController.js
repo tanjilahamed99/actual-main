@@ -1,6 +1,8 @@
 const { default: mongoose } = require("mongoose");
 const ReadingTest = require("../../models/ReadingTest");
 const { readingTestPayloadSchema } = require("../../validation/validation");
+const ReadingAttempt = require("../../models/ReadingAttempt");
+
 
 exports.createReadingTest = async (req, res) => {
   const parsed = readingTestPayloadSchema.safeParse(req.body);
@@ -135,4 +137,28 @@ exports.deleteReadingTest = async (req, res) => {
   const test = await ReadingTest.findByIdAndDelete(req.params.id);
   if (!test) return res.status(404).json({ message: "Not found" });
   res.json({ message: "Deleted", success: true });
+};
+
+// Get all attempts for the Admin Panel
+exports.adminGetAllAttempts = async (req, res) => {
+  try {
+    const attempts = await ReadingAttempt.find()
+      .sort({ submittedAt: -1 })
+      .lean();
+
+    res.json({ success: true, attempts });
+  } catch (err) {
+    console.error("[adminGetAllAttempts]", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// Optional: Delete an attempt
+exports.adminDeleteAttempt = async (req, res) => {
+  try {
+    await ReadingAttempt.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: "Deleted" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 };

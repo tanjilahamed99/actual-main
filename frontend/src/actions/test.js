@@ -22,3 +22,7 @@ export const getPublicReadingTest = (testNumber) =>
 
 export const listPublicReadingTests = () =>
   API.get("/reading");
+
+
+export const saveReadingAttemptToDB = (data) => API.post("/reading/submit-attempt", data);
+export const getMyReadingAttempts = () => API.get("/reading/my-attempts");

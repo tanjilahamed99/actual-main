@@ -50,7 +50,8 @@ export const getPublicReadingTest = (testNumber) =>
 /** List all users (admin). */
 export const adminGetAllUserData = () => API.get("/admin/users");
 
-export const adminUpdateUser = (id, data) => API.put(`/admin/users/${id}`, data);
+export const adminUpdateUser = (id, data) =>
+  API.put(`/admin/users/${id}`, data);
 
 export const adminGetAllAdmins = () => API.get("/admin/users/admins");
 
@@ -68,3 +69,8 @@ export const getAllPassages = (params = {}) =>
   API.get("/admin/passages", { params });
 
 export const getDuplicatePassages = () => API.get("/admin/passages/duplicates");
+
+export const adminGetAllReadingAttempts = () =>
+  API.get("/admin/reading/reading-attempts");
+export const adminDeleteReadingAttempt = (id) =>
+  API.delete(`/admin/reading/reading-attempts/${id}`);

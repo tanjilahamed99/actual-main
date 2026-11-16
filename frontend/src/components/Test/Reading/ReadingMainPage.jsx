@@ -19,6 +19,7 @@ import { BottomNav } from "@/components/Test/BottomNav";
 import { useExitGuard } from "@/hooks/Useexitguard";
 import Image from "next/image";
 import { sendGTMEvent } from "@next/third-parties/google";
+import { saveReadingAttemptToDB } from "@/actions/test";
 
 const TOTAL_SEC = 60 * 60;
 const fmt = (s) =>
@@ -30,6 +31,7 @@ export default function ReadingMainPage({
   ANSWER_KEY,
   testType,
   title,
+  demo = false,
 }) {
   const [phase, setPhase] = useState("intro");
   const [activePassage, setActivePassage] = useState(0);
@@ -54,20 +56,20 @@ export default function ReadingMainPage({
     setIsReviewMode(true); // Enables the "Answer Badges" on the passage
   }, []);
 
-useEffect(() => {
-  const stringId = String(testId);
-  
-  // Get the saved session
-  const session = getSession("reading", stringId);
+  useEffect(() => {
+    const stringId = String(testId);
 
-  // If they have answers saved, show the prompt
-  if (session?.answers && Object.keys(session.answers).length > 0) {
-    setSavedAnswers(session.answers);
-    setShowRestorePrompt(true);
-  }
+    // Get the saved session
+    const session = getSession("reading", stringId);
 
-  initModule("reading", stringId, `Reading Test ${stringId}`);
-}, [testId, getSession, initModule]);
+    // If they have answers saved, show the prompt
+    if (session?.answers && Object.keys(session.answers).length > 0) {
+      setSavedAnswers(session.answers);
+      setShowRestorePrompt(true);
+    }
+
+    initModule("reading", stringId, `Reading Test ${stringId}`);
+  }, [testId, getSession, initModule]);
 
   useEffect(() => {
     // Get the saved session for this specific test
@@ -82,22 +84,22 @@ useEffect(() => {
     initModule("reading", String(testId), `Reading Test ${testId}`);
   }, [testId, getSession, initModule]);
 
- const handleRestore = () => {
-  const formattedVals = {};
-  Object.entries(savedAnswers).forEach(([key, value]) => {
-    // The key is "question_1", we split by "_" and take the last part "1"
-    const qNum = key.split("_").pop(); 
-    formattedVals[qNum] = value;
-  });
+  const handleRestore = () => {
+    const formattedVals = {};
+    Object.entries(savedAnswers).forEach(([key, value]) => {
+      // The key is "question_1", we split by "_" and take the last part "1"
+      const qNum = key.split("_").pop();
+      formattedVals[qNum] = value;
+    });
 
-  setVals(formattedVals);
-  setShowRestorePrompt(false);
-  
-  if (phase === "intro") {
-    startModule("reading", String(testId));
-    setPhase("test");
-  }
-};
+    setVals(formattedVals);
+    setShowRestorePrompt(false);
+
+    if (phase === "intro") {
+      startModule("reading", String(testId));
+      setPhase("test");
+    }
+  };
 
   const handleDiscard = () => {
     setSavedAnswers({});
@@ -164,35 +166,108 @@ useEffect(() => {
         return { ...prev, [n]: v };
       });
 
-      // 2. We need the LATEST vals to save to Zustand. 
+      // 2. We need the LATEST vals to save to Zustand.
       // Since setVals is async, we read the current state directly from the hook variable.
       // But to be absolutely safe, we use a functional approach to construct the next state.
       const nextVals = { ...vals, [n]: v };
-      
+
       const formattedAnswers = {};
       Object.entries(nextVals).forEach(([qNum, answer]) => {
         formattedAnswers[`question_${qNum}`] = answer;
       });
-      
+
       // 3. Save to Zustand OUTSIDE the setVals function
       saveAllAnswers("reading", String(testId), formattedAnswers);
     },
-    [vals, testId, saveAllAnswers] // Add `vals` to dependencies
+    [vals, testId, saveAllAnswers], // Add `vals` to dependencies
   );
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
+    // 1. Calculate Score locally
+    const totalQuestions = Object.keys(ANSWER_KEY || {}).length;
+    let correctCount = 0;
+
+    Object.entries(ANSWER_KEY).forEach(([key, correctData]) => {
+      const studentAns = String(vals[key] || "")
+        .trim()
+        .toLowerCase();
+      const isRichFormat =
+        typeof correctData === "object" && correctData !== null;
+      const correctAnsRaw = isRichFormat ? correctData.answer : correctData;
+
+      let isCorrect = false;
+      if (Array.isArray(correctAnsRaw)) {
+        isCorrect = correctAnsRaw
+          .map((a) => String(a).trim().toLowerCase())
+          .includes(studentAns);
+      } else {
+        isCorrect =
+          studentAns === String(correctAnsRaw).trim().toLowerCase() &&
+          studentAns !== "";
+      }
+      if (isCorrect) correctCount++;
+    });
+
+    // Calculate Band (Approximate)
+    const getBand = (c, t) => {
+      const scaled = Math.round((c / t) * 40);
+      if (scaled >= 39) return "9.0";
+      if (scaled >= 37) return "8.5";
+      if (scaled >= 35) return "8.0";
+      if (scaled >= 33) return "7.5";
+      if (scaled >= 30) return "7.0";
+      if (scaled >= 27) return "6.5";
+      if (scaled >= 23) return "6.0";
+      if (scaled >= 19) return "5.5";
+      if (scaled >= 15) return "5.0";
+      if (scaled >= 13) return "4.5";
+      if (scaled >= 10) return "4.0";
+      return "3.5";
+    };
+    const band = getBand(correctCount, totalQuestions);
+    const timeSpentSeconds = TOTAL_SEC - timeLeft;
+
+    // 2. Save to Zustand (Local)
     const formattedAnswers = {};
     Object.entries(vals).forEach(([qNum, answer]) => {
       formattedAnswers[`question_${qNum}`] = answer;
     });
-    saveAllAnswers("reading", testId, formattedAnswers);
-    submitModule("reading", testId);
+    saveAllAnswers("reading", String(testId), formattedAnswers);
+    submitModule("reading", String(testId));
+
+    if (!demo) {
+      try {
+        const data = await saveReadingAttemptToDB({
+          testId: testId,
+          testNumber: Number(testId),
+          testTitle: title,
+          score: correctCount,
+          totalQuestions,
+          band,
+          timeSpentSeconds,
+          answers: vals, // Optional: Store the raw answers
+        });
+        console.log(data);
+      } catch (err) {
+        console.error("Failed to save attempt to DB:", err);
+      }
+    }
+
+    // 4. Show Result Modal
     setPhase("done");
     setShowResult(true);
-    // no forced navigation to "writing" — reading is standalone now
 
     sendGTMEvent({ event: "test_submitted", test_type: "reading" });
-  }, [vals, saveAllAnswers, submitModule, testId]);
+  }, [
+    vals,
+    saveAllAnswers,
+    submitModule,
+    testId,
+    title,
+    ANSWER_KEY,
+    timeLeft,
+    demo,
+  ]);
 
   const handleRestart = useCallback(() => {
     setVals({});

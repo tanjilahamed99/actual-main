@@ -10,11 +10,12 @@ const nav = [
   { href: "/admin/reading", label: "Reading", icon: "book" },
   { href: "/admin/passages", label: "Passages", icon: "layers" },
   { href: "/admin/listening", label: "Listening", icon: "headphones" },
-  { href: "/admin/writing", label: "Writing", icon: "pen" },
+  // ✅ Add exact: true here
+  { href: "/admin/writing", label: "Writing", icon: "pen", exact: true },
   { href: "/admin/writing/attempts", label: "Submissions", icon: "inbox" },
   { href: "/admin/users", label: "Users", icon: "user" },
   { href: "/admin/admins", label: "Admins", icon: "user" },
-  // { href: "#", label: "Speaking", icon: "mic", soon: true },
+  { href: "/admin/reading-attempts", label: "Reading Attempts", icon: "layers" },
 ];
 
 const icons = {

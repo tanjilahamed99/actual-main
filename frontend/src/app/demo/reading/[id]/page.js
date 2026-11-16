@@ -41,6 +41,7 @@ export default function TestDetailPage() {
         ReadingPassage={test.questions}
         testType="demo"
         title={test.title}
+        demo={true}
       />
     </div>
   );
