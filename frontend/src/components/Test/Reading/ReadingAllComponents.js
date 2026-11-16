@@ -1294,7 +1294,7 @@ export function ShortBlock({
           {block.items.map(renderItem)}
         </ul>
       ) : (
-        <div className="mt-2">
+        <div className="mt-2 pl-5">
           {block.items.map(renderItem)}
         </div>
       )}
