@@ -1,7 +1,9 @@
 // src/controllers/admin/writingAttemptController.js
-const { default: mongoose } = require("mongoose");
+const mongoose = require("mongoose");
 const WritingAttempt = require("../../models/WritingAttempt");
 const { markAttemptSchema } = require("../../validation/attemptValidation");
+const sendEmail = require("../../config/sendEmail");
+const { getWritingMarkedTemplate } = require("../../utils/emailTemplate");
 
 /**
  * GET /api/admin/writing/attempts
@@ -98,6 +100,27 @@ exports.markAttempt = async (req, res) => {
     );
 
     if (!attempt) return res.status(404).json({ message: "Not found" });
+
+    // ✅ Send Email Notification to the Student
+    try {
+      if (attempt.userEmail) {
+        await sendEmail({
+          to: attempt.userEmail,
+          subject: `Your Writing Result is Ready! - Band ${attempt.overallBand || "N/A"}`,
+          html: getWritingMarkedTemplate(
+            attempt.userName || "Student",
+            attempt.testTitle || "Writing Test",
+            attempt.overallBand || "N/A",
+            attempt.generalFeedback || "",
+            "https://actual-ielts.strixdevs.com/dashboard", // ✅ Your website dashboard link
+          ),
+        });
+      }
+    } catch (emailErr) {
+      // We log the email error but DO NOT stop the response
+      // The mark is already saved in the DB successfully.
+      console.error("Failed to send marking email:", emailErr.message);
+    }
 
     res.json({ success: true, attempt });
   } catch (err) {

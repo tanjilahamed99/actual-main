@@ -177,3 +177,51 @@ exports.getAccountDeletedTemplate = (name) => {
     `,
   });
 };
+
+// ── 5. Writing Marked Email ──
+exports.getWritingMarkedTemplate = (name, testTitle, overallBand, generalFeedback, loginUrl) => {
+  return wrapEmail({
+    title: "Your Writing Test has been Marked",
+    preheader: `You scored Band ${overallBand} on ${testTitle}.`,
+    content: `
+      <h2 style="color: #111827; margin-top: 0; font-size: 24px; font-weight: 700;">Your Writing Result is Ready! ✍️</h2>
+      <p style="color: #4b5563; font-size: 15px; line-height: 1.6;">Hi <strong>${name}</strong>,</p>
+      <p style="color: #4b5563; font-size: 15px; line-height: 1.6;">
+        Great news! Our expert examiner has finished reviewing your writing submission for <strong>${testTitle}</strong>. 
+      </p>
+
+      <!-- Score Box -->
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 30px 0; background-color: #f7f5f0; border: 1px solid #e5e7eb; border-radius: 12px;">
+        <tr>
+          <td align="center" style="padding: 24px;">
+            <p style="margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #6b7280; font-weight: 600;">Overall Band Score</p>
+            <p style="margin: 10px 0 0 0; font-size: 48px; font-weight: 800; color: #d4af37; line-height: 1;">${overallBand}</p>
+          </td>
+        </tr>
+      </table>
+
+      ${generalFeedback ? `
+      <div style="background-color: #f8fafc; border-left: 4px solid #161d34; padding: 16px; margin-bottom: 30px;">
+        <p style="margin: 0 0 8px 0; font-size: 13px; font-weight: 700; text-transform: uppercase; color: #161d34;">Examiner's General Feedback</p>
+        <p style="margin: 0; font-size: 15px; color: #4b5563; line-height: 1.6; font-style: italic;">
+          "${generalFeedback}"
+        </p>
+      </div>
+      ` : ""}
+
+      <p style="color: #4b5563; font-size: 15px; line-height: 1.6;">
+        You can log in to your account to view the detailed breakdown of your score (Task Achievement, Coherence & Cohesion, Lexical Resource, and Grammar).
+      </p>
+      
+      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin: 30px 0;">
+        <tr>
+          <td align="center">
+            <a href="${loginUrl}" style="background-color: #d4af37; color: #161d34; padding: 16px 36px; border-radius: 999px; font-weight: 700; font-size: 15px; text-decoration: none; display: inline-block; box-shadow: 0 4px 12px rgba(212,175,55,0.3);">
+              View Full Result
+            </a>
+          </td>
+        </tr>
+      </table>
+    `,
+  });
+};
